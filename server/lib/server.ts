@@ -12,9 +12,8 @@ import routes from './routes';
 const app = express();
 
 //webpack middleware stuff
-const devServerEnabled = true;
-
-if (devServerEnabled) {
+const isDev = process.env.NODE_ENV === 'development';
+if (isDev) {
     const webpack = require('webpack');
     const webpackDevMiddleware = require('webpack-dev-middleware');
     const webpackHotMiddleware = require('webpack-hot-middleware');
