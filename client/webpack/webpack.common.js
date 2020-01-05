@@ -5,21 +5,22 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ENV = process.env.NODE_ENV;
 
+const wtpConfigValues = {
+    auth0ClientId: JSON.stringify(process.env.AUTH0_CLIENT_ID),
+    auth0Domain: JSON.stringify(process.env.AUTH0_DOMAIN),
+    auth0Audience: JSON.stringify(process.env.AUTH0_AUDIENCE),
+    serverUrl: JSON.stringify(process.env.SERVER_URL)
+};
+
+console.log('webpack config values', wtpConfigValues);
+
 module.exports = {
     entry: {
         app: [helpers.root('/src/app.ts')]
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify(ENV)
-            },
-            WTP_CONFIG: {
-                auth0ClientId: JSON.stringify(process.env.AUTH0_CLIENT_ID),
-                auth0Domain: JSON.stringify(process.env.AUTH0_DOMAIN),
-                auth0Audience: JSON.stringify(process.env.AUTH0_AUDIENCE),
-                serverUrl: JSON.stringify(process.env.SERVER_URL)
-            }
+            WTP_CONFIG: wtpConfigValues
         }),
         new HtmlWebpackPlugin({
             template: helpers.root('/index.html')
