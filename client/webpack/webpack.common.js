@@ -15,7 +15,9 @@ module.exports = {
                 NODE_ENV: JSON.stringify(ENV)
             },
             WTP_CONFIG: {
+                auth0ClientId: JSON.stringify(process.env.AUTH0_CLIENT_ID),
                 auth0Domain: JSON.stringify(process.env.AUTH0_DOMAIN),
+                auth0Audience: JSON.stringify(process.env.AUTH0_AUDIENCE),
                 serverUrl: JSON.stringify(process.env.SERVER_URL)
             }
         }),

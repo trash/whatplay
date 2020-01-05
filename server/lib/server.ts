@@ -2,7 +2,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../') });
 import express from 'express';
 import jwt from 'express-jwt';
-var jwks = require('jwks-rsa');
+const jwks = require('jwks-rsa');
 
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -44,17 +44,25 @@ if (isDev) {
     app.use(webpackHotMiddleware(compiler));
 }
 
+const jwtParameters = {
+    jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+    audience: process.env.AUTH0_AUDIENCE,
+    issuer: `https://${process.env.AUTH0_DOMAIN}/`
+};
+
 const jwtCheck = jwt({
     secret: jwks.expressJwtSecret({
+        jwksUri: jwtParameters.jwksUri,
         cache: true,
         rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+        jwksRequestsPerMinute: 5
     }),
-    audience: process.env.AUTH0_AUDIENCE,
-    issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+    audience: jwtParameters.audience,
+    issuer: jwtParameters.issuer,
     algorithms: ['RS256']
 });
+
+console.log('jwt params', jwtParameters);
 
 // Use JWT from auth0 for apis
 app.use('/api', jwtCheck);

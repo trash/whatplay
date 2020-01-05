@@ -60,6 +60,7 @@ function getNotes(req: AuthenticatedRequest) {
 }
 
 export function getAllNotes(req: AuthenticatedRequest, res: Response) {
+    console.log('wotit');
     const startDateString = req.params.startDate;
     let notesQuery = getNotes(req);
     if (startDateString && moment(startDateString).isValid()) {

@@ -1,47 +1,65 @@
 import * as React from 'react';
-import {Provider} from 'react-redux';
-import {RouteComponentProps} from 'react-router';
-import {Router, Route, Link, Redirect, Switch} from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { Router, Route } from 'react-router-dom';
 
-import {store} from '../redux/store';
-import {auth} from '../services/Auth';
-import {history} from '../services/history';
+import { store } from '../redux/store';
+import { history } from '../services/history';
 
-import {ConnectedHomeView} from './Home';
-import {CreateUserView} from './CreateUser';
-import {ConnectedNotesPageView} from './NotesPage';
-import {Callback} from './Callback';
-import {TestView} from './Test';
-import {ConnectedHeaderView} from './Header';
+import { ConnectedHomeView } from './Home';
+import { CreateUserView } from './CreateUser';
+import { ConnectedNotesPageView } from './NotesPage';
+// import { TestView } from './Test';
+import { HeaderView } from './Header';
+import { config } from '../config';
+import { Auth0Provider, useAuth0 } from '../services/Auth';
+import Profile from './Profile';
+import { PrivateRoute } from './PrivateRoute';
 
-export class MainView extends React.Component<void, {}> {
-    private handleAuthentication(nextState: RouteComponentProps<void>) {
-        if (/access_token|id_token|error/.test(nextState.location.hash)) {
-            auth.handleAuthentication();
-        }
+// A function that routes the user to the right place
+// after login
+const onRedirectCallback = appState => {
+    history.push(
+        appState && appState.targetUrl
+            ? appState.targetUrl
+            : window.location.pathname
+    );
+};
+
+function MainView() {
+    const { loading } = useAuth0();
+
+    if (loading) {
+        return <div>Loading...</div>;
     }
-
-	render () {
-		return (
-            <Provider store={store}>
+    return (
+        <Provider store={store}>
+            <Auth0Provider
+                domain={config.auth0Domain}
+                client_id={config.auth0ClientId}
+                redirect_uri={window.location.origin}
+                onRedirectCallback={onRedirectCallback}
+            >
                 <Router history={history}>
                     <div>
-                        <ConnectedHeaderView/>
+                        <HeaderView />
                         <div className="maxWidth">
-                            <Route exact path="/" component={ConnectedHomeView}/>
-                            <Route path="/user" component={CreateUserView}/>
-                            <Route path="/notes" component={ConnectedNotesPageView}/>
                             <Route
-                                path="/callback"
-                                render={(props: RouteComponentProps<void>) => {
-                                    this.handleAuthentication(props);
-                                    return <Callback {...props} />
-                                }}
+                                exact
+                                path="/"
+                                component={ConnectedHomeView}
                             />
+                            <Route path="/user" component={CreateUserView} />
+                            <Route
+                                path="/notes"
+                                component={ConnectedNotesPageView}
+                            />
+                            <PrivateRoute path="/profile" component={Profile} />
                         </div>
                     </div>
                 </Router>
-            </Provider>
-		);
-	}
+            </Auth0Provider>
+        </Provider>
+    );
 }
+
+export default MainView;

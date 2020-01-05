@@ -12,9 +12,10 @@ export default function(app: Application) {
         api.user.createUser(req, res)
     );
 
-    app.get('/api/v1/notes', (req: AuthenticatedRequest, res: Response) =>
-        api.note.getAllNotes(req, res)
-    );
+    app.get('/api/v1/notes', (req: AuthenticatedRequest, res: Response) => {
+        console.log('asdfsdfa 1');
+        api.note.getAllNotes(req, res);
+    });
     app.post('/api/v1/notes', (req: Request, res: Response) =>
         api.note.createNote(req, res)
     );

@@ -1,4 +1,6 @@
 export type WtpConfig = {
+    auth0Audience: string;
+    auth0ClientId: string;
     auth0Domain: string;
     serverUrl: string;
 };

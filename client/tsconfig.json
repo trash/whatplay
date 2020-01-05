@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "sourceMap": true,
         "target": "es2017",
         "module": "commonjs",
@@ -7,11 +8,5 @@
         "listFiles": true,
         "jsx": "react"
     },
-    "exclude": [
-        "app/bower_components",
-        "node_modules",
-        "app/src/vendor",
-        "lib",
-        "app/test"
-    ]
+    "exclude": ["node_modules"]
 }
