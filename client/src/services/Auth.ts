@@ -3,15 +3,16 @@ import * as auth0 from 'auth0-js';
 import { history } from './history';
 import { store } from '../redux/store';
 import { login, logout } from '../redux/actions';
+import { config } from '../config';
 
 const redirectUri = `${window.location.origin}/callback`;
 
 export class Auth {
     auth0 = new auth0.WebAuth({
-        domain: 'yearinreview.auth0.com',
+        domain: config.auth0Domain,
         clientID: 'RQ0DxPvvFGtxFHkwdY79jgUPUjfYVb1o',
         redirectUri: redirectUri,
-        audience: `${window.location.host}/api`,
+        audience: `${window.location.origin}/api`,
         responseType: 'token id_token',
         scope: 'openid'
     });

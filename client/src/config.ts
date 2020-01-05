@@ -1,7 +1,10 @@
-export type YIRConfig = {
+export type WtpConfig = {
+    auth0Domain: string;
     serverUrl: string;
 };
 
-declare var YIR_CONFIG: YIRConfig;
+declare var WTP_CONFIG: WtpConfig;
 
-export const config = YIR_CONFIG;
+console.log('config', WTP_CONFIG);
+
+export const config = WTP_CONFIG;

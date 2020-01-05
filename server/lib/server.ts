@@ -1,9 +1,12 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../') });
 import express from 'express';
 import jwt from 'express-jwt';
 var jwks = require('jwks-rsa');
 
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+const port = process.env.port || process.env.PORT || 5000;
 
 // Express settings
 import { config } from './config';
@@ -46,10 +49,10 @@ const jwtCheck = jwt({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: 'https://yearinreview.auth0.com/.well-known/jwks.json'
+        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
     }),
-    audience: 'localhost:8999/api',
-    issuer: 'https://yearinreview.auth0.com/',
+    audience: process.env.AUTH0_AUDIENCE,
+    issuer: `https://${process.env.AUTH0_DOMAIN}/`,
     algorithms: ['RS256']
 });
 
@@ -61,8 +64,6 @@ routes(app);
 
 // Routing
 // app.get('/*', (req, res) => res.render('index'));
-
-const port = process.env.port || process.env.PORT || 8999;
 
 // Start server
 app.listen(port, function() {

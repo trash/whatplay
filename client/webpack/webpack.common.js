@@ -1,5 +1,7 @@
-const webpack = require('webpack');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const helpers = require('./helpers');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ENV = process.env.NODE_ENV;
 
@@ -11,6 +13,10 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify(ENV)
+            },
+            WTP_CONFIG: {
+                auth0Domain: JSON.stringify(process.env.AUTH0_DOMAIN),
+                serverUrl: JSON.stringify(process.env.SERVER_URL)
             }
         }),
         new HtmlWebpackPlugin({

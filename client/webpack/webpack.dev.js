@@ -4,7 +4,6 @@ var commonConfig = require('./webpack.common.js');
 var helpers = require('./helpers');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin;
-var clientConfig = require('./clientConfig');
 
 module.exports = webpackMerge(commonConfig, {
     mode: 'development',
@@ -19,9 +18,6 @@ module.exports = webpackMerge(commonConfig, {
     },
 
     plugins: [
-        new webpack.DefinePlugin({
-            YIR_CONFIG: JSON.stringify(clientConfig.dev)
-        })
         //     new BundleAnalyzerPlugin({
         //         analyzerPort: 1337
         //     })
