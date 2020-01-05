@@ -4,7 +4,7 @@
     },
     "scripts": {
         "clean": "cd client && npm run clean && cd ../server && npm run clean",
-        "build": "npm run build-server && npm run build-client",
+        "build": "cd server && npm run build && cd ../client && npm run build",
         "start": "cd serve && npm run start",
         "test": "jest"
     },
