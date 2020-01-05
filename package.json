@@ -6,8 +6,9 @@
         "node": "13.1.0"
     },
     "scripts": {
+        "postinstall": "cd client && yarn && cd ../server && yarn",
         "clean": "cd client && npm run clean && cd ../server && npm run clean",
-        "build": "cd server && npm run build && cd ../client && npm run build",
+        "build": "cd client && npm run build && cd ../server && npm run build",
         "start": "cd serve && npm run start",
         "test": "jest"
     },
