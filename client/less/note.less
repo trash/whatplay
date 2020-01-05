@@ -1,0 +1,53 @@
+.notesList {
+}
+
+.notesList_note {
+    padding: 10px;
+    background: white;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px @boxShadowColor;
+
+    .notesList_note_header {
+        display: flex;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+    .notesList_note_body {
+    }
+    .notesList_note_title {
+        width: 100%;
+        margin-bottom: 10px;
+        font-weight: @darkerText;
+    }
+    .notesList_note_id {
+        // font-size: 12px;
+        color: @lighterText;
+        margin-right: 5px;
+    }
+    .notesList_note_timestamp {
+        // font-size: 12px;
+        color: @lighterText;
+    }
+    .notesList_note_controls {
+        margin-left: auto;
+        button {
+            margin-right: 10px;
+            &:last-child {
+                margin-right: 0;
+            }
+            &:not(.active) {
+                color: @lighterText;
+            }
+        }
+    }
+    textarea {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    &.notesList_note--newNote {
+        .notesList_note_body {
+            margin-bottom: 10px;
+        }
+    }
+}

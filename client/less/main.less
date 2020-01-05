@@ -1,0 +1,66 @@
+@import 'colors';
+@import 'note';
+
+@heavyFontWeight: 600;
+@normalFontWeight: 500;
+
+#root {
+}
+body {
+    background: @backgroundColor;
+}
+
+.maxWidth {
+    margin: auto;
+    max-width: 720px;
+}
+
+.header {
+    background: @brand;
+    border-top: 4px solid @brand2;
+    color: white;
+    padding: 10px;
+
+    .header_inner {
+        display: flex;
+    }
+
+    a, button {
+        color: white;
+    }
+
+    .header_brand {
+        flex: 0 1 auto;
+        margin-right: 20px;
+        font-weight: @heavyFontWeight;
+    }
+    .header_navlist {
+        flex: auto;
+    }
+    .header_navlist_item {
+        margin-right: 10px;
+
+        &.selected {
+            text-decoration: underline;
+        }
+    }
+
+    button {
+        background: @primaryButtonOnBrand;
+    }
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+    font-weight: @heavyFontWeight;
+    padding: 4px 10px;
+
+    &.primary {
+        background: @primaryButton;
+        color: white;
+    }
+    &.active {
+        color: @primaryButton;
+    }
+}

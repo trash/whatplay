@@ -1,0 +1,43 @@
+{
+    "name": "whatplay-server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "directories": {
+        "lib": "lib"
+    },
+    "dependencies": {
+        "@babel/cli": "^7.7.7",
+        "@babel/core": "^7.7.7",
+        "@babel/node": "^7.7.7",
+        "@babel/plugin-proposal-class-properties": "^7.7.4",
+        "@babel/plugin-proposal-object-rest-spread": "^7.7.7",
+        "@babel/preset-env": "^7.7.7",
+        "@babel/preset-typescript": "^7.7.7",
+        "body-parser": "^1.18.2",
+        "ejs": "^2.5.2",
+        "express": "^4.14.0",
+        "express-jwt": "^5.3.1",
+        "jwks-rsa": "^1.2.1",
+        "moment": "^2.15.1",
+        "typescript": "3.7.4"
+    },
+    "scripts": {
+        "build": "npx babel lib --out-dir build --extensions '.ts,.js'",
+        "serve": "node build/server",
+        "start": "npm run build && npm run serve",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "css-loader": "^3.4.1",
+        "less": "^3.10.3",
+        "less-loader": "^5.0.0",
+        "style-loader": "^1.1.2",
+        "ts-loader": "^6.2.1",
+        "webpack": "^4.41.5",
+        "webpack-dev-middleware": "^3.7.2",
+        "webpack-hot-middleware": "^2.25.0"
+    }
+}

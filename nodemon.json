@@ -1,0 +1,6 @@
+{
+    "watch": ["server"],
+    "ext": "ts",
+    "ignore": ["server/**/*.spec.ts"],
+    "exec": "npm run build-server && npm run serve"
+}
