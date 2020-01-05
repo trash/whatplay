@@ -4,14 +4,14 @@ import { history } from './history';
 import { store } from '../redux/store';
 import { login, logout } from '../redux/actions';
 
-const redirectUri = `http://${window.location.host}/callback`;
+const redirectUri = `${window.location.origin}/callback`;
 
 export class Auth {
     auth0 = new auth0.WebAuth({
         domain: 'yearinreview.auth0.com',
         clientID: 'RQ0DxPvvFGtxFHkwdY79jgUPUjfYVb1o',
         redirectUri: redirectUri,
-        audience: 'localhost:8999/api',
+        audience: `${window.location.host}/api`,
         responseType: 'token id_token',
         scope: 'openid'
     });

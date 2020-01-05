@@ -489,7 +489,7 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-auth0-js@^9.3.3:
+auth0-js@^9.12.1:
   version "9.12.1"
   resolved "https://registry.yarnpkg.com/auth0-js/-/auth0-js-9.12.1.tgz#ffe76acdbd66ad61a0a71c818d69a599c8228937"
   integrity sha512-0BqClX8iRYWeX8lM6V1h9Yg0ZSxs+naM+dMiknfdwr8g7HNLEXqRc1Wx4iZUJfF4PTU5pDksRkiWvjDFQbt2SA==
