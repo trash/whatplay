@@ -2,6 +2,9 @@
     "dependencies": {
         "typescript": "3.7.4"
     },
+    "engines": {
+        "node": "13.1.0"
+    },
     "scripts": {
         "clean": "cd client && npm run clean && cd ../server && npm run clean",
         "build": "cd server && npm run build && cd ../client && npm run build",
