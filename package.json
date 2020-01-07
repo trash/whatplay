@@ -3,7 +3,8 @@
         "typescript": "3.7.4"
     },
     "engines": {
-        "node": "13.1.0"
+        "node": "13.1.0",
+        "yarn": "1.21.1"
     },
     "scripts": {
         "postinstall": "cd client && yarn && cd ../server && yarn",
