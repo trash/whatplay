@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { useAuth0 } from '../services/Auth';
+import { useAuth0 } from '../services/ReactAuth';
 
 export function HeaderView() {
     const { isAuthenticated, loginWithRedirect, logout } = useAuth0();

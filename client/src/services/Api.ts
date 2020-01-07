@@ -1,10 +1,11 @@
 import { config } from '../config';
+import { auth0 } from './ReactAuth';
 
 export class Api {
-    private static appendAuthHeaders(
+    private static async appendAuthHeaders(
         headers: Headers = new Headers()
-    ): Headers {
-        const token = localStorage.getItem('access_token');
+    ): Promise<Headers> {
+        const token = await auth0.getTokenSilently();
         headers.append('Authorization', `Bearer ${token}`);
         return headers;
     }
@@ -47,17 +48,17 @@ export class Api {
         );
     }
 
-    static get<T = any>(url: string, queryParams?: any): Promise<T> {
+    static async get<T = any>(url: string, queryParams?: any): Promise<T> {
         return fetch(Api.getUrl(url, queryParams), {
-            headers: Api.appendAuthHeaders()
+            headers: await Api.appendAuthHeaders()
         }).then(response => this.handleResponse(response));
     }
 
-    static post<D = any, T = any>(url: string, data: D): Promise<T> {
+    static async post<D = any, T = any>(url: string, data: D): Promise<T> {
         return fetch(Api.getUrl(url), {
             method: 'POST',
             body: JSON.stringify(data),
-            headers: Api.appendAuthHeaders(
+            headers: await Api.appendAuthHeaders(
                 new Headers({
                     'Content-Type': 'application/json'
                 })
@@ -65,18 +66,18 @@ export class Api {
         }).then(response => this.handleResponse(response));
     }
 
-    static delete<T = any>(url: string): Promise<T> {
+    static async delete<T = any>(url: string): Promise<T> {
         return fetch(Api.getUrl(url), {
             method: 'DELETE',
-            headers: Api.appendAuthHeaders()
+            headers: await Api.appendAuthHeaders()
         }).then(response => this.handleResponse(response, false));
     }
 
-    static patch<D = any, T = any>(url: string, data: D): Promise<T> {
+    static async patch<D = any, T = any>(url: string, data: D): Promise<T> {
         return fetch(Api.getUrl(url), {
             method: 'PATCH',
             body: JSON.stringify(data),
-            headers: Api.appendAuthHeaders(
+            headers: await Api.appendAuthHeaders(
                 new Headers({
                     'Content-Type': 'application/json'
                 })

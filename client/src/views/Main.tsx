@@ -11,54 +11,30 @@ import { ConnectedNotesPageView } from './NotesPage';
 // import { TestView } from './Test';
 import { HeaderView } from './Header';
 import { config } from '../config';
-import { Auth0Provider, useAuth0 } from '../services/Auth';
+import { Auth0Provider, useAuth0 } from '../services/ReactAuth';
 import Profile from './Profile';
 import { PrivateRoute } from './PrivateRoute';
-
-// A function that routes the user to the right place
-// after login
-const onRedirectCallback = appState => {
-    history.push(
-        appState && appState.targetUrl
-            ? appState.targetUrl
-            : window.location.pathname
-    );
-};
 
 function MainView() {
     const { loading } = useAuth0();
 
+    // Right now this is kind of heavy handed but it makes stuff
+    // a little easier because the Api service is not written
+    // right now to handle the time when the auth0 client isn't loaded.
+    // It should be...someday.
     if (loading) {
-        return <div>Loading...</div>;
+        return null;
     }
     return (
-        <Provider store={store}>
-            <Auth0Provider
-                domain={config.auth0Domain}
-                client_id={config.auth0ClientId}
-                redirect_uri={window.location.origin}
-                onRedirectCallback={onRedirectCallback}
-            >
-                <Router history={history}>
-                    <div>
-                        <HeaderView />
-                        <div className="maxWidth">
-                            <Route
-                                exact
-                                path="/"
-                                component={ConnectedHomeView}
-                            />
-                            <Route path="/user" component={CreateUserView} />
-                            <Route
-                                path="/notes"
-                                component={ConnectedNotesPageView}
-                            />
-                            <PrivateRoute path="/profile" component={Profile} />
-                        </div>
-                    </div>
-                </Router>
-            </Auth0Provider>
-        </Provider>
+        <Router history={history}>
+            <HeaderView />
+            <div className="maxWidth">
+                <Route exact path="/" component={ConnectedHomeView} />
+                <Route path="/user" component={CreateUserView} />
+                <Route path="/notes" component={ConnectedNotesPageView} />
+                <PrivateRoute path="/profile" component={Profile} />
+            </div>
+        </Router>
     );
 }
 

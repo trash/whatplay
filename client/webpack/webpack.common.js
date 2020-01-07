@@ -16,7 +16,7 @@ console.log('webpack config values', wtpConfigValues);
 
 module.exports = {
     entry: {
-        app: [helpers.root('/src/app.ts')]
+        app: [helpers.root('/src/app.tsx')]
     },
     plugins: [
         new webpack.DefinePlugin({

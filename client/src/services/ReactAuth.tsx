@@ -1,7 +1,25 @@
 // src/react-auth0-spa.js
 import React, { useState, useEffect, useContext } from 'react';
 import createAuth0Client from '@auth0/auth0-spa-js';
+import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
+import { config } from '../config';
 
+// Do a little BS here to expose our Auth0 client outside react
+export let auth0: Auth0Client;
+const configureClient = async () => {
+    auth0 = await createAuth0Client({
+        domain: config.auth0Domain,
+        audience: config.auth0Audience,
+        client_id: config.auth0ClientId,
+        redirect_uri: window.location.origin
+    });
+};
+const configureClientPromise = configureClient();
+
+// Everything below here is basically copy pasted from Auth0's
+// React guide. It provides hooks for react components for the
+// auth0 client flow. I changed a couple commented lines to
+// use the globally exposed auth0 client I created above.
 export interface Auth0User extends Omit<IdToken, '__raw'> {}
 
 interface Auth0Context {
@@ -21,6 +39,7 @@ interface Auth0Context {
 }
 
 type Auth0ProviderOptions = {
+    audience: string;
     domain: string;
     client_id: string;
     redirect_uri: string;
@@ -44,9 +63,11 @@ export const Auth0Provider = ({
 
     useEffect(() => {
         const initAuth0 = async () => {
-            const auth0FromHook = await createAuth0Client(
-                initOptions as Auth0ProviderOptions
-            );
+            // These two lines are my hack to get the Auth0 react code
+            // to play with my globally exposed auth0 client
+            await configureClientPromise;
+            const auth0FromHook = auth0;
+
             setAuth0(auth0FromHook);
 
             if (window.location.search.includes('code=')) {
