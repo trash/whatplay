@@ -1,8 +1,5 @@
-import * as moment from 'moment';
 import { Request, Response } from 'express';
-import { mysqlDateFormat } from '../constants';
-
-import { AuthenticatedRequest } from './AuthenticatedRequest';
+import { MongoClient } from 'mongodb';
 
 // const knex = client(knexfile);
 const knex: any = {};
@@ -17,7 +14,7 @@ export function createNote(req: Request, res: Response) {
     };
     return knex('note')
         .insert(newNote)
-        .then(([id]) => {
+        .then(([id]: [any]) => {
             return res.status(201).send(
                 Object.assign(
                     {
@@ -27,7 +24,7 @@ export function createNote(req: Request, res: Response) {
                 )
             );
         })
-        .catch(error => {
+        .catch((error: any) => {
             console.error(error.code, error.sqlMessage);
             return res.sendStatus(500);
         });
@@ -47,31 +44,36 @@ export function updateNote(req: Request, res: Response) {
     return knex('note')
         .where('id', req.params.id)
         .update(req.body)
-        .then(([id]) => {
+        .then(() => {
             return res.sendStatus(200);
         });
 }
 
-function getNotes(req: AuthenticatedRequest) {
-    return knex('note')
-        .join('user', 'user.id', '=', 'note.user_id')
-        .where('user.auth0_id', req.user.sub)
-        .select('note.*');
-}
+export async function getAllGames(_req: Request, res: Response) {
+    // console.log('wotit');
+    // const startDateString = req.params.startDate;
+    // let notesQuery = getNotes(req);
+    // if (startDateString && moment(startDateString).isValid()) {
+    //     const startDate = moment(startDateString);
+    //     notesQuery = notesQuery
+    //         .where('date', '>=', startDate.format(mysqlDateFormat))
+    //         .andWhere(
+    //             'date',
+    //             '<=',
+    //             startDate.add(7, 'days').format(mysqlDateFormat)
+    //         );
+    // }
+    // return notesQuery.then(data => res.status(200).send(data));
+    const client = new MongoClient(process.env.DATABASE_URL!);
+    await client.connect();
 
-export function getAllNotes(req: AuthenticatedRequest, res: Response) {
-    console.log('wotit');
-    const startDateString = req.params.startDate;
-    let notesQuery = getNotes(req);
-    if (startDateString && moment(startDateString).isValid()) {
-        const startDate = moment(startDateString);
-        notesQuery = notesQuery
-            .where('date', '>=', startDate.format(mysqlDateFormat))
-            .andWhere(
-                'date',
-                '<=',
-                startDate.add(7, 'days').format(mysqlDateFormat)
-            );
-    }
-    return notesQuery.then(data => res.status(200).send(data));
+    const db = client.db(process.env.DATABASE_NAME);
+
+    const collection = db.collection<any>('games');
+
+    const matches = await collection.find({}).toArray();
+
+    console.log(matches);
+
+    return res.status(200).send(matches);
 }

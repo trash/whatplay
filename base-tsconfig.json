@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "strict": true,
+        "target": "es2017",
+        "pretty": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    }
+}

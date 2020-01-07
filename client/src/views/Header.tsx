@@ -9,15 +9,15 @@ export function HeaderView() {
         <div className="header">
             <div className="header_inner maxWidth">
                 <div className="header_brand">
-                    <NavLink to="">YearInReview</NavLink>
+                    <NavLink to="">What To Play Next</NavLink>
                 </div>
                 <div className="header_navlist">
                     <NavLink
                         className="header_navlist_item"
-                        to="/notes"
+                        to="/games"
                         activeClassName="selected"
                     >
-                        Notes
+                        Games
                     </NavLink>
                     {isAuthenticated && (
                         <NavLink

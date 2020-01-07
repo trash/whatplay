@@ -24,7 +24,7 @@ export class Api {
         if (response.ok) {
             return json ? response.json() : new Promise(resolve => resolve());
         }
-        return new Promise((resolve, reject) => {
+        return new Promise((_resolve, reject) => {
             console.error('Error in response', response);
             reject(response);
         });

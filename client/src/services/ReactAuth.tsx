@@ -45,15 +45,21 @@ type Auth0ProviderOptions = {
     redirect_uri: string;
 };
 
-const DEFAULT_REDIRECT_CALLBACK = (appState: Auth0ProviderOptions) =>
+const DEFAULT_REDIRECT_CALLBACK = (_appState: Auth0ProviderOptions) =>
     window.history.replaceState({}, document.title, window.location.pathname);
 
 export const Auth0Context = React.createContext<Auth0Context>({} as any);
 export const useAuth0 = () => useContext(Auth0Context);
 export const Auth0Provider = ({
     children,
-    onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
-    ...initOptions
+    onRedirectCallback = DEFAULT_REDIRECT_CALLBACK
+}: {
+    children: any;
+    onRedirectCallback: Function;
+    domain: string;
+    audience: string;
+    client_id: string;
+    redirect_uri: string;
 }) => {
     const [isAuthenticated, setIsAuthenticated] = useState();
     const [user, setUser] = useState();

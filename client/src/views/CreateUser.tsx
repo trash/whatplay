@@ -1,16 +1,17 @@
 import * as React from 'react';
 
-type CreateUserViewProps = {
-
-}
+type CreateUserViewProps = {};
 
 type CreateUserViewState = {
     username: string;
     password: string;
-}
+};
 
-export class CreateUserView extends React.Component<CreateUserViewProps, CreateUserViewState> {
-    constructor(props) {
+export class CreateUserView extends React.Component<
+    CreateUserViewProps,
+    CreateUserViewState
+> {
+    constructor(props: CreateUserViewProps) {
         super(props);
         this.state = {
             username: '',
@@ -48,12 +49,10 @@ export class CreateUserView extends React.Component<CreateUserViewProps, CreateU
 
     render() {
         return (
-            <form onSubmit={(event) => this.createUser(event)}>
+            <form onSubmit={event => this.createUser(event)}>
                 <legend>Create User:</legend>
                 <p>
-                    <label htmlFor="username">
-                        Username
-                    </label>
+                    <label htmlFor="username">Username</label>
                     <input
                         type="text"
                         name="username"

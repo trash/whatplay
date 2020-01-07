@@ -18,6 +18,8 @@
         "@babel/plugin-proposal-object-rest-spread": "^7.7.7",
         "@babel/preset-env": "^7.7.7",
         "@babel/preset-typescript": "^7.7.7",
+        "@types/mongodb": "^3.3.14",
+        "babel-polyfill": "^6.26.0",
         "body-parser": "^1.18.2",
         "dotenv": "^8.2.0",
         "ejs": "^2.5.2",
@@ -25,10 +27,13 @@
         "express-jwt": "^5.3.1",
         "jwks-rsa": "^1.2.1",
         "moment": "^2.15.1",
+        "mongodb": "^3.4.1",
         "typescript": "3.7.4"
     },
     "scripts": {
-        "build": "npx babel lib --out-dir build --extensions '.ts,.js'",
+        "build": "npm run build:types && npm run build:js",
+        "build:types": "tsc --noEmit",
+        "build:js": "npx babel lib --out-dir build --extensions '.ts,.js'",
         "serve": "node build/server",
         "start": "npm run build && npm run serve",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -39,6 +44,7 @@
         "css-loader": "^3.4.1",
         "less": "^3.10.3",
         "less-loader": "^5.0.0",
+        "nodemon": "^2.0.2",
         "style-loader": "^1.1.2",
         "ts-loader": "^6.2.1",
         "webpack": "^4.41.5",

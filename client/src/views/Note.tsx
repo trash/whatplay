@@ -1,24 +1,21 @@
 import * as React from 'react';
-import * as moment from 'moment';
-import * as Immutable from 'immutable';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import TextareaAutosize from 'react-autosize-textarea';
 
-
-import {Note} from '../models/note';
-import {noteService} from '../services/NoteService';
+import { Note } from '../models/note';
+import { noteService } from '../services/NoteService';
 
 type NotesViewProps = {
     note: Note;
-}
+};
 
 type NoteViewState = {
     isEditing: boolean;
     editedNote: string;
-}
+};
 
 export class NoteView extends React.Component<NotesViewProps, NoteViewState> {
-    constructor(props) {
+    constructor(props: NotesViewProps) {
         super(props);
         this.state = {
             editedNote: '',
@@ -37,8 +34,6 @@ export class NoteView extends React.Component<NotesViewProps, NoteViewState> {
             });
         }
     }
-
-    private autoResizeTextArea
 
     private inputOnChange(e: React.ChangeEvent<any>): void {
         this.setState({
@@ -73,19 +68,21 @@ export class NoteView extends React.Component<NotesViewProps, NoteViewState> {
     }
 
     private onDelete(id: number): void {
-        if (window.confirm('Are you sure you would like to delete this note?')) {
+        if (
+            window.confirm('Are you sure you would like to delete this note?')
+        ) {
             noteService.deleteNote(id);
         }
     }
 
-     render() {
+    render() {
         const note = this.props.note;
         return (
             <div className="notesList_note" key={note.id}>
                 <div className="notesList_note_header">
-                    { false && <span className="notesList_note_id">
-                        {note.id}
-                    </span> }
+                    {false && (
+                        <span className="notesList_note_id">{note.id}</span>
+                    )}
                     <span className="notesList_note_timestamp">
                         {note.date.format('MM/DD/YYYY')}
                     </span>
@@ -107,10 +104,11 @@ export class NoteView extends React.Component<NotesViewProps, NoteViewState> {
                     </div>
                 </div>
                 <div className="notesList_note_body">
-                    {this.state.isEditing
-                        ? this.renderEditingView()
-                        : <span>{note.note}</span>
-                    }
+                    {this.state.isEditing ? (
+                        this.renderEditingView()
+                    ) : (
+                        <span>{note.note}</span>
+                    )}
                 </div>
             </div>
         );

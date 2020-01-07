@@ -20,9 +20,9 @@ function RedirectIfNotLoggedInComponent(props: { path: string }) {
     return null;
 }
 
-export const PrivateRoute = ({ component: Component, path, ...rest }) => {
-    const { loading, isAuthenticated } = useAuth0();
-    const render = props =>
+export const PrivateRoute = ({ component: Component, path, ...rest }: any) => {
+    const { isAuthenticated } = useAuth0();
+    const render = (props: any) =>
         isAuthenticated === true ? (
             <Component {...props} />
         ) : (

@@ -10,12 +10,12 @@ export function createUser(req: Request, res: Response) {
             username: req.body.username,
             password: req.body.password
         })
-        .then(([id]) => {
+        .then(([id]: [any]) => {
             return res.status(201).send({
                 id
             });
         })
-        .catch(error => {
+        .catch((error: any) => {
             console.error(error.code, error.sqlMessage);
             if (error.code === 'ER_DUP_ENTRY') {
                 return res.sendStatus(403);

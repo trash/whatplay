@@ -41,14 +41,14 @@ function mainReducer(previousState = initialState, action: ReducerAction) {
             break;
         case actionTypes.DELETE_NOTE: {
             const index = previousState.notes.findIndex(
-                n => n.id === action.id
+                n => n!.id === action.id
             );
             newState.notes = previousState.notes.remove(index);
             break;
         }
         case actionTypes.UPDATE_NOTE: {
             const index = previousState.notes.findIndex(
-                n => n.id === action.id
+                n => n!.id === action.id
             );
             newState.notes = previousState.notes.update(index, n => {
                 return Object.assign({}, n, {

@@ -1,11 +1,7 @@
 import * as React from 'react';
-import * as moment from 'moment';
 import { connect } from 'react-redux';
-import { Route, RouteComponentProps } from 'react-router';
-import { History } from 'history';
-import * as classNames from 'classnames';
 
-import { store, StoreState } from '../redux/store';
+import { StoreState } from '../redux/store';
 import { Note } from '../models/note';
 import { noteService } from '../services/NoteService';
 
@@ -17,11 +13,8 @@ type HomeViewState = {
     notes: Note[];
 };
 
-export class HomeView extends React.Component<
-    RouteComponentProps<HomeViewProps>,
-    HomeViewState
-> {
-    constructor(props) {
+export class HomeView extends React.Component<HomeViewProps, HomeViewState> {
+    constructor(props: HomeViewProps) {
         super(props);
         this.state = {
             notes: []
@@ -52,6 +45,6 @@ export class HomeView extends React.Component<
     }
 }
 
-export const ConnectedHomeView = connect((state: StoreState) => {
+export const ConnectedHomeView = connect((_state: StoreState) => {
     return {};
 })(HomeView);

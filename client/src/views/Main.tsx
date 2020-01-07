@@ -1,17 +1,14 @@
 import * as React from 'react';
-import { Provider } from 'react-redux';
 import { Router, Route } from 'react-router-dom';
 
-import { store } from '../redux/store';
 import { history } from '../services/history';
 
 import { ConnectedHomeView } from './Home';
 import { CreateUserView } from './CreateUser';
-import { ConnectedNotesPageView } from './NotesPage';
+import { ConnectedGamesPageView } from './NotesPage';
 // import { TestView } from './Test';
 import { HeaderView } from './Header';
-import { config } from '../config';
-import { Auth0Provider, useAuth0 } from '../services/ReactAuth';
+import { useAuth0 } from '../services/ReactAuth';
 import Profile from './Profile';
 import { PrivateRoute } from './PrivateRoute';
 
@@ -31,7 +28,7 @@ function MainView() {
             <div className="maxWidth">
                 <Route exact path="/" component={ConnectedHomeView} />
                 <Route path="/user" component={CreateUserView} />
-                <Route path="/notes" component={ConnectedNotesPageView} />
+                <Route path="/games" component={ConnectedGamesPageView} />
                 <PrivateRoute path="/profile" component={Profile} />
             </div>
         </Router>

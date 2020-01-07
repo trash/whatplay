@@ -1,12 +1,8 @@
 {
+    "extends": "../base-tsconfig.json",
     "compilerOptions": {
         "esModuleInterop": true,
-        "sourceMap": true,
-        "target": "es2017",
         "module": "commonjs",
-        "pretty": true,
-        "listFiles": true,
         "jsx": "react"
-    },
-    "exclude": ["node_modules"]
+    }
 }

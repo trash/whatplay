@@ -27,7 +27,7 @@ class NoteService {
     }
 
     private async getAllNotes(
-        userId: number,
+        _userId: number,
         startDate?: string
     ): Promise<Note[]> {
         const queryParams = startDate
@@ -80,7 +80,7 @@ class NoteService {
             note
         });
         store.dispatch(updateNote(id, note));
-        return store.getState().notes.find(n => n.id === id);
+        return store.getState().notes.find(n => n!.id === id);
     }
 
     async getNotesForWeek(

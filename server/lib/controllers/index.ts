@@ -1,12 +1,13 @@
 import * as path from 'path';
+import { Request, Response } from 'express';
 
 /**
  * Send partial, or 404 if it doesn't exist
  */
-export function partials(req, res) {
+export function partials(req: Request, res: Response) {
     var stripped = req.url.split('.')[0];
     var requestedView = path.join('./', stripped);
-    res.render(requestedView, function(err, html) {
+    res.render(requestedView, function(err: Error, html: string) {
         if (err) {
             console.log(
                 "Error rendering partial '" + requestedView + "'\n",
@@ -23,6 +24,6 @@ export function partials(req, res) {
 /**
  * Send our single page app
  */
-export function index(req, res) {
+export function index(_req: Request, res: Response) {
     res.render('index');
 }

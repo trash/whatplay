@@ -16,7 +16,7 @@ export class CreateNoteView extends React.Component<
     CreateNoteViewProps,
     CreateNoteViewState
 > {
-    constructor(props) {
+    constructor(props: CreateNoteViewProps) {
         super(props);
         this.state = {
             userId: 1,
