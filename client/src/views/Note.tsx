@@ -14,6 +14,8 @@ type NoteViewState = {
     editedNote: string;
 };
 
+const showId = true;
+
 export class NoteView extends React.Component<NotesViewProps, NoteViewState> {
     constructor(props: NotesViewProps) {
         super(props);
@@ -80,7 +82,7 @@ export class NoteView extends React.Component<NotesViewProps, NoteViewState> {
         return (
             <div className="notesList_note" key={note.id}>
                 <div className="notesList_note_header">
-                    {false && (
+                    {showId && (
                         <span className="notesList_note_id">{note.id}</span>
                     )}
                     <span className="notesList_note_timestamp">

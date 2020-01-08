@@ -10,10 +10,18 @@ import {
     NotePatchServer
 } from '../models/note';
 
-import { addNote, deleteNote, updateNotes, updateNote } from '../redux/actions';
+import {
+    addNote,
+    deleteNote,
+    updateNotes,
+    updateNote,
+    updateGames
+} from '../redux/actions';
 import { store } from '../redux/store';
 
 import { mysqlDateFormat } from '../constants';
+import { Game } from '../models/game';
+import { GameServer } from '@shared/models/game';
 
 class NoteService {
     private transformNoteServerToNote(noteServer: NoteServer): Note {
@@ -23,6 +31,16 @@ class NoteService {
             date: moment(noteServer.date),
             period: noteServer.period,
             id: noteServer.id
+        };
+    }
+
+    private transformGameServertoGame(gameServer: GameServer): Game {
+        return {
+            id: gameServer._id,
+            title: gameServer.title,
+            genres: gameServer.genres,
+            systems: gameServer.systems,
+            timeToBeat: gameServer.timeToBeat
         };
     }
 
@@ -42,10 +60,21 @@ class NoteService {
         return notesServer.map(n => this.transformNoteServerToNote(n));
     }
 
+    private async getAllGames(): Promise<Game[]> {
+        const gamesServer = await Api.get<GameServer[]>(`/api/v1/notes`);
+        return gamesServer.map(g => this.transformGameServertoGame(g));
+    }
+
     async refetchAllNotes(userId: number): Promise<Note[]> {
         let notes = await this.getAllNotes(userId);
         store.dispatch(updateNotes(notes));
         return notes;
+    }
+
+    async refetchAllGames(): Promise<Game[]> {
+        let games = await this.getAllGames();
+        store.dispatch(updateGames(games));
+        return games;
     }
 
     async createNote(

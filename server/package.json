@@ -32,7 +32,7 @@
     },
     "scripts": {
         "build": "npm run build:types && npm run build:js",
-        "build:types": "tsc --noEmit",
+        "build:types": "tsc --project server-tsconfig.json --noEmit",
         "build:js": "npx babel lib --out-dir build --extensions '.ts,.js'",
         "serve": "node build/server",
         "start": "npm run build && npm run serve",

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { MongoClient } from 'mongodb';
+import { GameServer } from '@shared/models/game';
 
 // const knex = client(knexfile);
 const knex: any = {};
@@ -69,7 +70,7 @@ export async function getAllGames(_req: Request, res: Response) {
 
     const db = client.db(process.env.DATABASE_NAME);
 
-    const collection = db.collection<any>('games');
+    const collection = db.collection<GameServer>('games');
 
     const matches = await collection.find({}).toArray();
 

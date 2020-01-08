@@ -5,7 +5,7 @@ import { history } from '../services/history';
 
 import { ConnectedHomeView } from './Home';
 import { CreateUserView } from './CreateUser';
-import { ConnectedGamesPageView } from './NotesPage';
+import { GamesPageView2 } from './GamesPage';
 // import { TestView } from './Test';
 import { HeaderView } from './Header';
 import { useAuth0 } from '../services/ReactAuth';
@@ -28,7 +28,7 @@ function MainView() {
             <div className="maxWidth">
                 <Route exact path="/" component={ConnectedHomeView} />
                 <Route path="/user" component={CreateUserView} />
-                <Route path="/games" component={ConnectedGamesPageView} />
+                <Route path="/games" component={GamesPageView2} />
                 <PrivateRoute path="/profile" component={Profile} />
             </div>
         </Router>

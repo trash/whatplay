@@ -9,26 +9,31 @@ import {
     UpdateNote,
     UpdateNotes,
     Login,
-    Logout
+    Logout,
+    UpdateGames
 } from './actions';
 
 import { Note } from '../models/note';
+import { Game } from '../models/game';
 
 type ReducerAction =
     | AddNote
     | DeleteNote
     | UpdateNote
     | UpdateNotes
+    | UpdateGames
     | Login
     | Logout;
 
 export interface StoreState {
     notes: Immutable.List<Note>;
+    games: Immutable.List<Game>;
     isAuthenticated: boolean;
 }
 
 const initialState: StoreState = {
     notes: Immutable.List(),
+    games: Immutable.List(),
     isAuthenticated: false
 };
 
@@ -60,6 +65,11 @@ function mainReducer(previousState = initialState, action: ReducerAction) {
         case actionTypes.UPDATE_NOTES:
             newState.notes = Immutable.List(action.notes);
             break;
+
+        case actionTypes.UPDATE_GAMES:
+            newState.games = Immutable.List(action.games);
+            break;
+
         case actionTypes.LOGIN:
             newState.isAuthenticated = true;
             break;

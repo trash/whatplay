@@ -1,5 +1,6 @@
 import { Note } from '../../models/note';
 import * as actionTypes from './types';
+import { Game } from '../../models/game';
 
 export interface AddNote {
     type: actionTypes.ADD_NOTE;
@@ -48,6 +49,18 @@ export function updateNotes(notes: Note[]): UpdateNotes {
     return {
         notes,
         type: actionTypes.UPDATE_NOTES
+    };
+}
+
+export interface UpdateGames {
+    type: actionTypes.UPDATE_GAMES;
+    games: Game[];
+}
+
+export function updateGames(games: Game[]): UpdateGames {
+    return {
+        games,
+        type: actionTypes.UPDATE_GAMES
     };
 }
 
