@@ -9,7 +9,6 @@ export default function(app: Application) {
     app.post('/api/v1/users', (req, res) => api.user.createUser(req, res));
 
     app.get('/api/v1/notes', (req, res) => {
-        console.log('asdfsdfa 1');
         api.note.getAllGames(req, res);
     });
     app.post('/api/v1/notes', (req, res) => api.note.createNote(req, res));

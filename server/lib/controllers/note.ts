@@ -51,30 +51,20 @@ export function updateNote(req: Request, res: Response) {
 }
 
 export async function getAllGames(_req: Request, res: Response) {
-    // console.log('wotit');
-    // const startDateString = req.params.startDate;
-    // let notesQuery = getNotes(req);
-    // if (startDateString && moment(startDateString).isValid()) {
-    //     const startDate = moment(startDateString);
-    //     notesQuery = notesQuery
-    //         .where('date', '>=', startDate.format(mysqlDateFormat))
-    //         .andWhere(
-    //             'date',
-    //             '<=',
-    //             startDate.add(7, 'days').format(mysqlDateFormat)
-    //         );
-    // }
-    // return notesQuery.then(data => res.status(200).send(data));
     const client = new MongoClient(process.env.DATABASE_URL!);
-    await client.connect();
+    try {
+        await client.connect();
 
-    const db = client.db(process.env.DATABASE_NAME);
+        const db = client.db(process.env.DATABASE_NAME);
 
-    const collection = db.collection<GameServer>('games');
+        const collection = db.collection<GameServer>('games');
 
-    const matches = await collection.find({}).toArray();
+        const matches = await collection.find({}).toArray();
+        console.log(matches);
 
-    console.log(matches);
-
-    return res.status(200).send(matches);
+        return res.status(200).send(matches);
+    } catch (e) {
+        return res.status(500).send(e);
+    }
+    client.close();
 }
