@@ -4,7 +4,7 @@ import { createStore } from 'redux';
 
 import * as actionTypes from './actions/types';
 import {
-    AddNote,
+    AddGame,
     DeleteNote,
     UpdateNote,
     UpdateNotes,
@@ -14,10 +14,10 @@ import {
 } from './actions';
 
 import { Note } from '../models/note';
-import { Game } from '../models/game';
+import { Game } from '../models/game.model';
 
 type ReducerAction =
-    | AddNote
+    | AddGame
     | DeleteNote
     | UpdateNote
     | UpdateNotes
@@ -41,9 +41,10 @@ function mainReducer(previousState = initialState, action: ReducerAction) {
     const newState = _.extend({}, previousState);
 
     switch (action.type) {
-        case actionTypes.ADD_NOTE:
-            newState.notes = previousState.notes.push(action.note);
+        case actionTypes.ADD_GAME:
+            newState.games = previousState.games.push(action.game);
             break;
+
         case actionTypes.DELETE_NOTE: {
             const index = previousState.notes.findIndex(
                 n => n!.id === action.id

@@ -11,7 +11,7 @@ export default function(app: Application) {
     app.get('/api/v1/games', (req, res) => {
         api.game.getAllGames(req, res);
     });
-    app.post('/api/v1/game', (req, res) => api.game.createGame(req, res));
+    app.post('/api/v1/games', (req, res) => api.game.createGame(req, res));
     app.delete('/api/v1/notes/:id', (req, res) =>
         api.game.deleteGame(req, res)
     );

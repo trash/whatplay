@@ -4,12 +4,16 @@ export type GamePatchServer = {};
 
 export type GamePostServer = {};
 
-export interface GameServer extends MongoDocument {
+export interface GameStub {
     title: string;
     systems: string[];
     genres: string[];
     timeToBeat: number;
 }
+
+export interface GameServer extends MongoDocument, GameStub {}
+
+// type KeysOf = keyof GameServer;
 
 export type Game = {
     id: string;

@@ -1,10 +1,10 @@
 import { Api } from './Api';
 
-import { updateGames } from '../redux/actions';
+import { updateGames, addGame } from '../redux/actions';
 import { store } from '../redux/store';
 
-import { Game } from '../models/game';
-import { GameServer } from '@shared/models/game';
+import { Game } from '../models/game.model';
+import { GameServer, GameStub } from '@shared/models/game.model';
 
 class GameService {
     private transformGameServertoGame(gameServer: GameServer): Game {
@@ -28,27 +28,16 @@ class GameService {
         return games;
     }
 
-    // async createNote(
-    //     userId: number,
-    //     note: string,
-    //     datePeriod: DatePeriod
-    // ): Promise<Note> {
-    //     const newNote = await Api.post<NotePostServer, NoteServer>(
-    //         '/api/v1/notes',
-    //         {
-    //             userId: userId,
-    //             note: note,
-    //             date: moment()
-    //                 .utc()
-    //                 .format(mysqlDateFormat),
-    //             period: datePeriod
-    //         }
-    //     ).then(noteServer => this.transformNoteServerToNote(noteServer));
+    async createGame(game: GameStub): Promise<Game> {
+        const newGame = await Api.post<GameStub, GameServer>(
+            '/api/v1/games',
+            game
+        ).then(gameServer => this.transformGameServertoGame(gameServer));
 
-    //     store.dispatch(addNote(newNote));
+        store.dispatch(addGame(newGame));
 
-    //     return newNote;
-    // }
+        return newGame;
+    }
 
     // async deleteNote(id: number): Promise<void> {
     //     await Api.delete(`/api/v1/notes/${id}`);

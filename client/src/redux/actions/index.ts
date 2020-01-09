@@ -1,16 +1,16 @@
 import { Note } from '../../models/note';
 import * as actionTypes from './types';
-import { Game } from '../../models/game';
+import { Game } from '../../models/game.model';
 
-export interface AddNote {
-    type: actionTypes.ADD_NOTE;
-    note: Note;
+export interface AddGame {
+    type: actionTypes.ADD_GAME;
+    game: Game;
 }
 
-export function addNote(note: Note): AddNote {
+export function addGame(game: Game): AddGame {
     return {
-        note,
-        type: actionTypes.ADD_NOTE
+        game,
+        type: actionTypes.ADD_GAME
     };
 }
 

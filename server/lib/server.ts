@@ -1,7 +1,7 @@
-require('babel-polyfill');
+import 'regenerator-runtime/runtime';
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../') });
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import jwt from 'express-jwt';
 const jwks = require('jwks-rsa');
 
@@ -65,8 +65,31 @@ const jwtCheck = jwt({
 
 console.log('jwt params', jwtParameters);
 
+class HttpException extends Error {
+    status: number;
+    message: string;
+    constructor(status: number, message: string) {
+        super(message);
+        this.status = status;
+        this.message = message;
+    }
+}
+
+const UnauthorizedError = 'UnauthorizedError';
+
 // Use JWT from auth0 for apis
 app.use('/api', jwtCheck);
+app.use(
+    '/api',
+    (err: HttpException, _req: Request, res: Response, next: NextFunction) => {
+        if (err.name === UnauthorizedError) {
+            return res.status(401).send();
+        }
+        console.info('MUH ERROR');
+        console.info(JSON.stringify(err));
+        next();
+    }
+);
 
 config(app);
 routes(app);

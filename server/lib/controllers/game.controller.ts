@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { MongoClient } from 'mongodb';
-import { GameServer } from '@shared/models/game';
+import { GameServer, GameStub } from '@shared/models/game.model';
 
-type ControllerMethod = (req: Request, res: Response) => Response;
+type ControllerMethod = (req: Request, res: Response) => Promise<Response>;
 
 // export function createNote(req: Request, res: Response) {
 //     console.warn('do validation on note here');
@@ -30,13 +30,38 @@ type ControllerMethod = (req: Request, res: Response) => Response;
 //         });
 // }
 
-export const createGame: ControllerMethod = (_req, res) => {
+export const createGame: ControllerMethod = async (req, res) => {
+    console.warn('do validation on note here');
+    const newGame = {
+        title: req.body.title,
+        systems: req.body.systems,
+        genres: req.body.genres,
+        timeToBeat: req.body.timeToBeat
+    };
+
+    console.log(
+        'need to pull this logic of setting a connection to db up out of here.'
+    );
+    const client = new MongoClient(process.env.DATABASE_URL!);
+    try {
+        await client.connect();
+
+        const db = client.db(process.env.DATABASE_NAME);
+
+        const collection = db.collection<GameStub>('games');
+
+        const gameWithId = await collection.insertOne(newGame);
+
+        return res.status(200).send(gameWithId.ops[0]);
+    } catch (e) {
+        return res.status(500).send(e);
+    }
+    client.close();
+};
+export const deleteGame: ControllerMethod = async (_req, res) => {
     return res.status(501).send();
 };
-export const deleteGame: ControllerMethod = (_req, res) => {
-    return res.status(501).send();
-};
-export const updateGame: ControllerMethod = (_req, res) => {
+export const updateGame: ControllerMethod = async (_req, res) => {
     return res.status(501).send();
 };
 

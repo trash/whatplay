@@ -4,9 +4,10 @@ import * as Immutable from 'immutable';
 
 import { StoreState } from '../redux/store';
 
-import { GameView } from './Game';
+import { GameComponent } from './Game';
 import { gameService } from '../services/GameService';
-import { Game } from '../models/game';
+import { Game } from '../models/game.model';
+import { CreateGame } from './CreateGame';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -28,9 +29,10 @@ export const GamesPageView2: React.FC<GamesPageViewProps> = () => {
     );
     return (
         <div style={{ marginTop: '10px' }}>
+            <CreateGame />
             <div className="notesList">
                 {games.map(game => {
-                    return <GameView key={game!.id} game={game!} />;
+                    return <GameComponent key={game!.id!} game={game!} />;
                 })}
             </div>
         </div>
