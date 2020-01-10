@@ -94,7 +94,7 @@ export async function getAllGames(_req: Request, res: Response) {
         const collection = db.collection<GameServer>('games');
 
         const matches = await collection.find({}).toArray();
-        console.log(matches);
+        // console.log(matches);
 
         return res.status(200).send(matches);
     } catch (e) {

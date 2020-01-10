@@ -1,9 +1,34 @@
-@darkBlue: #011260;
-@paleBlue: #4286f4;
-@lightBlue: #3AD8E8;
+// Set 1 Plain Ol' Blue
+// @brand: #4286f4;
+// @brand2: #011260;
+// @brand3: #ddd;
+// @brand4: #fafafa;
 
-@brand: @paleBlue;
-@brand2: @darkBlue;
+// Set 2 Fresh Peach https://colorhunt.co/palette/160646
+// @lightPeach: lighten(@peach, 5%);
+
+// @brand: #4b8e8d;
+// @brand2: #396362;
+// @brand3: #f6c89f;
+// @brand4: #ffe7d1;
+// @backgroundColor: @peach;
+// @boxShadowColor: @tan;
+// @lightBackgroundColor: @lightPeach;
+// @inputBorder: darken(@peach, 10%);
+
+// Set 3 4xGreen https://colorhunt.co/palette/66129
+@brand: #1fab89;
+@brand2: #62d2a2;
+@brand3: #9df3c4;
+@brand4: #d7fbe8;
+
+// Set 4 Cloud https://colorhunt.co/palette/33990
+// @brand: #769fcd;
+// @brand2: #b9d7ea;
+// @brand3: #d6e6f2;
+// @brand4: #f7fbfc;
+
+// Shared
 @primaryButton: @brand;
 @primaryButtonOnBrand: lighten(@primaryButton, 10%);
 
@@ -11,5 +36,14 @@
 @normalText: #4a4a4a;
 @lighterText: #737373;
 
+// Brand background/input
+@backgroundColor: @brand4;
+@boxShadowColor: @brand3;
+@lightBackgroundColor: lighten(@backgroundColor, 5%);
+@inputBorder: darken(@backgroundColor, 5%);
+
+// Plain background/input
 @backgroundColor: #fafafa;
 @boxShadowColor: #eee;
+@lightBackgroundColor: white;
+@inputBorder: inherit;
