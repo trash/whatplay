@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
+import errorHandler from 'errorhandler';
 
 const rootPath = path.normalize(__dirname + '/../../');
 const clientRootPath = path.normalize(rootPath + '/client');
@@ -10,7 +11,10 @@ console.log(rootPath, clientRootPath);
 /**
  * Express configuration
  */
-export const config = function(app: express.Application) {
+export const config = function(
+    app: express.Application,
+    isDev: boolean = false
+) {
     // Disable caching of scripts for easier testing
     app.use(function noCache(req, res, next) {
         if (req.url.indexOf('/scripts/') === 0) {
@@ -50,9 +54,11 @@ export const config = function(app: express.Application) {
 
         next();
     });
+
+    if (isDev) {
+        // Error handler
+        app.use(errorHandler());
+    }
     // app.use(express.methodOverride());
     // app.use(express.cookieParser());
-
-    // Error handler
-    // app.use(express.errorHandler());
 };

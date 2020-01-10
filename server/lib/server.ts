@@ -89,13 +89,11 @@ app.use(
         if (err.name === UnauthorizedError) {
             return res.status(401).send();
         }
-        console.info('MUH ERROR');
-        console.info(JSON.stringify(err));
         next();
     }
 );
 
-config(app);
+config(app, isDev);
 routes(app);
 
 // Start server
