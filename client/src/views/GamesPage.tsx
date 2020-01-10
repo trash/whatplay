@@ -15,7 +15,7 @@ type GamesPageViewProps = {
 
 let calledOnce = false;
 
-export const GamesPageView2: React.FC<GamesPageViewProps> = () => {
+export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     if (!calledOnce) {
         gameService.refetchAllGames();
         calledOnce = true;

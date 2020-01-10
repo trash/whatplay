@@ -17,16 +17,18 @@ export function HeaderView() {
                         to="/games"
                         activeClassName="selected"
                     >
-                        Games
+                        Browse Games
                     </NavLink>
                     {isAuthenticated && (
-                        <NavLink
-                            className="header_navlist_item"
-                            to="/profile"
-                            activeClassName="selected"
-                        >
-                            Profile
-                        </NavLink>
+                        <React.Fragment>
+                            <NavLink
+                                className="header_navlist_item"
+                                to="/library"
+                                activeClassName="selected"
+                            >
+                                My Library
+                            </NavLink>
+                        </React.Fragment>
                     )}
                 </div>
                 <button

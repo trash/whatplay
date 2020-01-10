@@ -7,7 +7,7 @@ interface HomeViewProps {}
 
 type HomeViewState = {};
 
-export class HomeView extends React.Component<HomeViewProps, HomeViewState> {
+export class LandingPage extends React.Component<HomeViewProps, HomeViewState> {
     constructor(props: HomeViewProps) {
         super(props);
         this.state = {};
@@ -16,7 +16,7 @@ export class HomeView extends React.Component<HomeViewProps, HomeViewState> {
     render() {
         return (
             <section>
-                <h1>Home Screen</h1>
+                <h1>Landing Page</h1>
             </section>
         );
     }
@@ -24,4 +24,4 @@ export class HomeView extends React.Component<HomeViewProps, HomeViewState> {
 
 export const ConnectedHomeView = connect((_state: StoreState) => {
     return {};
-})(HomeView);
+})(LandingPage);
