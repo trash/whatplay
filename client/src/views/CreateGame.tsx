@@ -28,30 +28,34 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
     };
     return (
         <form onSubmit={handleSubmit}>
-            <label>
-                Title
-                <input
-                    type="text"
-                    value={game.title}
-                    onChange={e =>
-                        updateGameProperty(game, 'title', e.target.value)
-                    }
-                />
-            </label>
-            <label>
-                Time To Beat
-                <input
-                    type="number"
-                    value={game.timeToBeat}
-                    onChange={e =>
-                        updateGameProperty(
-                            game,
-                            'timeToBeat',
-                            parseFloat(e.target.value)
-                        )
-                    }
-                />
-            </label>
+            <div>
+                <label>
+                    Title
+                    <input
+                        type="text"
+                        value={game.title}
+                        onChange={e =>
+                            updateGameProperty(game, 'title', e.target.value)
+                        }
+                    />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Time To Beat
+                    <input
+                        type="number"
+                        value={game.timeToBeat}
+                        onChange={e =>
+                            updateGameProperty(
+                                game,
+                                'timeToBeat',
+                                parseFloat(e.target.value)
+                            )
+                        }
+                    />
+                </label>
+            </div>
 
             <button>Submit</button>
         </form>
