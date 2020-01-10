@@ -3,4 +3,5 @@ build
 node_modules
 server/**/*.js
 .env
-yarn-error.log
+**/yarn-error.log
+*.pem

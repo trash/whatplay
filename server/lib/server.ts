@@ -3,6 +3,8 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../') });
 import express, { Request, Response, NextFunction } from 'express';
 import jwt from 'express-jwt';
+import https from 'https';
+import fs from 'fs';
 const jwks = require('jwks-rsa');
 
 // Set default node environment to development
@@ -98,13 +100,26 @@ routes(app);
 // app.get('/*', (req, res) => res.render('index'));
 
 // Start server
-app.listen(port, function() {
-    console.log(
-        'Express server listening on port %d in %s mode',
-        port,
-        app.get('env')
-    );
-});
+if (isDev) {
+    https
+        .createServer(
+            {
+                key: fs.readFileSync('./key.pem'),
+                cert: fs.readFileSync('./cert.pem'),
+                passphrase: process.env.SSL_PASS
+            },
+            app
+        )
+        .listen(port);
+} else {
+    app.listen(port, function() {
+        console.log(
+            'Express server listening on port %d in %s mode',
+            port,
+            app.get('env')
+        );
+    });
+}
 
 // Expose app
 export default app;
