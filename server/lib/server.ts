@@ -14,6 +14,7 @@ const port = process.env.port || process.env.PORT || 5000;
 // Express settings
 import { config } from './config';
 import routes from './routes';
+import { sslRedirectMiddleware } from './middleware/sslRedirect';
 
 const app = express();
 
@@ -79,6 +80,7 @@ class HttpException extends Error {
 
 const UnauthorizedError = 'UnauthorizedError';
 
+app.use(sslRedirectMiddleware());
 // Use JWT from auth0 for apis
 app.use('/api', jwtCheck);
 app.use(
@@ -96,11 +98,9 @@ app.use(
 config(app);
 routes(app);
 
-// Routing
-// app.get('/*', (req, res) => res.render('index'));
-
 // Start server
 if (isDev) {
+    // Use openssl certs in develop so we're always SSL
     https
         .createServer(
             {
