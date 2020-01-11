@@ -13,7 +13,30 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
     });
 
     console.error('Get these from the server');
-    const genres = ['JRPG', 'Action', 'Action RPG', 'Adventure'];
+    const genres = [
+        'JRPG',
+        'Action',
+        'Action RPG',
+        'Adventure',
+        'RPG',
+        'Open World'
+    ];
+    const systems = [
+        'PS1',
+        'PS2',
+        'PS3',
+        'PS4',
+        'Xbox',
+        'Xbox 360',
+        'Xbox One',
+        'PC',
+        'Nintendo Switch',
+        '3DS',
+        'Nintendo DS',
+        'PSP',
+        'PS Vita',
+        'GBA'
+    ];
 
     function updateGameProperty<T extends keyof GameStub>(
         gameToUpdate: GameStub,
@@ -82,8 +105,30 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
                     </select>
                 </label>
             </div>
+            <div>
+                <label>
+                    System(s)
+                    <select
+                        multiple
+                        value={game.systems}
+                        onChange={e =>
+                            updateGameProperty(
+                                game,
+                                'systems',
+                                Array.from(e.target.selectedOptions).map(
+                                    o => o.value
+                                )
+                            )
+                        }
+                    >
+                        {systems.map(s => (
+                            <option key={s}>{s}</option>
+                        ))}
+                    </select>
+                </label>
+            </div>
 
-            <button>Submit</button>
+            <button className="primary">Submit</button>
         </form>
     );
 };

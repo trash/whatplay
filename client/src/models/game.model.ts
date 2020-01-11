@@ -13,4 +13,7 @@ export class GameUtilities {
     static outputGenres(game: Game): string {
         return game.genres.reduce((prev, current) => prev + ' ' + current, '');
     }
+    static outputSystems(game: Game): string {
+        return game.systems.reduce((prev, current) => prev + ' ' + current, '');
+    }
 }
