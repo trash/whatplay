@@ -1,5 +1,5 @@
 import React from 'react';
-import { Game } from '../models/game.model';
+import { Game, GameUtilities } from '../models/game.model';
 
 type GameProps = {
     game: Game;
@@ -14,6 +14,9 @@ export const GameComponent: React.FC<GameProps> = props => {
                 </div>
                 <div className="notesList_note_id">
                     Time To Beat: {props.game.timeToBeat}
+                </div>
+                <div className="notesList_note_id">
+                    Genre(s): {GameUtilities.outputGenres(props.game)}
                 </div>
                 <div className="notesList_note_id">Id: {props.game.id}</div>
             </div>

@@ -11,6 +11,10 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
         genres: [],
         timeToBeat: 0
     });
+
+    console.error('Get these from the server');
+    const genres = ['JRPG', 'Action', 'Action RPG', 'Adventure'];
+
     function updateGameProperty<T extends keyof GameStub>(
         gameToUpdate: GameStub,
         property: T,
@@ -54,6 +58,28 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
                             )
                         }
                     />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Genre(s)
+                    <select
+                        multiple
+                        value={game.genres}
+                        onChange={e =>
+                            updateGameProperty(
+                                game,
+                                'genres',
+                                Array.from(e.target.selectedOptions).map(
+                                    o => o.value
+                                )
+                            )
+                        }
+                    >
+                        {genres.map(g => (
+                            <option key={g}>{g}</option>
+                        ))}
+                    </select>
                 </label>
             </div>
 

@@ -7,3 +7,10 @@ export type GamePostServer = {};
 export interface Game extends GameStub {
     id: string;
 }
+
+// Maybe go OO at some point
+export class GameUtilities {
+    static outputGenres(game: Game): string {
+        return game.genres.reduce((prev, current) => prev + ' ' + current, '');
+    }
+}
