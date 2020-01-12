@@ -5,6 +5,23 @@
 
 @heavyFontWeight: 600;
 @normalFontWeight: 500;
+@iconMargin: 4px;
+
+@spinner: '\e97b';
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+.spin() {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
 
 
 body {
@@ -75,9 +92,21 @@ button {
     &.warning {
         .button(@brandError);
     }
+    &.loading {
+        &:before {
+            display: inline-block;
+            font-family: 'icomoon';
+            content: @spinner;
+            .spin();
+            margin-right: @iconMargin;
+        }
+        [class^='icon-']{
+            display: none;
+        }
+    }
 
     [class^='icon-']{
-        margin-right: 4px;
+        margin-right: @iconMargin;
     }
 }
 

@@ -9,6 +9,7 @@ import { gameService } from '../services/GameService';
 import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { GameStub } from '@shared/models/game.model';
+import { useState } from 'react';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -28,15 +29,21 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             };
         }
     );
+    const [isSaving, setIsSaving] = useState<boolean>(false);
 
     const handleSubmit = async (
         event: React.FormEvent,
         game: GameStub
-    ): Promise<Game> => {
+    ): Promise<void> => {
         event.preventDefault();
+        if (isSaving) {
+            return;
+        }
+        setIsSaving(true);
         const created = await gameService.createGame(game);
+        setIsSaving(false);
         console.log(created);
-        return created;
+        return;
     };
 
     return (
@@ -46,6 +53,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                 onSubmit={handleSubmit}
                 titleText="Add A New Game To The Database"
                 submitButtonText="Submit"
+                loading={isSaving}
             />
             <div className="notesList">
                 {games.map(game => {

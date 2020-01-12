@@ -7,7 +7,6 @@ export interface Game extends GameStub {
 // Maybe go OO at some point
 export class GameUtilities {
     static newGameState(): GameStub {
-        console.log('how many times is this called');
         return {
             title: '<Game Title>',
             systems: [],

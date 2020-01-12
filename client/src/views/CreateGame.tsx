@@ -1,12 +1,14 @@
 import React, { useState, FormEvent } from 'react';
-import { GameStub, Game } from '@shared/models/game.model';
+import { GameStub } from '@shared/models/game.model';
 import { genres, systems } from '../constants';
+import classNames from 'classnames';
 
 type CreateGameProps<T extends GameStub> = {
     initialGameState: T;
-    onSubmit: (event: FormEvent, game: T) => Promise<Game>;
+    onSubmit: (event: FormEvent, game: T) => Promise<void>;
     titleText: string;
     submitButtonText: string;
+    loading: boolean;
 };
 
 function updateGamePropertyGenerator<T extends GameStub>(
@@ -100,7 +102,13 @@ export const CreateGame: <T extends GameStub>(
                 </label>
             </div>
 
-            <button className="primary">{props.submitButtonText}</button>
+            <button
+                className={classNames('primary', {
+                    loading: props.loading
+                })}
+            >
+                {props.submitButtonText}
+            </button>
         </form>
     );
 };

@@ -83,8 +83,9 @@ export const deleteGame: ControllerMethod = async (req, res) => {
         const nModified = update.result.n;
         if (nModified === 1) {
             response = res.status(200).send(update.result);
+        } else {
+            throw new Error('No matching record was found.');
         }
-        throw new Error('No matching record was found.');
     } catch (e) {
         console.error(e);
         response = res.status(500).send(e);
@@ -117,11 +118,12 @@ export const updateGame: ControllerMethod = async (req, res) => {
         const nModified = update.result.nModified;
         if (nModified === 1) {
             response = res.status(200).send(update.result);
+        } else {
+            throw new Error('No matching record was found.');
         }
-        throw new Error('No matching record was found.');
     } catch (e) {
         console.error(e);
-        response = res.status(500).send(JSON.stringify(e));
+        response = res.status(500).send(e);
     }
     client.close();
     return response;

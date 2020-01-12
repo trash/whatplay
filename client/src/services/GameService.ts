@@ -65,9 +65,6 @@ class GameService {
     async deleteGame(id: string): Promise<void> {
         await Api.delete(`/api/v1/games/${id}`);
         store.dispatch(deleteGame(id));
-        console.error(
-            'dispatch action to update list of games with dleted game'
-        );
     }
 
     // async updateNote(id: number, note: string): Promise<Note> {
