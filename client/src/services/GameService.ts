@@ -1,6 +1,6 @@
 import { Api } from './Api';
 
-import { updateGames, addGame } from '../redux/actions';
+import { updateGames, addGame, updateGame } from '../redux/actions';
 import { store } from '../redux/store';
 
 import { Game } from '../models/game.model';
@@ -57,6 +57,7 @@ class GameService {
             'we need to update the store with the updated game.'
                 + ' possibly pass in an index and the updated game'
         );
+        store.dispatch(updateGame(game.id, game));
 
         return game;
     }

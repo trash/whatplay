@@ -6,7 +6,7 @@ import * as actionTypes from './actions/types';
 import {
     AddGame,
     DeleteNote,
-    UpdateNote,
+    UpdateGame,
     UpdateNotes,
     Login,
     Logout,
@@ -19,7 +19,7 @@ import { Game } from '../models/game.model';
 type ReducerAction =
     | AddGame
     | DeleteNote
-    | UpdateNote
+    | UpdateGame
     | UpdateNotes
     | UpdateGames
     | Login
@@ -52,14 +52,12 @@ function mainReducer(previousState = initialState, action: ReducerAction) {
             newState.notes = previousState.notes.remove(index);
             break;
         }
-        case actionTypes.UPDATE_NOTE: {
-            const index = previousState.notes.findIndex(
-                n => n!.id === action.id
+        case actionTypes.UPDATE_GAME: {
+            const index = previousState.games.findIndex(
+                g => g!.id === action.id
             );
-            newState.notes = previousState.notes.update(index, n => {
-                return Object.assign({}, n, {
-                    note: action.note
-                });
+            newState.games = previousState.games.update(index, n => {
+                return Object.assign({}, n, action.game);
             });
             break;
         }

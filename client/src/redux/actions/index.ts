@@ -26,17 +26,17 @@ export function deleteNote(id: number): DeleteNote {
     };
 }
 
-export interface UpdateNote {
-    type: actionTypes.UPDATE_NOTE;
-    id: number;
-    note: string;
+export interface UpdateGame {
+    type: actionTypes.UPDATE_GAME;
+    id: string;
+    game: Game;
 }
 
-export function updateNote(id: number, note: string): UpdateNote {
+export function updateGame(id: string, game: Game): UpdateGame {
     return {
         id,
-        note,
-        type: actionTypes.UPDATE_NOTE
+        game,
+        type: actionTypes.UPDATE_GAME
     };
 }
 
