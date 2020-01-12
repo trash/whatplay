@@ -30,6 +30,12 @@ export const GameComponent: React.FC<GameProps> = props => {
             />
         );
     }
+    const handleDelete = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (window.confirm('Are you sure you want to delete this game?')) {
+            gameService.deleteGame(props.game.id);
+        }
+    };
     return (
         <div className="game">
             <div className="game_title">
@@ -39,7 +45,7 @@ export const GameComponent: React.FC<GameProps> = props => {
                         <span className="icon-pencil"></span>
                         Edit
                     </button>
-                    <button className="warning">
+                    <button className="warning" onClick={e => handleDelete(e)}>
                         <span className="icon-bin"></span>
                         Delete
                     </button>

@@ -70,8 +70,27 @@ export const createGame: ControllerMethod = async (req, res) => {
     client.close();
     return response;
 };
-export const deleteGame: ControllerMethod = async (_req, res) => {
-    return res.status(501).send();
+export const deleteGame: ControllerMethod = async (req, res) => {
+    const gameToUpdateId = req.params.id;
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+    try {
+        const collection = db.collection<GameStub>('games');
+
+        const update = await collection.deleteOne({
+            _id: new ObjectId(gameToUpdateId)
+        });
+        const nModified = update.result.n;
+        if (nModified === 1) {
+            response = res.status(200).send(update.result);
+        }
+        throw new Error('No matching record was found.');
+    } catch (e) {
+        console.error(e);
+        response = res.status(500).send(e);
+    }
+    client.close();
+    return response;
 };
 export const updateGame: ControllerMethod = async (req, res) => {
     const gameToUpdateId = req.params.id;

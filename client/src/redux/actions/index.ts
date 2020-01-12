@@ -14,15 +14,15 @@ export function addGame(game: Game): AddGame {
     };
 }
 
-export interface DeleteNote {
-    type: actionTypes.DELETE_NOTE;
-    id: number;
+export interface DeleteGame {
+    type: actionTypes.DELETE_GAME;
+    id: string;
 }
 
-export function deleteNote(id: number): DeleteNote {
+export function deleteGame(id: string): DeleteGame {
     return {
         id,
-        type: actionTypes.DELETE_NOTE
+        type: actionTypes.DELETE_GAME
     };
 }
 

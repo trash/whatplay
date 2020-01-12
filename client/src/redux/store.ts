@@ -5,7 +5,7 @@ import { createStore } from 'redux';
 import * as actionTypes from './actions/types';
 import {
     AddGame,
-    DeleteNote,
+    DeleteGame,
     UpdateGame,
     UpdateNotes,
     Login,
@@ -18,7 +18,7 @@ import { Game } from '../models/game.model';
 
 type ReducerAction =
     | AddGame
-    | DeleteNote
+    | DeleteGame
     | UpdateGame
     | UpdateNotes
     | UpdateGames
@@ -45,11 +45,11 @@ function mainReducer(previousState = initialState, action: ReducerAction) {
             newState.games = previousState.games.push(action.game);
             break;
 
-        case actionTypes.DELETE_NOTE: {
-            const index = previousState.notes.findIndex(
+        case actionTypes.DELETE_GAME: {
+            const index = previousState.games.findIndex(
                 n => n!.id === action.id
             );
-            newState.notes = previousState.notes.remove(index);
+            newState.games = previousState.games.remove(index);
             break;
         }
         case actionTypes.UPDATE_GAME: {
