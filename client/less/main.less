@@ -1,12 +1,14 @@
+@import 'reset';
+@import 'code';
 @import 'colors';
-@import 'note';
+@import 'game';
 
 @heavyFontWeight: 600;
 @normalFontWeight: 500;
 
-#root {
-}
+
 body {
+    font-family: 'Segoe UI','Source Sans Pro', sans-serif;
     background: @backgroundColor;
 }
 
@@ -50,6 +52,17 @@ body {
     }
 }
 
+.button(@color) {
+    background: @color;
+    color: white;
+    &:hover {
+        background: darken(@color, 5%);
+    }
+    &:active {
+        background: darken(@color, 10%);
+    }
+}
+
 button {
     border: 0;
     cursor: pointer;
@@ -57,11 +70,10 @@ button {
     padding: 4px 10px;
 
     &.primary {
-        background: @primaryButton;
-        color: white;
+        .button(@primaryButton);
     }
-    &.active {
-        color: @primaryButton;
+    &.warning {
+        .button(@brandError);
     }
 }
 
@@ -72,6 +84,12 @@ label {
 form {
     background: @lightBackgroundColor;
     padding: 10px;
+}
+
+.form_title {
+    font-size: 20px;
+    border-bottom: 1px solid @inputBorder;
+    margin-bottom: 10px;
 }
 
 input, select {

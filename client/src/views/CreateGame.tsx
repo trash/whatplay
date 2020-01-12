@@ -1,85 +1,32 @@
 import React, { useState, FormEvent } from 'react';
-import { gameService } from '../services/GameService';
-import { GameStub } from '@shared/models/game.model';
+import { GameStub, Game } from '@shared/models/game.model';
+import { genres, systems } from '../constants';
 
-type CreateGameProps = {};
+type CreateGameProps<T extends GameStub> = {
+    initialGameState: T;
+    onSubmit: (event: FormEvent, game: T) => Promise<Game>;
+    titleText: string;
+    submitButtonText: string;
+};
 
-export const CreateGame: React.FC<CreateGameProps> = () => {
-    const [game, setGame] = useState<GameStub>({
-        title: '<Game Title>',
-        systems: [],
-        genres: [],
-        timeToBeat: 0
-    });
-
-    const genres = [
-        'JRPG',
-        'Action',
-        'Action RPG',
-        'Adventure',
-        'RPG',
-        'Open World',
-        'Shooter',
-        'VR',
-        'MMO',
-        'Simulation',
-        'Rhythm',
-        'Strategy RPG',
-        'Base Builder',
-        'Stealth',
-        'Roguelike',
-        'Puzzle',
-        'Survival',
-        'Horror',
-        'TCG',
-        'Crafting',
-        'Sidescroller',
-        'Platformer',
-        'Strategy'
-    ].sort();
-    const systems = [
-        'PlayStation',
-        'PlayStation 2',
-        'PlayStation 3',
-        'PlayStation 4',
-        'Xbox',
-        'Xbox 360',
-        'Xbox One',
-        'PC',
-        'Nintendo Switch',
-        'Nintendo 3DS',
-        'Nintendo DS',
-        'PSP',
-        'PS Vita',
-        'Game Boy Advance',
-        'Nintendo 64',
-        'Nintendo GameCube',
-        'Wii',
-        'Wii U',
-        'Sega Dreamcast',
-        'Sega Genesis',
-        'Sega Saturn',
-        'NES',
-        'SNES'
-    ].sort();
-
-    function updateGameProperty<T extends keyof GameStub>(
-        gameToUpdate: GameStub,
-        property: T,
-        value: GameStub[T]
-    ): void {
-        const clone = Object.assign({}, gameToUpdate);
+function updateGamePropertyGenerator<T extends GameStub>(
+    setGame: React.Dispatch<React.SetStateAction<T>>
+) {
+    return <K extends keyof T>(gameToUpdate: T, property: K, value: T[K]) => {
+        const clone = Object.assign({} as T, gameToUpdate);
         clone[property] = value;
         setGame(clone);
-    }
-    const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault();
-        console.log(game);
-        const created = await gameService.createGame(game);
-        console.log(created);
     };
+}
+
+export const CreateGame: <T extends GameStub>(
+    props: CreateGameProps<T>
+) => React.ReactElement<CreateGameProps<T>> = props => {
+    const [game, setGame] = useState(props.initialGameState);
+    const updateGameProperty = updateGamePropertyGenerator(setGame);
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={e => props.onSubmit(e, game)}>
+            <div className="form_title">{props.titleText}</div>
             <div>
                 <label>
                     Title
@@ -153,7 +100,7 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
                 </label>
             </div>
 
-            <button className="primary">Submit</button>
+            <button className="primary">{props.submitButtonText}</button>
         </form>
     );
 };

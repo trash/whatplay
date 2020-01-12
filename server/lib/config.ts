@@ -28,6 +28,7 @@ export const config = function(
     app.use(express.static(path.join(clientRootPath, '.tmp')));
     app.use(express.static(path.join(clientRootPath, '/build')));
     app.use(express.static(path.join(clientRootPath, '/images')));
+    app.use(express.static(path.join(clientRootPath, '/fonts')));
     app.use(express.static(path.join(clientRootPath, '/')));
     app.set('views', clientRootPath + '/build');
 

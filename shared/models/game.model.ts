@@ -1,6 +1,8 @@
 import { MongoDocument } from './mongoDocument';
 
-export type GamePatchServer = {};
+export type GamePatchServer = {
+    game: Partial<GameStub>;
+};
 
 export type GamePostServer = {};
 

@@ -4,7 +4,11 @@ import { updateGames, addGame } from '../redux/actions';
 import { store } from '../redux/store';
 
 import { Game } from '../models/game.model';
-import { GameServer, GameStub } from '@shared/models/game.model';
+import {
+    GameServer,
+    GameStub,
+    GamePatchServer
+} from '@shared/models/game.model';
 
 class GameService {
     private transformGameServertoGame(gameServer: GameServer): Game {
@@ -37,6 +41,24 @@ class GameService {
         store.dispatch(addGame(newGame));
 
         return newGame;
+    }
+
+    async updateGame(game: Game): Promise<Game> {
+        try {
+            await Api.patch<GamePatchServer, null>(`/api/v1/games/${game.id}`, {
+                game
+            });
+        } catch (e) {
+            console.error('error-notification');
+            throw e;
+        }
+
+        console.error(
+            'we need to update the store with the updated game.'
+                + ' possibly pass in an index and the updated game'
+        );
+
+        return game;
     }
 
     // async deleteNote(id: number): Promise<void> {

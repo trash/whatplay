@@ -1,0 +1,33 @@
+.game {
+    padding: 10px;
+    background: @lightBackgroundColor;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px @boxShadowColor;
+    .game_details {
+        th {
+            padding-right: 10px;
+            font-weight: 600;
+        }
+    }
+    .game_title {
+        width: 100%;
+        font-weight: bold;
+        display: flex;
+    }
+    .game_title_controls {
+        flex-shrink: 0;
+        margin-left: auto;
+        button {
+            margin-left: 10px;
+        }
+    }
+    .game_id {
+        // font-size: 12px;
+        color: @lighterText;
+        margin-right: 5px;
+    }
+    .game_timestamp {
+        // font-size: 12px;
+        color: @lighterText;
+    }
+}

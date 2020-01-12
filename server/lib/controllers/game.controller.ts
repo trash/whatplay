@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
-import { MongoClient } from 'mongodb';
-import { GameServer, GameStub } from '@shared/models/game.model';
+import { MongoClient, Db, ObjectId } from 'mongodb';
+import {
+    GameServer,
+    GameStub,
+    GamePatchServer
+} from '@shared/models/game.model';
 
 type ControllerMethod = (req: Request, res: Response) => Promise<Response>;
 
@@ -30,6 +34,19 @@ type ControllerMethod = (req: Request, res: Response) => Promise<Response>;
 //         });
 // }
 
+async function connectToDatabase(): Promise<[MongoClient, Db]> {
+    const client = new MongoClient(process.env.DATABASE_URL!);
+    try {
+        await client.connect();
+
+        const db = client.db(process.env.DATABASE_NAME);
+        return [client, db];
+    } catch (e) {
+        console.error('Error connecting to DB');
+        throw e;
+    }
+}
+
 export const createGame: ControllerMethod = async (req, res) => {
     console.warn('do validation on note here');
     const newGame = {
@@ -39,30 +56,56 @@ export const createGame: ControllerMethod = async (req, res) => {
         timeToBeat: req.body.timeToBeat
     };
 
-    console.log(
-        'need to pull this logic of setting a connection to db up out of here.'
-    );
-    const client = new MongoClient(process.env.DATABASE_URL!);
+    const [client, db] = await connectToDatabase();
+    let response: Response;
     try {
-        await client.connect();
-
-        const db = client.db(process.env.DATABASE_NAME);
-
         const collection = db.collection<GameStub>('games');
 
         const gameWithId = await collection.insertOne(newGame);
 
-        return res.status(200).send(gameWithId.ops[0]);
+        response = res.status(200).send(gameWithId.ops[0]);
     } catch (e) {
-        return res.status(500).send(e);
+        response = res.status(500).send(e);
     }
     client.close();
+    return response;
 };
 export const deleteGame: ControllerMethod = async (_req, res) => {
     return res.status(501).send();
 };
-export const updateGame: ControllerMethod = async (_req, res) => {
-    return res.status(501).send();
+export const updateGame: ControllerMethod = async (req, res) => {
+    const gameToUpdateId = req.params.id;
+    const body = req.body as GamePatchServer;
+    const gameUpdate = {
+        title: body.game.title,
+        systems: body.game.systems,
+        genres: body.game.genres,
+        timeToBeat: body.game.timeToBeat
+    };
+    console.warn('do validation on game here', req.body);
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+    try {
+        const collection = db.collection<GameStub>('games');
+
+        const update = await collection.update(
+            {
+                _id: new ObjectId(gameToUpdateId)
+            },
+            gameUpdate
+        );
+
+        const nModified = update.result.nModified;
+        if (nModified === 1) {
+            response = res.status(200).send(update.result);
+        }
+        throw new Error('No matching record was found.');
+    } catch (e) {
+        console.error(e);
+        response = res.status(500).send(JSON.stringify(e));
+    }
+    client.close();
+    return response;
 };
 
 // export function deleteNote(req: Request, res: Response) {
@@ -84,21 +127,22 @@ export const updateGame: ControllerMethod = async (_req, res) => {
 //         });
 // }
 
-export async function getAllGames(_req: Request, res: Response) {
-    const client = new MongoClient(process.env.DATABASE_URL!);
+export const getAllGames: ControllerMethod = async (
+    _req: Request,
+    res: Response
+) => {
+    const [client, db] = await connectToDatabase();
+    let response: Response;
     try {
-        await client.connect();
-
-        const db = client.db(process.env.DATABASE_NAME);
-
         const collection = db.collection<GameServer>('games');
 
         const matches = await collection.find({}).toArray();
         // console.log(matches);
 
-        return res.status(200).send(matches);
+        response = res.status(200).send(matches);
     } catch (e) {
-        return res.status(500).send(e);
+        response = res.status(500).send(e);
     }
     client.close();
-}
+    return response;
+};
