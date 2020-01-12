@@ -11,9 +11,15 @@ export interface Game extends GameStub {
 // Maybe go OO at some point
 export class GameUtilities {
     static outputGenres(game: Game): string {
-        return game.genres.reduce((prev, current) => prev + ' ' + current, '');
+        return game.genres.reduce(
+            (prev, current) => prev + (prev.length ? ', ' : '') + current,
+            ''
+        );
     }
     static outputSystems(game: Game): string {
-        return game.systems.reduce((prev, current) => prev + ' ' + current, '');
+        return game.systems.reduce(
+            (prev, current) => prev + (prev.length ? ', ' : '') + current,
+            ''
+        );
     }
 }

@@ -12,31 +12,56 @@ export const CreateGame: React.FC<CreateGameProps> = () => {
         timeToBeat: 0
     });
 
-    console.error('Get these from the server');
     const genres = [
         'JRPG',
         'Action',
         'Action RPG',
         'Adventure',
         'RPG',
-        'Open World'
-    ];
+        'Open World',
+        'Shooter',
+        'VR',
+        'MMO',
+        'Simulation',
+        'Rhythm',
+        'Strategy RPG',
+        'Base Builder',
+        'Stealth',
+        'Roguelike',
+        'Puzzle',
+        'Survival',
+        'Horror',
+        'TCG',
+        'Crafting',
+        'Sidescroller',
+        'Platformer',
+        'Strategy'
+    ].sort();
     const systems = [
-        'PS1',
-        'PS2',
-        'PS3',
-        'PS4',
+        'PlayStation',
+        'PlayStation 2',
+        'PlayStation 3',
+        'PlayStation 4',
         'Xbox',
         'Xbox 360',
         'Xbox One',
         'PC',
         'Nintendo Switch',
-        '3DS',
+        'Nintendo 3DS',
         'Nintendo DS',
         'PSP',
         'PS Vita',
-        'GBA'
-    ];
+        'Game Boy Advance',
+        'Nintendo 64',
+        'Nintendo GameCube',
+        'Wii',
+        'Wii U',
+        'Sega Dreamcast',
+        'Sega Genesis',
+        'Sega Saturn',
+        'NES',
+        'SNES'
+    ].sort();
 
     function updateGameProperty<T extends keyof GameStub>(
         gameToUpdate: GameStub,
