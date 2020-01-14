@@ -82,6 +82,6 @@ export class Api {
                     'Content-Type': 'application/json'
                 })
             )
-        }).then(response => this.handleResponse(response, false));
+        }).then(response => this.handleResponse(response));
     }
 }

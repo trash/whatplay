@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import { MongoClient, Db, ObjectId } from 'mongodb';
 import {
     GameServer,
-    GamePatchServer,
-    GameNotSavedServer
+    GamePatch,
+    GameNotSavedServer,
+    GamePatchServer
 } from '@shared/models/game.model';
 import { getCurrentUtcTime } from '../helpers.util';
 
@@ -73,6 +74,7 @@ export const createGame: ControllerMethod = async (req, res) => {
     client.close();
     return response;
 };
+
 export const deleteGame: ControllerMethod = async (req, res) => {
     const gameToUpdateId = req.params.id;
     const [client, db] = await connectToDatabase();
@@ -96,14 +98,16 @@ export const deleteGame: ControllerMethod = async (req, res) => {
     client.close();
     return response;
 };
+
 export const updateGame: ControllerMethod = async (req, res) => {
     const gameToUpdateId = req.params.id;
-    const body = req.body as GamePatchServer;
+    const body = req.body as GamePatch;
     const gameUpdate = {
         title: body.game.title,
         systems: body.game.systems,
         genres: body.game.genres,
-        timeToBeat: body.game.timeToBeat
+        timeToBeat: body.game.timeToBeat,
+        lastModifiedTime: getCurrentUtcTime()
     };
     console.warn('do validation on game here', req.body);
     const [client, db] = await connectToDatabase();
@@ -111,16 +115,23 @@ export const updateGame: ControllerMethod = async (req, res) => {
     try {
         const collection = db.collection<GameServer>('games');
 
-        const update = await collection.update(
+        const update = await collection.updateOne(
             {
                 _id: new ObjectId(gameToUpdateId)
             },
-            gameUpdate
+            {
+                $set: gameUpdate
+            }
         );
 
         const nModified = update.result.nModified;
         if (nModified === 1) {
-            response = res.status(200).send(update.result);
+            const responseBody: GamePatchServer = {
+                update: {
+                    lastModifiedTime: gameUpdate.lastModifiedTime
+                }
+            };
+            response = res.status(200).send(responseBody);
         } else {
             throw new Error('No matching record was found.');
         }

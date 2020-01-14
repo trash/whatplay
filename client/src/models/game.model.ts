@@ -16,8 +16,14 @@ export class GameUtilities {
             genres: gameServer.genres,
             systems: gameServer.systems,
             timeToBeat: gameServer.timeToBeat,
-            lastModifiedTime: moment(gameServer.lastModifiedTime),
-            createdTime: moment(gameServer.createdTime)
+            lastModifiedTime: moment(
+                gameServer.lastModifiedTime
+                    ? gameServer.lastModifiedTime
+                    : 'INVALID'
+            ),
+            createdTime: moment(
+                gameServer.createdTime ? gameServer.createdTime : 'INVALID'
+            )
         };
     }
 
@@ -46,6 +52,6 @@ export class GameUtilities {
         game: Game,
         timeKey: 'lastModifiedTime' | 'createdTime'
     ): string {
-        return game[timeKey].format('LLL');
+        return game[timeKey].format('LL LTS');
     }
 }

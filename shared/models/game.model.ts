@@ -1,7 +1,15 @@
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
 
-export type GamePatchServer = {
+// The data the client send to the server for a PATCH
+export type GamePatch = {
     game: Partial<GameStub>;
+};
+
+// The data the server returns after a successful PATCH
+export type GamePatchServer = {
+    update: {
+        lastModifiedTime: string;
+    };
 };
 
 export type GamePostServer = {};

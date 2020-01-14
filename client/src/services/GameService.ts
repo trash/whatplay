@@ -6,9 +6,11 @@ import { store } from '../redux/store';
 import { Game, GameUtilities } from '../models/game.model';
 import {
     GameStub,
-    GamePatchServer,
-    GameServerJson
+    GamePatch,
+    GameServerJson,
+    GamePatchServer
 } from '@shared/models/game.model';
+import moment from 'moment';
 
 class GameService {
     private async getAllGames(): Promise<Game[]> {
@@ -37,9 +39,13 @@ class GameService {
 
     async updateGame(game: Game): Promise<Game> {
         try {
-            await Api.patch<GamePatchServer, null>(`/api/v1/games/${game.id}`, {
-                game
-            });
+            const gameUpdate = await Api.patch<GamePatch, GamePatchServer>(
+                `/api/v1/games/${game.id}`,
+                {
+                    game
+                }
+            );
+            game.lastModifiedTime = moment(gameUpdate.update.lastModifiedTime);
         } catch (e) {
             console.error('error-notification');
             throw e;
