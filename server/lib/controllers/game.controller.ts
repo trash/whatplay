@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import { MongoClient, Db, ObjectId } from 'mongodb';
 import {
     GameServer,
-    GameStub,
-    GamePatchServer
+    GamePatchServer,
+    GameNotSavedServer
 } from '@shared/models/game.model';
+import { getCurrentUtcTime } from '../helpers.util';
 
 type ControllerMethod = (req: Request, res: Response) => Promise<Response>;
 
@@ -49,17 +50,19 @@ async function connectToDatabase(): Promise<[MongoClient, Db]> {
 
 export const createGame: ControllerMethod = async (req, res) => {
     console.warn('do validation on note here');
-    const newGame = {
+    const newGame: GameNotSavedServer = {
         title: req.body.title,
         systems: req.body.systems,
         genres: req.body.genres,
-        timeToBeat: req.body.timeToBeat
+        timeToBeat: req.body.timeToBeat,
+        lastModifiedTime: getCurrentUtcTime(),
+        createdTime: getCurrentUtcTime()
     };
 
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
-        const collection = db.collection<GameStub>('games');
+        const collection = db.collection<GameNotSavedServer>('games');
 
         const gameWithId = await collection.insertOne(newGame);
 
@@ -75,7 +78,7 @@ export const deleteGame: ControllerMethod = async (req, res) => {
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
-        const collection = db.collection<GameStub>('games');
+        const collection = db.collection<GameServer>('games');
 
         const update = await collection.deleteOne({
             _id: new ObjectId(gameToUpdateId)
@@ -106,7 +109,7 @@ export const updateGame: ControllerMethod = async (req, res) => {
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
-        const collection = db.collection<GameStub>('games');
+        const collection = db.collection<GameServer>('games');
 
         const update = await collection.update(
             {

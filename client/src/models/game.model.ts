@@ -1,11 +1,26 @@
-import { GameStub } from '@shared/models/game.model';
+import { GameStub, GameServerJson } from '@shared/models/game.model';
+import moment, { Moment } from 'moment';
 
 export interface Game extends GameStub {
     id: string;
+    lastModifiedTime: Moment;
+    createdTime: Moment;
 }
 
 // Maybe go OO at some point
 export class GameUtilities {
+    static transformGameServertoGame(gameServer: GameServerJson): Game {
+        return {
+            id: gameServer._id,
+            title: gameServer.title,
+            genres: gameServer.genres,
+            systems: gameServer.systems,
+            timeToBeat: gameServer.timeToBeat,
+            lastModifiedTime: moment(gameServer.lastModifiedTime),
+            createdTime: moment(gameServer.createdTime)
+        };
+    }
+
     static newGameState(): GameStub {
         return {
             title: '<Game Title>',
@@ -26,5 +41,11 @@ export class GameUtilities {
             (prev, current) => prev + (prev.length ? ', ' : '') + current,
             ''
         );
+    }
+    static displayTime(
+        game: Game,
+        timeKey: 'lastModifiedTime' | 'createdTime'
+    ): string {
+        return game[timeKey].format('LLL');
     }
 }

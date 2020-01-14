@@ -3,27 +3,17 @@ import { Api } from './Api';
 import { updateGames, addGame, updateGame, deleteGame } from '../redux/actions';
 import { store } from '../redux/store';
 
-import { Game } from '../models/game.model';
+import { Game, GameUtilities } from '../models/game.model';
 import {
-    GameServer,
     GameStub,
-    GamePatchServer
+    GamePatchServer,
+    GameServerJson
 } from '@shared/models/game.model';
 
 class GameService {
-    private transformGameServertoGame(gameServer: GameServer): Game {
-        return {
-            id: gameServer._id,
-            title: gameServer.title,
-            genres: gameServer.genres,
-            systems: gameServer.systems,
-            timeToBeat: gameServer.timeToBeat
-        };
-    }
-
     private async getAllGames(): Promise<Game[]> {
-        const gamesServer = await Api.get<GameServer[]>(`/api/v1/games`);
-        return gamesServer.map(g => this.transformGameServertoGame(g));
+        const gamesServer = await Api.get<GameServerJson[]>(`/api/v1/games`);
+        return gamesServer.map(g => GameUtilities.transformGameServertoGame(g));
     }
 
     async refetchAllGames(): Promise<Game[]> {
@@ -33,10 +23,12 @@ class GameService {
     }
 
     async createGame(game: GameStub): Promise<Game> {
-        const newGame = await Api.post<GameStub, GameServer>(
+        const newGame = await Api.post<GameStub, GameServerJson>(
             '/api/v1/games',
             game
-        ).then(gameServer => this.transformGameServertoGame(gameServer));
+        ).then(gameServer =>
+            GameUtilities.transformGameServertoGame(gameServer)
+        );
 
         store.dispatch(addGame(newGame));
 

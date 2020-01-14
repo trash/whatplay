@@ -92,6 +92,24 @@ export const GameComponent: React.FC<GameProps> = props => {
                         <th>Id</th>
                         <td>{props.game.id}</td>
                     </tr>
+                    <tr>
+                        <th>Time Created</th>
+                        <td>
+                            {GameUtilities.displayTime(
+                                props.game,
+                                'createdTime'
+                            )}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Time Last Modified</th>
+                        <td>
+                            {GameUtilities.displayTime(
+                                props.game,
+                                'lastModifiedTime'
+                            )}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

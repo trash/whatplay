@@ -1,4 +1,4 @@
-import { MongoDocument } from './mongoDocument';
+import { MongoDocument, MongoDocumentJson } from './mongoDocument';
 
 export type GamePatchServer = {
     game: Partial<GameStub>;
@@ -13,14 +13,10 @@ export interface GameStub {
     timeToBeat: number;
 }
 
-export interface GameServer extends MongoDocument, GameStub {}
+export interface GameNotSavedServer extends GameStub {
+    lastModifiedTime: string;
+    createdTime: string;
+}
 
-// type KeysOf = keyof GameServer;
-
-export type Game = {
-    id: string;
-    title: string;
-    systems: string[];
-    genres: string[];
-    timeToBeat: number;
-};
+export interface GameServer extends MongoDocument, GameNotSavedServer {}
+export interface GameServerJson extends MongoDocumentJson, GameNotSavedServer {}

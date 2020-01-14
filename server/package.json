@@ -19,6 +19,7 @@
         "@babel/preset-env": "^7.7.7",
         "@babel/preset-typescript": "^7.7.7",
         "@types/errorhandler": "^0.0.32",
+        "@types/moment": "^2.13.0",
         "@types/mongodb": "^3.3.14",
         "body-parser": "^1.18.2",
         "dotenv": "^8.2.0",
@@ -28,7 +29,7 @@
         "express-jwt": "^5.3.1",
         "https": "^1.0.0",
         "jwks-rsa": "^1.2.1",
-        "moment": "^2.15.1",
+        "moment": "^2.24.0",
         "mongodb": "^3.4.1",
         "regenerator-runtime": "^0.13.3",
         "typescript": "3.7.4"

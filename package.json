@@ -7,7 +7,7 @@
         "yarn": "1.21.1"
     },
     "scripts": {
-        "postinstall": "cd client && yarn && cd ../server && yarn",
+        "postinstall": "cd shared && yarn && cd ../client && yarn && cd ../server && yarn",
         "clean": "cd client && npm run clean && cd ../server && npm run clean",
         "build": "cd client && npm run build && cd ../server && npm run build",
         "start": "cd server && npm run start",
