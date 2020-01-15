@@ -1,27 +1,30 @@
 ## What is this?
-A good starter setup for working with node on the server with ts support and react on the frontend with ts support. It also includes fun stuff like Redux and React-Router.
+It's whatplay dood
 
 ## How to get started
-
-1. Create a mysql database named "node_react_typescript_starter".
-    - *The name of this database is configured in `server/knexfile.js`.*
-2. Get the database set up by running migrations:
-    - Install the knex cli tool: `$ npm install knex -g`
-    - Go in the server directory: `$ cd server`
-    - Run all the migrations: `$ knex migrate:latest`
-    - *This will populate a database with one user and one note*
-3. Install node packages
+1. Create a `.env` file in the root with these values:
+```
+DATABASE_NAME=<Fill this in yourself>
+DATABASE_URL=<Fill this in yourself>
+AUTH0_CLIENT_ID=<Fill this in yourself>
+AUTH0_DOMAIN=yearinreview.auth0.com
+AUTH0_AUDIENCE=https://localhost:5000/api
+SERVER_URL=https://localhost:5000
+SSL_PASS=<Fill this in yourself>
+```
+2. Create a Mongodb Atlas account and enter the credentials for `DATABASE_URL` and `DATABASE_NAME`.
+3. Get the Auth0 client id from Stefan and fill that in for `AUTH0_CLIENT_ID`.
+4. Create an ssl cert with `openssl` and enter the password for `SSL_PASS`
+5. Install node packages
     - `$ yarn`
-    - *...Or I guess `$ npm install`...though if stuff breaks don't look at me*
-3. Start up the node server and the webpack dev server
-    - `$ npm run dev`
-    - *This will start everything in watch mode so that if you make a change to a server file or a frontend file, the appropriate program will restart itself with the latest changes.*
-4. Open `localhost:3001` in your browser to see the app.
-    - *You can also hit `localhost:8999` directly for the API.*
-    
+6. Start up the server: `cd server && npx nodemon`
+    - This will start up `nodemon` which will restart the node server any time a change is made to the server files.
+    - The node server is running the webpack dev server middleware which will watch for changes in the `client/` directory and hot swap the code (shouldn't require a browser refresh to get newest client code).
+7. Open `https://localhost:5000` in your browser to see the app.
+    - *You can also hit `https://localhost:5000/api/docs` directly for the Swagger page.*
+
 Et Voila!
 
-Other useful tasks can be found in the `package.json` including tasks to run one off builds for deploying to servers and what not.
 
 ```
                           ........:oo:........
