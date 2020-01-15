@@ -1,0 +1,77 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "WhatPlay API",
+        "description": "The api for the what play site",
+        "version": "0.1.0"
+    },
+    "servers": [
+        {
+            "url": "https://what-to-play-next.herokuapp.com/api/v1",
+            "description": "Prod env"
+        },
+        {
+            "url": "https://localhost:5000/api/v1",
+            "description": "Local dev env"
+        }
+    ],
+    "paths": {
+        "/games": {
+            "get": {
+                "summary": "Returns a list of games.",
+                "description": "TBD",
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of games",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Game"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Game": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "systems": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timeToBeat": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lastModifiedTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "createdTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -80,9 +80,21 @@ class HttpException extends Error {
 
 const UnauthorizedError = 'UnauthorizedError';
 
+// Routes requiring authorization
+export const authorizedRoutes: Map<string, string[]> = new Map([
+    ['/api/v1/games', ['POST', 'DELETE', 'PATCH']]
+]);
 app.use(sslRedirectMiddleware());
 // Use JWT from auth0 for apis
-app.use('/api', jwtCheck);
+app.use('/api', (req, res, next) => {
+    const fullPath = `/api${req.path}`;
+    const pathMatches = authorizedRoutes.get(fullPath);
+    const methodMatch = pathMatches ? pathMatches.includes(req.method) : false;
+    if (methodMatch) {
+        return jwtCheck(req, res, next);
+    }
+    next();
+});
 app.use(
     '/api',
     (err: HttpException, _req: Request, res: Response, next: NextFunction) => {

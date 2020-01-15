@@ -5,6 +5,9 @@ export class Api {
     private static async appendAuthHeaders(
         headers: Headers = new Headers()
     ): Promise<Headers> {
+        if (!(await auth0.isAuthenticated())) {
+            return headers;
+        }
         const token = await auth0.getTokenSilently();
         headers.append('Authorization', `Bearer ${token}`);
         return headers;
