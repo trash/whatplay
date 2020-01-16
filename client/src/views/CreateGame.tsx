@@ -20,14 +20,27 @@ function updateGamePropertyGenerator<T extends GameStub>(
         setGame(clone);
     };
 }
-
+function onSubmit<T extends GameStub>(
+    props: CreateGameProps<T>,
+    callback: Function,
+    e: FormEvent,
+    game: T
+) {
+    props.onSubmit(e, game);
+    callback(game);
+}
 export const CreateGame: <T extends GameStub>(
     props: CreateGameProps<T>
 ) => React.ReactElement<CreateGameProps<T>> = props => {
     const [game, setGame] = useState(props.initialGameState);
     const updateGameProperty = updateGamePropertyGenerator(setGame);
+
     return (
-        <form onSubmit={e => props.onSubmit(e, game)}>
+        <form
+            onSubmit={e =>
+                onSubmit(props, () => setGame(props.initialGameState), e, game)
+            }
+        >
             <div className="form_title">{props.titleText}</div>
             <div>
                 <label>
