@@ -3,6 +3,7 @@ import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { gameService } from '../services/GameService';
 import classNames from 'classnames';
+import { useAuth0 } from '../services/ReactAuth';
 
 type GameProps = {
     game: Game;
@@ -49,30 +50,33 @@ export const GameComponent: React.FC<GameProps> = props => {
             setIsSaving(false);
         }
     };
+    const { isAuthenticated } = useAuth0();
     return (
         <div className="game">
             <div className="game_title">
                 <span>Game: {props.game.title}</span>
-                <div className="game_title_controls">
-                    <button
-                        className={classNames({
-                            loading: isSaving
-                        })}
-                        onClick={() => setIsEditing(true)}
-                    >
-                        <span className="icon-pencil"></span>
-                        Edit
-                    </button>
-                    <button
-                        className={classNames('warning', {
-                            loading: isSaving
-                        })}
-                        onClick={e => handleDelete(e)}
-                    >
-                        <span className="icon-bin"></span>
-                        Delete
-                    </button>
-                </div>
+                {isAuthenticated && (
+                    <div className="game_title_controls">
+                        <button
+                            className={classNames({
+                                loading: isSaving
+                            })}
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <span className="icon-pencil"></span>
+                            Edit
+                        </button>
+                        <button
+                            className={classNames('warning', {
+                                loading: isSaving
+                            })}
+                            onClick={e => handleDelete(e)}
+                        >
+                            <span className="icon-bin"></span>
+                            Delete
+                        </button>
+                    </div>
+                )}
             </div>
             <table className="game_details">
                 <tbody>

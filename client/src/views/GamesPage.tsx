@@ -10,6 +10,7 @@ import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';
+import { useAuth0 } from '../services/ReactAuth';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -46,15 +47,18 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         return;
     };
 
+    const { isAuthenticated } = useAuth0();
     return (
         <div style={{ marginTop: '10px' }}>
-            <CreateGame
-                initialGameState={GameUtilities.newGameState()}
-                onSubmit={handleSubmit}
-                titleText="Add A New Game To The Database"
-                submitButtonText="Submit"
-                loading={isSaving}
-            />
+            {isAuthenticated && (
+                <CreateGame
+                    initialGameState={GameUtilities.newGameState()}
+                    onSubmit={handleSubmit}
+                    titleText="Add A New Game To The Database"
+                    submitButtonText="Submit"
+                    loading={isSaving}
+                />
+            )}
             <div className="notesList">
                 {games.map(game => {
                     return <GameComponent key={game!.id!} game={game!} />;
