@@ -46,6 +46,7 @@ export const CreateGame: <T extends GameStub>(
                 <label>
                     Title
                     <input
+                        required
                         type="text"
                         value={game.title}
                         onChange={e =>
@@ -58,6 +59,7 @@ export const CreateGame: <T extends GameStub>(
                 <label>
                     Time To Beat
                     <input
+                        required
                         type="number"
                         value={game.timeToBeat}
                         onChange={e =>
@@ -75,6 +77,7 @@ export const CreateGame: <T extends GameStub>(
                     Genre(s)
                     <select
                         multiple
+                        required
                         value={game.genres}
                         onChange={e =>
                             updateGameProperty(
@@ -97,6 +100,7 @@ export const CreateGame: <T extends GameStub>(
                     System(s)
                     <select
                         multiple
+                        required
                         value={game.systems}
                         onChange={e =>
                             updateGameProperty(

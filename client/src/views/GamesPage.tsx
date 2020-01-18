@@ -5,7 +5,7 @@ import * as Immutable from 'immutable';
 import { StoreState } from '../redux/store';
 
 import { GameComponent } from './Game';
-import { gameService } from '../services/GameService';
+import { gameService } from '../services/game.service';
 import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { GameStub } from '@shared/models/game.model';
@@ -41,13 +41,13 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             return;
         }
         setIsSaving(true);
-        const created = await gameService.createGame(game);
+        await gameService.createGame(game);
         setIsSaving(false);
-        console.log(created);
         return;
     };
 
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated, user } = useAuth0();
+    console.log(user);
     return (
         <div style={{ marginTop: '10px' }}>
             {isAuthenticated && (

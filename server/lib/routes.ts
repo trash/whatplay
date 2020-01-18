@@ -9,7 +9,7 @@ import swaggerDocument from '../openapi.json';
  */
 export default function(app: Application) {
     app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    // app.post('/api/v1/users', (req, res) => api.user.createUser(req, res));
+    app.get('/api/v1/users/:auth0Id', (req, res) => api.user.getUser(req, res));
 
     app.get('/api/v1/games', (req, res) => {
         api.game.getAllGames(req, res);

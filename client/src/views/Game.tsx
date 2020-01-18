@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
-import { gameService } from '../services/GameService';
+import { gameService } from '../services/game.service';
 import classNames from 'classnames';
 import { useAuth0 } from '../services/ReactAuth';
 

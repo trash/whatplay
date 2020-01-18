@@ -82,7 +82,8 @@ const UnauthorizedError = 'UnauthorizedError';
 
 // Routes requiring authorization
 export const authorizedRoutes: Map<string, string[]> = new Map([
-    ['/api/v1/games', ['POST', 'DELETE', 'PATCH']]
+    ['/api/v1/games', ['POST', 'DELETE', 'PATCH']],
+    ['/api/v1/users', ['GET']]
 ]);
 app.use(sslRedirectMiddleware());
 // Use JWT from auth0 for apis

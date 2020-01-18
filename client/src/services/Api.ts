@@ -25,7 +25,11 @@ export class Api {
         json = true
     ): Promise<any> {
         if (response.ok) {
-            return json ? response.json() : new Promise(resolve => resolve());
+            const emptyPromise = new Promise(resolve => resolve());
+            if (response.status === 204) {
+                return emptyPromise;
+            }
+            return json ? response.json() : emptyPromise;
         }
         return new Promise((_resolve, reject) => {
             console.error('Error in response', response);

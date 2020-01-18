@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { MongoClient, Db, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import {
     GameServer,
     GamePatch,
@@ -7,8 +7,8 @@ import {
     GamePatchServer
 } from '@shared/models/game.model';
 import { getCurrentUtcTime } from '../helpers.util';
-
-type ControllerMethod = (req: Request, res: Response) => Promise<Response>;
+import { ControllerMethod } from './ControllerMethod';
+import { connectToDatabase } from '../database.util';
 
 // export function createNote(req: Request, res: Response) {
 //     console.warn('do validation on note here');
@@ -35,19 +35,6 @@ type ControllerMethod = (req: Request, res: Response) => Promise<Response>;
 //             return res.sendStatus(500);
 //         });
 // }
-
-async function connectToDatabase(): Promise<[MongoClient, Db]> {
-    const client = new MongoClient(process.env.DATABASE_URL!);
-    try {
-        await client.connect();
-
-        const db = client.db(process.env.DATABASE_NAME);
-        return [client, db];
-    } catch (e) {
-        console.error('Error connecting to DB');
-        throw e;
-    }
-}
 
 export const createGame: ControllerMethod = async (req, res) => {
     console.warn('do validation on note here');

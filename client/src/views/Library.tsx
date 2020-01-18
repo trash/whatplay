@@ -21,9 +21,10 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                     alt="Profile"
                 />
 
-                <h2>{user.name}</h2>
-                <p>{user.email}</p>
-                <code>{JSON.stringify(user, null, 2)}</code>
+                <h2>Name: {user.name}</h2>
+                <p>Auth0 Id: {user.auth0Id}</p>
+                <p>Id: {user.id}</p>
+                <p>Last Updated (Auth0) {user.updatedAt.format('LLL')}</p>
             </React.Fragment>
         </section>
     );
