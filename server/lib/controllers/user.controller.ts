@@ -3,10 +3,14 @@ import { connectToDatabase } from '../database.util';
 import { Response } from 'express';
 import { FindAndModifyWriteOpResultObject } from '@shared/node_modules/@types/mongodb';
 import { UserServer } from '@shared/models/user.model';
+import { AuthenticatedRequest } from './AuthenticatedRequest';
 
-export const getUser: ControllerMethod = async (req, res) => {
+export const getUser: ControllerMethod = async (
+    req: AuthenticatedRequest,
+    res
+) => {
     const userId = req.params.auth0Id;
-    console.log(userId);
+    console.log('user:', req.user);
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {

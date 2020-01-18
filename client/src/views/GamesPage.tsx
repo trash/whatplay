@@ -37,7 +37,9 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             return;
         }
         setIsSaving(true);
-        await gameService.createGame(game);
+        try {
+            await gameService.createGame(game);
+        } catch (e) {}
         setIsSaving(false);
         return;
     };

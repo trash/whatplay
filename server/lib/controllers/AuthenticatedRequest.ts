@@ -9,5 +9,6 @@ export interface AuthenticatedRequest extends Request {
         exp: number;
         azp: string;
         scope: string;
+        permissions: string[];
     };
 }
