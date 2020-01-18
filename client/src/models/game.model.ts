@@ -29,7 +29,7 @@ export class GameUtilities {
 
     static newGameState(): GameStub {
         return {
-            title: '<Game Title>',
+            title: '',
             systems: [],
             genres: [],
             timeToBeat: 0
