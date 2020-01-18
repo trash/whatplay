@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-
-import { StoreState } from '../redux/store';
+import { RootState } from 'typesafe-actions';
 
 interface HomeViewProps {}
 
@@ -22,6 +21,6 @@ export class LandingPage extends React.Component<HomeViewProps, HomeViewState> {
     }
 }
 
-export const ConnectedHomeView = connect((_state: StoreState) => {
+export const ConnectedHomeView = connect((_state: RootState) => {
     return {};
 })(LandingPage);

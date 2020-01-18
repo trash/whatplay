@@ -3,7 +3,8 @@ import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { gameService } from '../services/game.service';
 import classNames from 'classnames';
-import { useAuth0 } from '../services/ReactAuth';
+import { RootState } from 'typesafe-actions';
+import { useSelector } from 'react-redux';
 
 type GameProps = {
     game: Game;
@@ -50,12 +51,21 @@ export const GameComponent: React.FC<GameProps> = props => {
             setIsSaving(false);
         }
     };
-    const { isAuthenticated } = useAuth0();
+    const { isAdmin } = useSelector<
+        RootState,
+        {
+            isAdmin: boolean;
+        }
+    >(state => {
+        return {
+            isAdmin: state.user.isAdmin
+        };
+    });
     return (
         <div className="game">
             <div className="game_title">
                 <span>{props.game.title}</span>
-                {isAuthenticated && (
+                {isAdmin && (
                     <div className="game_title_controls">
                         <button
                             className={classNames({

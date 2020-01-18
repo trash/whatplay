@@ -2,15 +2,13 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import * as Immutable from 'immutable';
 
-import { StoreState } from '../redux/store';
-
 import { GameComponent } from './Game';
 import { gameService } from '../services/game.service';
 import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';
-import { useAuth0 } from '../services/ReactAuth';
+import { RootState } from 'typesafe-actions';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -23,13 +21,11 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         gameService.refetchAllGames();
         calledOnce = true;
     }
-    const { games } = useSelector<StoreState, GamesPageViewProps>(
-        (state: StoreState) => {
-            return {
-                games: state.games
-            };
-        }
-    );
+    const { games } = useSelector<RootState, GamesPageViewProps>(state => {
+        return {
+            games: state.games.list
+        };
+    });
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
     const handleSubmit = async (
@@ -45,12 +41,20 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         setIsSaving(false);
         return;
     };
+    const { isAdmin } = useSelector<
+        RootState,
+        {
+            isAdmin: boolean;
+        }
+    >(state => {
+        return {
+            isAdmin: state.user.isAdmin
+        };
+    });
 
-    const { isAuthenticated, user } = useAuth0();
-    console.log(user);
     return (
         <div style={{ marginTop: '10px' }}>
-            {isAuthenticated && (
+            {isAdmin && (
                 <CreateGame
                     initialGameState={GameUtilities.newGameState()}
                     onSubmit={handleSubmit}

@@ -5,6 +5,8 @@ import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import { config } from '../config';
 import moment, { Moment } from 'moment';
 import { userService } from './user.service';
+import { updateUser } from '../redux/user/user.actions';
+import { store } from '../redux/store';
 
 // Do a little BS here to expose our Auth0 client outside react
 export let auth0: Auth0Client;
@@ -37,6 +39,7 @@ export interface User {
     email: string;
     picture: string;
     updatedAt: Moment;
+    isAdmin: boolean;
 }
 
 async function getFullUser(auth0User: Auth0User): Promise<User> {
@@ -48,7 +51,9 @@ async function getFullUser(auth0User: Auth0User): Promise<User> {
         updatedAt: moment(auth0User.updated_at)
     };
     const userServer = await userService.getUser(userStub.auth0Id);
-    return Object.assign({}, userStub, userServer);
+    const user = Object.assign({}, userStub, userServer);
+    store.dispatch(updateUser(user));
+    return user;
 }
 
 interface Auth0Context {

@@ -34,7 +34,6 @@ export const CreateGame: <T extends GameStub>(
 ) => React.ReactElement<CreateGameProps<T>> = props => {
     const [game, setGame] = useState(props.initialGameState);
     const updateGameProperty = updateGamePropertyGenerator(setGame);
-
     return (
         <form
             onSubmit={e =>

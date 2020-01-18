@@ -1,6 +1,5 @@
 import { Api } from './Api';
 
-import { updateGames, addGame, updateGame, deleteGame } from '../redux/actions';
 import { store } from '../redux/store';
 
 import { Game, GameUtilities } from '../models/game.model';
@@ -11,6 +10,12 @@ import {
     GamePatchServer
 } from '@shared/models/game.model';
 import moment from 'moment';
+import {
+    updateGames,
+    addGame,
+    updateGame,
+    deleteGame
+} from '../redux/games/games.actions';
 
 class GameService {
     private async getAllGames(): Promise<Game[]> {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { StoreState } from '../redux/store';
 import { useAuth0 } from '../services/ReactAuth';
+import { RootState } from 'typesafe-actions';
 
 interface LibraryProps {}
 
@@ -11,6 +11,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     if (!user) {
         return null;
     }
+    console.info(user);
     return (
         <section>
             <h1>My Library</h1>
@@ -22,6 +23,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                 />
 
                 <h2>Name: {user.name}</h2>
+                <p>Admin: {user.isAdmin + ''}</p>
                 <p>Auth0 Id: {user.auth0Id}</p>
                 <p>Id: {user.id}</p>
                 <p>Last Updated (Auth0) {user.updatedAt.format('LLL')}</p>
@@ -30,6 +32,6 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     );
 };
 
-export const ConnectedLibraryPage = connect((_state: StoreState) => {
+export const ConnectedLibraryPage = connect((_state: RootState) => {
     return {};
 })(LibraryPage);

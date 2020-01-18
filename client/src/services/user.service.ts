@@ -4,6 +4,7 @@ import { UserServerJson } from '@shared/models/user.model';
 type ClientUserServer = {
     id: string;
     auth0Id: string;
+    isAdmin: boolean;
 };
 
 class UserService {
@@ -13,7 +14,8 @@ class UserService {
         );
         return {
             id: server._id,
-            auth0Id: server.auth0Id
+            auth0Id: server.auth0Id,
+            isAdmin: server.isAdmin
         };
     }
 }
