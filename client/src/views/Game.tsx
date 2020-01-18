@@ -54,7 +54,7 @@ export const GameComponent: React.FC<GameProps> = props => {
     return (
         <div className="game">
             <div className="game_title">
-                <span>Game: {props.game.title}</span>
+                <span>{props.game.title}</span>
                 {isAuthenticated && (
                     <div className="game_title_controls">
                         <button
