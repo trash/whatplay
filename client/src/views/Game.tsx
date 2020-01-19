@@ -5,7 +5,7 @@ import { gameService } from '../services/game.service';
 import classNames from 'classnames';
 import { useAuth0 } from '../services/ReactAuth';
 import { userService } from '../services/user.service';
-import { Permission } from '../../../shared/models/permission.model';
+import { Permission } from '@shared/models/permission.model';
 
 type GameProps = {
     game: Game;
@@ -14,12 +14,14 @@ type GameProps = {
 export const GameComponent: React.FC<GameProps> = props => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
-    const { user } = useAuth0();
+    const { user, isAuthenticated } = useAuth0();
     let canEdit = false;
     let canDelete = false;
+    let hasGameInLibrary = false;
     if (user) {
         canEdit = userService.hasPermission(user, Permission.UpdateGame);
         canDelete = userService.hasPermission(user, Permission.DeleteGame);
+        hasGameInLibrary = userService.hasGameInLibrary(props.game);
     }
 
     const handleDelete = async (e: React.FormEvent) => {
@@ -32,6 +34,10 @@ export const GameComponent: React.FC<GameProps> = props => {
             await gameService.deleteGame(props.game.id);
             setIsSaving(false);
         }
+    };
+
+    const toggleGameFromLibrary = (game: Game) => {
+        return userService.toggleGameFromLibrary(game);
     };
 
     if (isEditing) {
@@ -67,6 +73,26 @@ export const GameComponent: React.FC<GameProps> = props => {
             <div className="game_title">
                 <span>{props.game.title}</span>
                 <div className="game_title_controls">
+                    {isAuthenticated && (
+                        <button
+                            className={classNames({
+                                loading: isSaving,
+                                warning: hasGameInLibrary
+                            })}
+                            onClick={() => toggleGameFromLibrary(props.game)}
+                        >
+                            <span
+                                className={classNames({
+                                    'icon-folder-plus': !hasGameInLibrary,
+                                    'icon-folder-minus': hasGameInLibrary
+                                })}
+                            ></span>
+                            {hasGameInLibrary
+                                ? 'Remove from Library'
+                                : 'Add to Library'}
+                        </button>
+                    )}
+
                     {canEdit && (
                         <button
                             className={classNames({

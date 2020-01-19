@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { RootState } from 'typesafe-actions';
 import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
-import { Permission } from '../../../shared/models/permission.model';
+import { Permission } from '@shared/models/permission.model';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;

@@ -3,11 +3,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import { config } from '../config';
-import moment from 'moment';
-import { userService } from './user.service';
-import { updateUser } from '../redux/user/user.actions';
-import { store } from '../redux/store';
 import { User } from '../models/user.model';
+import { userService } from './user.service';
 
 // Do a little BS here to expose our Auth0 client outside react
 export let auth0: Auth0Client;
@@ -25,27 +22,6 @@ const configureClientPromise = configureClient();
 // React guide. It provides hooks for react components for the
 // auth0 client flow. I changed a couple commented lines to
 // use the globally exposed auth0 client I created above.
-interface Auth0User {
-    sub: string;
-    name: string;
-    email: string;
-    picture: string;
-    updated_at: string;
-}
-
-async function getFullUser(auth0User: Auth0User): Promise<User> {
-    const userStub = {
-        auth0Id: auth0User.sub,
-        name: auth0User.name,
-        email: auth0User.email,
-        picture: auth0User.picture,
-        updatedAt: moment(auth0User.updated_at)
-    };
-    const userServer = await userService.getUser(userStub.auth0Id);
-    const user = Object.assign({}, userStub, userServer);
-    store.dispatch(updateUser(user));
-    return user;
-}
 
 interface Auth0Context {
     user?: User;
@@ -114,7 +90,7 @@ export const Auth0Provider = ({
 
             if (isAuthenticated) {
                 const auth0User = await auth0FromHook.getUser();
-                const user = await getFullUser(auth0User);
+                const user = await userService.getFullUser(auth0User);
                 setUser(user);
             }
 
@@ -134,7 +110,7 @@ export const Auth0Provider = ({
             setPopupOpen(false);
         }
         const auth0User = await auth0Client.getUser();
-        const user = await getFullUser(auth0User);
+        const user = await userService.getFullUser(auth0User);
         setUser(user);
         setIsAuthenticated(true);
     };
@@ -143,7 +119,7 @@ export const Auth0Provider = ({
         setLoading(true);
         const result = await auth0Client.handleRedirectCallback();
         const auth0User = await auth0Client.getUser();
-        const user = await getFullUser(auth0User);
+        const user = await userService.getFullUser(auth0User);
         setLoading(false);
         setIsAuthenticated(true);
         setUser(user);

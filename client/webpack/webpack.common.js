@@ -4,6 +4,7 @@ const helpers = require('./helpers');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ENV = process.env.NODE_ENV;
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const wtpConfigValues = {
     auth0ClientId: JSON.stringify(process.env.AUTH0_CLIENT_ID),
@@ -28,7 +29,13 @@ module.exports = {
     ],
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.
-        extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.jsx']
+        extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.jsx'],
+        plugins: [
+            // Have to do this because of the weirdness of where we have the tsconfig.json
+            new TsconfigPathsPlugin({
+                configFile: helpers.root('../tsconfig.json')
+            })
+        ]
     },
     module: {
         rules: [

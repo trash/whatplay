@@ -21,6 +21,7 @@
         "@types/errorhandler": "^0.0.32",
         "@types/moment": "^2.13.0",
         "@types/mongodb": "^3.3.14",
+        "@types/path-to-regexp": "^1.7.0",
         "@types/swagger-ui-express": "^4.1.1",
         "body-parser": "^1.18.2",
         "dotenv": "^8.2.0",
@@ -32,6 +33,7 @@
         "jwks-rsa": "^1.2.1",
         "moment": "^2.24.0",
         "mongodb": "^3.4.1",
+        "path-to-regexp": "^6.1.0",
         "regenerator-runtime": "^0.13.3",
         "swagger-ui-express": "^4.1.2",
         "typescript": "3.7.4"

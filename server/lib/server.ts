@@ -5,6 +5,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import jwt from 'express-jwt';
 import https from 'https';
 import fs from 'fs';
+import { pathToRegexp } from 'path-to-regexp';
 const jwks = require('jwks-rsa');
 
 // Set default node environment to development
@@ -86,10 +87,25 @@ export const authorizedRoutes: {
     actions: string[];
 }[] = [
     {
-        route: new RegExp('/api/v1/games'),
-        actions: ['POST', 'DELETE', 'PATCH']
+        route: pathToRegexp('/api/v1/games'),
+        actions: ['POST']
     },
-    { route: new RegExp('/api/v1/users'), actions: ['GET'] }
+    {
+        route: pathToRegexp('/api/v1/games/:id'),
+        actions: ['DELETE', 'PATCH']
+    },
+    {
+        route: pathToRegexp('/api/v1/users/library'),
+        actions: ['POST']
+    },
+    {
+        route: pathToRegexp('/api/v1/users/library/:id'),
+        actions: ['DELETE']
+    },
+    {
+        route: pathToRegexp('/api/v1/users/:auth0Id'),
+        actions: ['GET']
+    }
 ];
 app.use(sslRedirectMiddleware());
 // Use JWT from auth0 for apis
@@ -101,6 +117,9 @@ app.use('/api', (req, res, next) => {
     const methodMatch = pathMatches
         ? pathMatches.actions.includes(req.method)
         : false;
+    // console.log('fullPath', fullPath);
+    // console.log('pathMatches', pathMatches);
+    // console.log('methodMatch', methodMatch);
     if (methodMatch) {
         return jwtCheck(req, res, next);
     }

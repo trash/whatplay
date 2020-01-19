@@ -21,8 +21,17 @@ function requirePermissions(permission: string, cb: ControllerMethod) {
  */
 export default function(app: Application) {
     app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+    // USERS
+    app.post('/api/v1/users/library', (req, res) =>
+        api.user.addGameToLibrary(req, res)
+    );
+    app.delete('/api/v1/users/library/:id', (req, res) =>
+        api.user.deleteGameFromLibrary(req, res)
+    );
     app.get('/api/v1/users/:auth0Id', (req, res) => api.user.getUser(req, res));
 
+    // GAMES
     app.get('/api/v1/games', (req, res) => {
         api.game.getAllGames(req, res);
     });
@@ -44,7 +53,10 @@ export default function(app: Application) {
             api.game.updateGame(req, res)
         )
     );
+
+    // 404
     app.all('/api/*', (_req, res) => res.status(404).send());
 
+    // SPA
     app.get('/*', index);
 }
