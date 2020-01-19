@@ -1,4 +1,5 @@
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
+import { Permission } from './permission.model';
 
 export interface UserNotSavedServer {
     auth0Id: string;
@@ -6,4 +7,6 @@ export interface UserNotSavedServer {
 }
 
 export interface UserServer extends MongoDocument, UserNotSavedServer {}
-export interface UserServerJson extends MongoDocumentJson, UserNotSavedServer {}
+export interface UserServerJson extends MongoDocumentJson, UserNotSavedServer {
+    permissions: Permission[];
+}

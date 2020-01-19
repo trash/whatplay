@@ -26,6 +26,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                 <p>Admin: {user.isAdmin + ''}</p>
                 <p>Auth0 Id: {user.auth0Id}</p>
                 <p>Id: {user.id}</p>
+                <p>Permissions: {user.permissions}</p>
                 <p>Last Updated (Auth0) {user.updatedAt.format('LLL')}</p>
             </React.Fragment>
         </section>

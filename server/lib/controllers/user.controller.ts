@@ -10,7 +10,6 @@ export const getUser: ControllerMethod = async (
     res
 ) => {
     const userId = req.params.auth0Id;
-    console.log('user:', req.user);
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
@@ -31,7 +30,14 @@ export const getUser: ControllerMethod = async (
             } as any
         )) as any) as FindAndModifyWriteOpResultObject<UserServer>;
 
-        response = res.status(200).send(user.value);
+        response = res.status(200).send(
+            Object.assign(
+                {
+                    permissions: req.user.permissions
+                },
+                user.value!
+            )
+        );
     } catch (e) {
         console.error(e);
         response = res.status(500).send(e);

@@ -3,10 +3,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import { config } from '../config';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { userService } from './user.service';
 import { updateUser } from '../redux/user/user.actions';
 import { store } from '../redux/store';
+import { User } from '../models/user.model';
 
 // Do a little BS here to expose our Auth0 client outside react
 export let auth0: Auth0Client;
@@ -30,16 +31,6 @@ interface Auth0User {
     email: string;
     picture: string;
     updated_at: string;
-}
-
-export interface User {
-    id: string;
-    auth0Id: string;
-    name: string;
-    email: string;
-    picture: string;
-    updatedAt: Moment;
-    isAdmin: boolean;
 }
 
 async function getFullUser(auth0User: Auth0User): Promise<User> {

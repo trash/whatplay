@@ -56,10 +56,6 @@ class GameService {
             throw e;
         }
 
-        console.error(
-            'we need to update the store with the updated game.'
-                + ' possibly pass in an index and the updated game'
-        );
         store.dispatch(updateGame(game.id, game));
 
         return game;

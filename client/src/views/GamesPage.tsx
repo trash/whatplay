@@ -9,6 +9,9 @@ import { CreateGame } from './CreateGame';
 import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';
 import { RootState } from 'typesafe-actions';
+import { userService } from '../services/user.service';
+import { useAuth0 } from '../services/ReactAuth';
+import { Permission } from '../../../shared/models/permission.model';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -27,6 +30,8 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         };
     });
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const { user } = useAuth0();
+    const canCreate = userService.hasPermission(user!, Permission.CreateGame);
 
     const handleSubmit = async (
         event: React.FormEvent,
@@ -43,20 +48,9 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         setIsSaving(false);
         return;
     };
-    const { isAdmin } = useSelector<
-        RootState,
-        {
-            isAdmin: boolean;
-        }
-    >(state => {
-        return {
-            isAdmin: state.user.isAdmin
-        };
-    });
-
     return (
         <div style={{ marginTop: '10px' }}>
-            {isAdmin && (
+            {canCreate && (
                 <CreateGame
                     initialGameState={GameUtilities.newGameState()}
                     onSubmit={handleSubmit}

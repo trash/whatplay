@@ -3,8 +3,9 @@ import { Game, GameUtilities } from '../models/game.model';
 import { CreateGame } from './CreateGame';
 import { gameService } from '../services/game.service';
 import classNames from 'classnames';
-import { RootState } from 'typesafe-actions';
-import { useSelector } from 'react-redux';
+import { useAuth0 } from '../services/ReactAuth';
+import { userService } from '../services/user.service';
+import { Permission } from '../../../shared/models/permission.model';
 
 type GameProps = {
     game: Game;
@@ -13,6 +14,22 @@ type GameProps = {
 export const GameComponent: React.FC<GameProps> = props => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const { user } = useAuth0();
+    const canEdit = userService.hasPermission(user!, Permission.UpdateGame);
+    const canDelete = userService.hasPermission(user!, Permission.DeleteGame);
+
+    const handleDelete = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (isSaving) {
+            return;
+        }
+        if (window.confirm('Are you sure you want to delete this game?')) {
+            setIsSaving(true);
+            await gameService.deleteGame(props.game.id);
+            setIsSaving(false);
+        }
+    };
+
     if (isEditing) {
         const handleSubmit = async (
             event: React.FormEvent,
@@ -40,33 +57,13 @@ export const GameComponent: React.FC<GameProps> = props => {
             />
         );
     }
-    const handleDelete = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (isSaving) {
-            return;
-        }
-        if (window.confirm('Are you sure you want to delete this game?')) {
-            setIsSaving(true);
-            await gameService.deleteGame(props.game.id);
-            setIsSaving(false);
-        }
-    };
-    const { isAdmin } = useSelector<
-        RootState,
-        {
-            isAdmin: boolean;
-        }
-    >(state => {
-        return {
-            isAdmin: state.user.isAdmin
-        };
-    });
+
     return (
         <div className="game">
             <div className="game_title">
                 <span>{props.game.title}</span>
-                {isAdmin && (
-                    <div className="game_title_controls">
+                <div className="game_title_controls">
+                    {canEdit && (
                         <button
                             className={classNames({
                                 loading: isSaving
@@ -76,6 +73,8 @@ export const GameComponent: React.FC<GameProps> = props => {
                             <span className="icon-pencil"></span>
                             Edit
                         </button>
+                    )}
+                    {canDelete && (
                         <button
                             className={classNames('warning', {
                                 loading: isSaving
@@ -85,8 +84,8 @@ export const GameComponent: React.FC<GameProps> = props => {
                             <span className="icon-bin"></span>
                             Delete
                         </button>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
             <table className="game_details">
                 <tbody>

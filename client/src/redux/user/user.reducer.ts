@@ -4,7 +4,9 @@ import { combineReducers } from 'redux';
 
 export const isAdmin = createReducer(false).handleAction(
     updateUser,
-    (_state, action) => action.payload.isAdmin
+    (_state, action) => {
+        return action.payload.isAdmin;
+    }
 );
 
 // Can delete when types fixed in lib
