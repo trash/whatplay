@@ -31,7 +31,9 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     });
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const { user } = useAuth0();
-    const canCreate = userService.hasPermission(user!, Permission.CreateGame);
+    const canCreate = user
+        ? userService.hasPermission(user, Permission.CreateGame)
+        : false;
 
     const handleSubmit = async (
         event: React.FormEvent,

@@ -15,8 +15,12 @@ export const GameComponent: React.FC<GameProps> = props => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const { user } = useAuth0();
-    const canEdit = userService.hasPermission(user!, Permission.UpdateGame);
-    const canDelete = userService.hasPermission(user!, Permission.DeleteGame);
+    let canEdit = false;
+    let canDelete = false;
+    if (user) {
+        canEdit = userService.hasPermission(user, Permission.UpdateGame);
+        canDelete = userService.hasPermission(user, Permission.DeleteGame);
+    }
 
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
