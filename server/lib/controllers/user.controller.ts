@@ -10,10 +10,6 @@ import {
     GetGameLibraryPostServer
 } from '@shared/models/user.model';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
-// import {
-//     GameLibraryEntryServer,
-//     PlayedStatus
-// } from '@shared/models/game-library-entry.model';
 import {
     GameLibraryEntryServer,
     PlayedStatus

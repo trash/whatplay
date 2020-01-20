@@ -13,7 +13,7 @@ const wtpConfigValues = {
     serverUrl: JSON.stringify(process.env.SERVER_URL)
 };
 
-console.log('webpack config values', wtpConfigValues);
+// console.log('webpack config values', wtpConfigValues);
 
 module.exports = {
     entry: {

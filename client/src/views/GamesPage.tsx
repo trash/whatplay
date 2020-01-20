@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import * as Immutable from 'immutable';
 
-import { GameComponent } from './Game';
+import { GameComponent } from '../components/Game';
 import { gameService } from '../services/game.service';
 import { Game } from '../models/game.model';
 import { GameUtilities } from '../models/game.util';
-import { CreateGame } from './CreateGame';
+import { CreateGame } from '../components/CreateGame';
 import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';
 import { RootState } from 'typesafe-actions';

@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useAuth0 } from '../services/ReactAuth';
 import { userService } from '../services/user.service';
 import { Permission } from '@shared/models/permission.model';
+import { DeleteGameButton } from './DeleteGameButton';
 
 type GameProps = {
     game: Game;
@@ -17,25 +18,11 @@ export const GameComponent: React.FC<GameProps> = props => {
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const { user, isAuthenticated } = useAuth0();
     let canEdit = false;
-    let canDelete = false;
     let hasGameInLibrary = false;
     if (user) {
         canEdit = userService.hasPermission(user, Permission.UpdateGame);
-        canDelete = userService.hasPermission(user, Permission.DeleteGame);
         hasGameInLibrary = userService.hasGameInLibrary(props.game);
     }
-
-    const handleDelete = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (isSaving) {
-            return;
-        }
-        if (window.confirm('Are you sure you want to delete this game?')) {
-            setIsSaving(true);
-            await gameService.deleteGame(props.game.id);
-            setIsSaving(false);
-        }
-    };
 
     const toggleGameFromLibrary = (game: Game) => {
         return userService.toggleGameFromLibrary(game);
@@ -105,17 +92,10 @@ export const GameComponent: React.FC<GameProps> = props => {
                             Edit
                         </button>
                     )}
-                    {canDelete && (
-                        <button
-                            className={classNames('warning', {
-                                loading: isSaving
-                            })}
-                            onClick={e => handleDelete(e)}
-                        >
-                            <span className="icon-bin"></span>
-                            Delete
-                        </button>
-                    )}
+                    <DeleteGameButton
+                        loading={isSaving}
+                        gameId={props.game.id}
+                    />
                 </div>
             </div>
             <table className="game_details">

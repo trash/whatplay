@@ -4,7 +4,6 @@ import { Router, Route } from 'react-router-dom';
 import { history } from '../services/history';
 
 import { ConnectedHomeView } from './Landing';
-import { CreateUserView } from './CreateUser';
 import { GamesPageView } from './GamesPage';
 // import { TestView } from './Test';
 import { HeaderView } from './Header';
@@ -31,7 +30,6 @@ function MainView() {
                     path="/library"
                     component={ConnectedLibraryPage}
                 />
-                <Route path="/user" component={CreateUserView} />
                 <Route path="/games" component={GamesPageView} />
             </div>
         </Router>
