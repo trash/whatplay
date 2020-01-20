@@ -3,16 +3,24 @@ import {
     UserServerJson,
     GameLibraryEntryReferenceClient,
     AddGamePost,
-    GameLibraryEntryReferenceServer
+    GameLibraryEntryReferenceServer,
+    GetGameLibraryPostClient,
+    GetGameLibraryPostServer
 } from '@shared/models/user.model';
 import { Permission } from '@shared/models/permission.model';
-import { User, Auth0User } from '../models/user.model';
+import {
+    User,
+    Auth0User,
+    HydratedGameLibraryClient
+} from '../models/user.model';
 import { Game } from '../models/game.model';
+import { GameUtilities } from '../models/game.util';
 import moment from 'moment';
 import {
     updateUser,
     addGameToLibrary,
-    removeGameFromLibrary
+    removeGameFromLibrary,
+    updateHydratedGameLibrary
 } from '../redux/user/user.actions';
 import { store } from '../redux/store';
 import { List } from 'immutable';
@@ -85,6 +93,47 @@ class UserService {
         const user = Object.assign({}, userStub, userServer);
         store.dispatch(updateUser(user));
         return user;
+    }
+
+    private gameLibraryTransform(
+        server: GetGameLibraryPostServer
+    ): HydratedGameLibraryClient {
+        return List(
+            server.gameLibraryEntries.map(entry => {
+                const game = GameUtilities.transformGameServertoGame(
+                    entry.game
+                );
+                const gameLibraryEntry = Object.assign(
+                    {},
+                    entry.gameLibraryEntry,
+                    {
+                        dateCompleted:
+                            entry.gameLibraryEntry.dateCompleted !== null
+                                ? moment(entry.gameLibraryEntry.dateCompleted)
+                                : null
+                    }
+                );
+
+                return {
+                    game,
+                    gameLibraryEntry
+                };
+            })
+        );
+    }
+
+    async getAllLibraryGames(
+        library: List<GameLibraryEntryReferenceClient>
+    ): Promise<HydratedGameLibraryClient> {
+        const server = await Api.post<
+            GetGameLibraryPostClient,
+            GetGameLibraryPostServer
+        >(`/api/v1/users/library/getAll`, {
+            gameLibrary: library.toArray()
+        });
+        const hydrated = this.gameLibraryTransform(server);
+        store.dispatch(updateHydratedGameLibrary(hydrated));
+        return hydrated;
     }
 }
 export const userService = new UserService();

@@ -1,5 +1,7 @@
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
 import { Permission } from './permission.model';
+import { GameServerJson } from './game.model';
+import { GameLibraryEntryServerJson } from './game-library-entry.model';
 
 export type GameLibraryEntryReferenceServer = {
     gameId: string;
@@ -23,4 +25,17 @@ export interface UserServerJson extends MongoDocumentJson, UserNotSavedServer {
 
 export type AddGamePost = {
     gameId: string;
+};
+
+export type GetGameLibraryPostClient = {
+    gameLibrary: GameLibraryEntryReferenceClient[];
+};
+
+export type HydratedGameLibraryEntryServer = {
+    game: GameServerJson;
+    gameLibraryEntry: GameLibraryEntryServerJson;
+};
+
+export type GetGameLibraryPostServer = {
+    gameLibraryEntries: HydratedGameLibraryEntryServer[];
 };

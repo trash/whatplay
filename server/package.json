@@ -7,7 +7,7 @@
         "lib": "lib"
     },
     "engines": {
-        "node": "13.1.0"
+        "node": "13.6.0"
     },
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.6.0",
@@ -19,10 +19,10 @@
         "@babel/preset-env": "^7.7.7",
         "@babel/preset-typescript": "^7.7.7",
         "@types/errorhandler": "^0.0.32",
-        "@types/moment": "^2.13.0",
         "@types/mongodb": "^3.3.14",
         "@types/path-to-regexp": "^1.7.0",
         "@types/swagger-ui-express": "^4.1.1",
+        "babel-plugin-module-resolver": "^4.0.0",
         "body-parser": "^1.18.2",
         "dotenv": "^8.2.0",
         "ejs": "^2.5.2",
@@ -41,7 +41,8 @@
     "scripts": {
         "build": "npm run build:types && npm run build:js",
         "build:types": "tsc --project server-tsconfig.json --noEmit",
-        "build:js": "npx babel lib --out-dir build --extensions '.ts,.js'",
+        "build:dependencies": "cd ../shared && npm run build && cd ../server",
+        "build:js": "npm run build:dependencies && npx babel lib --out-dir build --extensions '.ts,.js'",
         "serve": "node build/server",
         "start": "npm run build && npm run serve",
         "test": "echo \"Error: no test specified\" && exit 1"

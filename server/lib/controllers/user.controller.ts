@@ -1,15 +1,25 @@
 import { ControllerMethod } from './ControllerMethod';
 import { connectToDatabase } from '../database.util';
 import { Response } from 'express';
-import { FindAndModifyWriteOpResultObject } from 'mongodb';
+import { FindAndModifyWriteOpResultObject, ObjectId } from 'mongodb';
 import {
     UserServer,
     AddGamePost,
-    GameLibraryEntryReferenceServer
+    GameLibraryEntryReferenceServer,
+    GetGameLibraryPostClient,
+    GetGameLibraryPostServer
 } from '@shared/models/user.model';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
-import { GameLibraryEntryServer } from '@shared/models/game-library-entry.model';
+// import {
+//     GameLibraryEntryServer,
+//     PlayedStatus
+// } from '@shared/models/game-library-entry.model';
+import {
+    GameLibraryEntryServer,
+    PlayedStatus
+} from '@shared/models/game-library-entry.model';
 import { getUserIdFromRequest } from '../helpers.util';
+import { GameServer } from '@shared/models/game.model';
 
 export const getUser: ControllerMethod = async (
     req: AuthenticatedRequest,
@@ -72,7 +82,7 @@ export const addGameToLibrary: ControllerMethod = async (
         const libEntryResult = await libraryEntryCollection.insertOne({
             gameId: body.gameId,
             rating: null,
-            playedStatus: null,
+            playedStatus: PlayedStatus.NotPlayed,
             comments: '',
             dateCompleted: null,
             backlogPriority: null,
@@ -152,6 +162,78 @@ export const deleteGameFromLibrary: ControllerMethod = async (
             throw new Error('Error updating User.');
         }
         response = res.status(204).send();
+    } catch (e) {
+        console.error(e);
+        response = res.status(500).send(e);
+    }
+    client.close();
+    return response;
+};
+
+export const getGameLibrary: ControllerMethod = async (
+    req: AuthenticatedRequest,
+    res
+) => {
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+
+    const body: GetGameLibraryPostClient = req.body;
+    if (!body.gameLibrary) {
+        const e = new Error('Missing game library data.');
+        return res.status(400).send(e);
+    }
+    try {
+        // 1) Get all game library entries
+        const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
+            'gameLibraryEntry'
+        );
+        const libEntries = await libraryEntryCollection
+            .find({
+                _id: {
+                    $in: body.gameLibrary.map(
+                        e => new ObjectId(e.gameLibraryEntryId)
+                    )
+                }
+            })
+            .toArray();
+
+        // 2) Get all games
+        const gameCollection = db.collection<GameServer>('games');
+        const games = await gameCollection
+            .find({
+                _id: {
+                    $in: body.gameLibrary.map(e => new ObjectId(e.gameId))
+                }
+            })
+            .toArray();
+        const responseBody: GetGameLibraryPostServer = {
+            gameLibraryEntries: body.gameLibrary.map(gl => {
+                const foundGame = games.find(
+                    g => g._id.toHexString() === gl.gameId
+                )!;
+                const jsonIdGame = Object.assign({}, foundGame, {
+                    _id: foundGame._id.toHexString()
+                });
+
+                const foundGameLibraryEntry = libEntries.find(
+                    l => l._id.toHexString() === gl.gameLibraryEntryId
+                )!;
+                // console.log('matching game lib entry', foundGameLibraryEntry);
+                const jsonIdGameLibraryEntry = Object.assign(
+                    {},
+                    foundGameLibraryEntry,
+                    {
+                        _id: foundGame._id.toHexString()
+                    }
+                );
+
+                return {
+                    game: jsonIdGame,
+                    gameLibraryEntry: jsonIdGameLibraryEntry
+                };
+            })
+        };
+        response = res.status(200).send(responseBody);
     } catch (e) {
         console.error(e);
         response = res.status(500).send(e);

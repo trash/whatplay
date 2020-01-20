@@ -2,11 +2,13 @@ import { createReducer } from 'typesafe-actions';
 import {
     updateUser,
     addGameToLibrary,
-    removeGameFromLibrary
+    removeGameFromLibrary,
+    updateHydratedGameLibrary
 } from './user.actions';
 import { combineReducers } from 'redux';
 import { List } from 'immutable';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
+import { HydratedGameLibraryClient } from '../../models/user.model';
 
 export const isAdmin = createReducer(false).handleAction(
     updateUser,
@@ -14,6 +16,10 @@ export const isAdmin = createReducer(false).handleAction(
         return action.payload.isAdmin;
     }
 );
+
+export const hydratedGameLibrary = createReducer<HydratedGameLibraryClient | null>(
+    null
+).handleAction(updateHydratedGameLibrary, (_state, action) => action.payload);
 
 export const gameLibrary = createReducer(
     List<GameLibraryEntryReferenceClient>()
@@ -30,9 +36,11 @@ export const gameLibrary = createReducer(
 export type UserReducersType = {
     isAdmin: boolean;
     gameLibrary: List<GameLibraryEntryReferenceClient>;
+    hydratedGameLibrary: HydratedGameLibraryClient;
 };
 
 export const userReducers = combineReducers<UserReducersType>({
     isAdmin,
-    gameLibrary
+    gameLibrary,
+    hydratedGameLibrary
 });

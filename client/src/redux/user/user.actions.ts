@@ -1,4 +1,4 @@
-import { User } from 'client/src/models/user.model';
+import { User, HydratedGameLibraryClient } from 'client/src/models/user.model';
 import { createAction } from 'typesafe-actions';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 
@@ -15,3 +15,8 @@ export const removeGameFromLibrary = createAction(
     'REMOVE_GAME_FROM_LIBRARY',
     (gameId: string) => gameId
 )<string>();
+
+export const updateHydratedGameLibrary = createAction(
+    'UPDATE_HYDRATED_GAME_LIBRARY',
+    (hydratedGameLibrary: HydratedGameLibraryClient) => hydratedGameLibrary
+)<HydratedGameLibraryClient>();

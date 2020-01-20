@@ -1,6 +1,8 @@
 import { Moment } from 'moment';
 import { List } from 'immutable';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
+import { Game } from './game.model';
+import { GameLibraryEntryClient } from '@shared/models/game-library-entry.model';
 export interface User {
     id: string;
     auth0Id: string;
@@ -19,3 +21,10 @@ export interface Auth0User {
     picture: string;
     updated_at: string;
 }
+
+export type HydratedGameLibraryEntryClient = {
+    game: Game;
+    gameLibraryEntry: GameLibraryEntryClient;
+};
+
+export type HydratedGameLibraryClient = List<HydratedGameLibraryEntryClient>;

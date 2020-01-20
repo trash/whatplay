@@ -4,7 +4,8 @@ import * as Immutable from 'immutable';
 
 import { GameComponent } from './Game';
 import { gameService } from '../services/game.service';
-import { Game, GameUtilities } from '../models/game.model';
+import { Game } from '../models/game.model';
+import { GameUtilities } from '../models/game.util';
 import { CreateGame } from './CreateGame';
 import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';

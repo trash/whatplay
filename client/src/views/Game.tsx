@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Game, GameUtilities } from '../models/game.model';
+import { Game } from '../models/game.model';
+import { GameUtilities } from '../models/game.util';
 import { CreateGame } from './CreateGame';
 import { gameService } from '../services/game.service';
 import classNames from 'classnames';

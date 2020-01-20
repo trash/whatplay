@@ -2,6 +2,15 @@
     "presets": ["@babel/preset-env", "@babel/typescript"],
     "plugins": [
         "@babel/proposal-class-properties",
-        "@babel/proposal-object-rest-spread"
+        "@babel/proposal-object-rest-spread",
+        [
+            "module-resolver",
+            {
+                "root": ["."],
+                "alias": {
+                    "@shared": "../shared/build/"
+                }
+            }
+        ]
     ]
 }

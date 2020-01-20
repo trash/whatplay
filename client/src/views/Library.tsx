@@ -5,6 +5,9 @@ import { useAuth0 } from '../services/ReactAuth';
 import { RootState } from 'typesafe-actions';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { List } from 'immutable';
+import { userService } from '../services/user.service';
+import { HydratedGameLibraryClient } from '../models/user.model';
+import { GameUtilities } from '../models/game.util';
 
 interface LibraryProps {}
 
@@ -13,17 +16,29 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     if (!user) {
         return null;
     }
-    const { library } = useSelector<
+    const { library, hydratedLibrary: hydratedGameLibrary } = useSelector<
         RootState,
         {
             library: List<GameLibraryEntryReferenceClient>;
+            hydratedLibrary: HydratedGameLibraryClient;
         }
     >(state => {
         return {
-            library: state.user.gameLibrary
+            library: state.user.gameLibrary,
+            hydratedLibrary: state.user.hydratedGameLibrary
         };
     });
-    console.info(user, library);
+    // Fetch all lib games
+    React.useEffect(() => {
+        userService.getAllLibraryGames(library);
+    }, [library]);
+
+    console.log(hydratedGameLibrary);
+
+    if (hydratedGameLibrary === null) {
+        return null;
+    }
+
     return (
         <section>
             <h1>Game Library</h1>
@@ -32,12 +47,40 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                 src={user.picture}
                 alt="Profile"
             />
-            {library.map(entry => (
-                <div>
-                    <div>Game Id:{entry?.gameId}</div>
-                    <div>Game Library Entry Id:{entry?.gameLibraryEntryId}</div>
-                </div>
-            ))}
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Time To Beat</th>
+                        <th>Played Status</th>
+                        <th>Your Rating</th>
+                        <th>Backlog Priority</th>
+                        <th style={{ display: 'none' }}>Systems Owned</th>
+                        <th style={{ display: 'none' }}>Id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {hydratedGameLibrary.map(entry => (
+                        <tr key={entry?.gameLibraryEntry._id}>
+                            <td>{entry?.game.title}</td>
+                            <td>{entry?.game.timeToBeat}</td>
+                            <td>
+                                {GameUtilities.playedStatus(
+                                    entry?.gameLibraryEntry.playedStatus!
+                                )}
+                            </td>
+                            <td>{entry?.gameLibraryEntry.rating}</td>
+                            <td>{entry?.gameLibraryEntry.backlogPriority}</td>
+                            <td style={{ display: 'none' }}>
+                                {entry?.gameLibraryEntry.systemsOwned}
+                            </td>
+                            <td style={{ display: 'none' }}>
+                                {entry?.gameLibraryEntry._id}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </section>
     );
 };

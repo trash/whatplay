@@ -23,12 +23,17 @@ export default function(app: Application) {
     app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     // USERS
+    // Library end points
+    app.post('/api/v1/users/library/getAll', (req, res) =>
+        api.user.getGameLibrary(req, res)
+    );
     app.post('/api/v1/users/library', (req, res) =>
         api.user.addGameToLibrary(req, res)
     );
     app.delete('/api/v1/users/library/:id', (req, res) =>
         api.user.deleteGameFromLibrary(req, res)
     );
+    // Get user data
     app.get('/api/v1/users/:auth0Id', (req, res) => api.user.getUser(req, res));
 
     // GAMES
