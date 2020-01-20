@@ -38,7 +38,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
         userService.getAllLibraryGames(library);
     }, [library]);
 
-    console.log(hydratedGameLibrary);
+    // console.log(hydratedGameLibrary);
 
     if (hydratedGameLibrary === null) {
         return null;
@@ -98,7 +98,10 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                     value={entry?.gameLibraryEntry.rating!}
                                 >
                                     {gameRatingsArray.map(rating => (
-                                        <option value={rating.value}>
+                                        <option
+                                            key={rating.value}
+                                            value={rating.value}
+                                        >
                                             {rating.text}
                                         </option>
                                     ))}
