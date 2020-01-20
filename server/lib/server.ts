@@ -81,10 +81,12 @@ class HttpException extends Error {
 
 const UnauthorizedError = 'UnauthorizedError';
 
+type HttpVerbs = 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
+
 // Routes requiring authorization
 export const authorizedRoutes: {
     route: RegExp;
-    actions: string[];
+    actions: HttpVerbs[];
 }[] = [
     {
         route: pathToRegexp('/api/v1/games'),
@@ -99,8 +101,12 @@ export const authorizedRoutes: {
         actions: ['POST']
     },
     {
+        route: pathToRegexp('/api/v1/users/library/getAll'),
+        actions: ['POST']
+    },
+    {
         route: pathToRegexp('/api/v1/users/library/:id'),
-        actions: ['DELETE']
+        actions: ['DELETE', 'PATCH']
     },
     {
         route: pathToRegexp('/api/v1/users/:auth0Id'),
@@ -115,7 +121,7 @@ app.use('/api', (req, res, next) => {
         fullPath.match(entry.route)
     );
     const methodMatch = pathMatches
-        ? pathMatches.actions.includes(req.method)
+        ? pathMatches.actions.includes(req.method as HttpVerbs)
         : false;
     // console.log('fullPath', fullPath);
     // console.log('pathMatches', pathMatches);

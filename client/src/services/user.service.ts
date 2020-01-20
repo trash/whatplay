@@ -5,7 +5,8 @@ import {
     AddGamePost,
     GameLibraryEntryReferenceServer,
     GetGameLibraryPostClient,
-    GetGameLibraryPostServer
+    GetGameLibraryPostServer,
+    UpdateGameLibraryEntryPatch
 } from '@shared/models/user.model';
 import { Permission } from '@shared/models/permission.model';
 import {
@@ -20,10 +21,12 @@ import {
     updateUser,
     addGameToLibrary,
     removeGameFromLibrary,
-    updateHydratedGameLibrary
+    updateHydratedGameLibrary,
+    updateHydratedGameLibraryEntry
 } from '../redux/user/user.actions';
 import { store } from '../redux/store';
 import { List } from 'immutable';
+import { GameLibraryEntryClient } from '@shared/models/game-library-entry.model';
 // Intermediate type just to convert the "_id" ObjectId into a string "id"
 type ClientUserServer = {
     id: string;
@@ -134,6 +137,20 @@ class UserService {
         const hydrated = this.gameLibraryTransform(server);
         store.dispatch(updateHydratedGameLibrary(hydrated));
         return hydrated;
+    }
+
+    async updateGameLibraryEntry(
+        gameLibraryEntry: GameLibraryEntryClient,
+        update: UpdateGameLibraryEntryPatch
+    ): Promise<void> {
+        await Api.patch<UpdateGameLibraryEntryPatch>(
+            `/api/v1/users/library/${gameLibraryEntry._id}`,
+            update
+        );
+        store.dispatch(
+            updateHydratedGameLibraryEntry(gameLibraryEntry, update)
+        );
+        return;
     }
 }
 export const userService = new UserService();

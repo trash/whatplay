@@ -30,7 +30,10 @@ export default function(app: Application) {
     app.post('/api/v1/users/library', (req, res) =>
         api.user.addGameToLibrary(req, res)
     );
-    app.delete('/api/v1/users/library/:id', (req, res) =>
+    app.patch('/api/v1/users/library/:gameLibraryEntryId', (req, res) =>
+        api.user.updateGameLibraryEntry(req, res)
+    );
+    app.delete('/api/v1/users/library/:gameId', (req, res) =>
         api.user.deleteGameFromLibrary(req, res)
     );
     // Get user data

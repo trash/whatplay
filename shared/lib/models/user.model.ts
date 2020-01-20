@@ -39,3 +39,5 @@ export type HydratedGameLibraryEntryServer = {
 export type GetGameLibraryPostServer = {
     gameLibraryEntries: HydratedGameLibraryEntryServer[];
 };
+
+export type UpdateGameLibraryEntryPatch = Partial<Omit<GameServerJson, '_id'>>;

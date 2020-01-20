@@ -20,6 +20,7 @@ function updateGamePropertyGenerator<T extends GameStub>(
         setGame(clone);
     };
 }
+
 function onSubmit<T extends GameStub>(
     props: CreateGameProps<T>,
     callback: Function,

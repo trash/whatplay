@@ -16,9 +16,27 @@ export enum BacklogPriority {
     High = 3
 }
 
+export enum GameRating {
+    NotRated = 0,
+    Disliked = 1,
+    Liked = 2
+}
+
+export const gameRatingsArray = [
+    {
+        value: GameRating.NotRated,
+        text: 'Not rated'
+    },
+    { value: GameRating.Disliked, text: '👎 Disiked' },
+    {
+        value: GameRating.Liked,
+        text: '👍 Liked'
+    }
+];
+
 interface GameLibraryEntryShared {
     gameId: string;
-    rating: number | null;
+    rating: GameRating;
     playedStatus: PlayedStatus;
     comments: string;
     backlogPriority: BacklogPriority | null;

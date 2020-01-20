@@ -9,6 +9,10 @@ import { userService } from '../services/user.service';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { GameUtilities } from '../models/game.util';
 import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
+import {
+    gameRatingsArray,
+    GameLibraryEntryClient
+} from '@shared/models/game-library-entry.model';
 
 interface LibraryProps {}
 
@@ -38,6 +42,17 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
 
     if (hydratedGameLibrary === null) {
         return null;
+    }
+
+    function updateFunction<K extends keyof GameLibraryEntryClient>(
+        gameLibraryEntryToUpdate: GameLibraryEntryClient,
+        property: K,
+        value: GameLibraryEntryClient[K]
+    ) {
+        console.log(gameLibraryEntryToUpdate, property, value);
+        userService.updateGameLibraryEntry(gameLibraryEntryToUpdate, {
+            [property]: value
+        });
     }
 
     return (
@@ -71,7 +86,24 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                     entry?.gameLibraryEntry.playedStatus!
                                 )}
                             </td>
-                            <td>{entry?.gameLibraryEntry.rating}</td>
+                            <td>
+                                <select
+                                    onChange={e =>
+                                        updateFunction(
+                                            entry?.gameLibraryEntry!,
+                                            'rating',
+                                            parseInt(e.target.value)
+                                        )
+                                    }
+                                    value={entry?.gameLibraryEntry.rating!}
+                                >
+                                    {gameRatingsArray.map(rating => (
+                                        <option value={rating.value}>
+                                            {rating.text}
+                                        </option>
+                                    ))}
+                                </select>
+                            </td>
                             <td>{entry?.gameLibraryEntry.backlogPriority}</td>
                             <td style={{ display: 'none' }}>
                                 {entry?.gameLibraryEntry.systemsOwned}

@@ -7,12 +7,14 @@ import {
     AddGamePost,
     GameLibraryEntryReferenceServer,
     GetGameLibraryPostClient,
-    GetGameLibraryPostServer
+    GetGameLibraryPostServer,
+    UpdateGameLibraryEntryPatch
 } from '@shared/models/user.model';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
 import {
     GameLibraryEntryServer,
-    PlayedStatus
+    PlayedStatus,
+    GameRating
 } from '@shared/models/game-library-entry.model';
 import { getUserIdFromRequest } from '../helpers.util';
 import { GameServer } from '@shared/models/game.model';
@@ -77,7 +79,7 @@ export const addGameToLibrary: ControllerMethod = async (
         );
         const libEntryResult = await libraryEntryCollection.insertOne({
             gameId: body.gameId,
-            rating: null,
+            rating: GameRating.NotRated,
             playedStatus: PlayedStatus.NotPlayed,
             comments: '',
             dateCompleted: null,
@@ -126,7 +128,7 @@ export const deleteGameFromLibrary: ControllerMethod = async (
     const [client, db] = await connectToDatabase();
     let response: Response;
 
-    const gameId = req.params.id;
+    const gameId = req.params.gameId;
     try {
         // 1) Delete the LibraryEntry
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
@@ -219,7 +221,7 @@ export const getGameLibrary: ControllerMethod = async (
                     {},
                     foundGameLibraryEntry,
                     {
-                        _id: foundGame._id.toHexString()
+                        _id: foundGameLibraryEntry._id.toHexString()
                     }
                 );
 
@@ -230,6 +232,45 @@ export const getGameLibrary: ControllerMethod = async (
             })
         };
         response = res.status(200).send(responseBody);
+    } catch (e) {
+        console.error(e);
+        response = res.status(500).send(e);
+    }
+    client.close();
+    return response;
+};
+
+export const updateGameLibraryEntry: ControllerMethod = async (
+    req: AuthenticatedRequest,
+    res
+) => {
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+    const body: UpdateGameLibraryEntryPatch = req.body;
+    if (!body) {
+        return res.status(400).send('Invalid patch request data.');
+    }
+
+    const gameLibraryEntryId = req.params.gameLibraryEntryId;
+    try {
+        // Update the LibraryEntry
+        const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
+            'gameLibraryEntry'
+        );
+        const libEntryResult = await libraryEntryCollection.updateOne(
+            {
+                _id: new ObjectId(gameLibraryEntryId)
+            },
+            {
+                $set: body
+            }
+        );
+        // console.log(libEntryResult, gameLibraryEntryId);
+
+        if (!libEntryResult.result.ok || libEntryResult.result.n === 0) {
+            throw new Error('Error updating Game Library Entry.');
+        }
+        response = res.status(204).send();
     } catch (e) {
         console.error(e);
         response = res.status(500).send(e);
