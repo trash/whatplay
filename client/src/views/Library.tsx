@@ -8,6 +8,7 @@ import { List } from 'immutable';
 import { userService } from '../services/user.service';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { GameUtilities } from '../models/game.util';
+import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
 
 interface LibraryProps {}
 
@@ -57,6 +58,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                         <th>Backlog Priority</th>
                         <th style={{ display: 'none' }}>Systems Owned</th>
                         <th style={{ display: 'none' }}>Id</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,6 +78,11 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                             </td>
                             <td style={{ display: 'none' }}>
                                 {entry?.gameLibraryEntry._id}
+                            </td>
+                            <td>
+                                <ToggleGameFromLibraryButton
+                                    game={entry?.game!}
+                                />
                             </td>
                         </tr>
                     ))}

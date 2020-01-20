@@ -8,6 +8,7 @@ import { useAuth0 } from '../services/ReactAuth';
 import { userService } from '../services/user.service';
 import { Permission } from '@shared/models/permission.model';
 import { DeleteGameButton } from './DeleteGameButton';
+import { ToggleGameFromLibraryButton } from './ToggleGameFromLibraryButton';
 
 type GameProps = {
     game: Game;
@@ -18,15 +19,9 @@ export const GameComponent: React.FC<GameProps> = props => {
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const { user, isAuthenticated } = useAuth0();
     let canEdit = false;
-    let hasGameInLibrary = false;
     if (user) {
         canEdit = userService.hasPermission(user, Permission.UpdateGame);
-        hasGameInLibrary = userService.hasGameInLibrary(props.game);
     }
-
-    const toggleGameFromLibrary = (game: Game) => {
-        return userService.toggleGameFromLibrary(game);
-    };
 
     if (isEditing) {
         const handleSubmit = async (
@@ -62,23 +57,10 @@ export const GameComponent: React.FC<GameProps> = props => {
                 <span>{props.game.title}</span>
                 <div className="game_title_controls">
                     {isAuthenticated && (
-                        <button
-                            className={classNames({
-                                loading: isSaving,
-                                warning: hasGameInLibrary
-                            })}
-                            onClick={() => toggleGameFromLibrary(props.game)}
-                        >
-                            <span
-                                className={classNames({
-                                    'icon-folder-plus': !hasGameInLibrary,
-                                    'icon-folder-minus': hasGameInLibrary
-                                })}
-                            ></span>
-                            {hasGameInLibrary
-                                ? 'Remove from Library'
-                                : 'Add to Library'}
-                        </button>
+                        <ToggleGameFromLibraryButton
+                            loading={isSaving}
+                            game={props.game}
+                        />
                     )}
 
                     {canEdit && (
