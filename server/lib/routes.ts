@@ -49,6 +49,9 @@ export default function(app: Application) {
             api.game.createGame(req, res)
         )
     );
+    app.get('/api/v1/games/search', (req, res) => {
+        api.game.searchGames(req, res);
+    });
     app.delete(
         '/api/v1/games/:id',
         requirePermissions('delete:game', (req, res) =>

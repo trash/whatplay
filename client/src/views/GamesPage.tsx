@@ -13,6 +13,8 @@ import { RootState } from 'typesafe-actions';
 import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
 import { Permission } from '@shared/models/permission.model';
+import { List } from 'immutable';
+import _ from 'lodash';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -31,6 +33,8 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         };
     });
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [searchText, setSearchText] = useState<string>('');
+    const [searchMatches, setSearchMatches] = useState<List<Game>>(List());
     const { user } = useAuth0();
     const canCreate = user
         ? userService.hasPermission(user, Permission.CreateGame)
@@ -51,6 +55,26 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         setIsSaving(false);
         return;
     };
+
+    const doSearch = async (searchText: string): Promise<Game[]> => {
+        console.log('not fucking debounced');
+        return await gameService.searchGames(searchText);
+    };
+
+    const debouncedSearch = _.debounce(doSearch, 1000, { leading: true });
+
+    const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchText = e.target.value;
+        setSearchMatches(List());
+        setSearchText(searchText);
+        if (!searchText) {
+            return;
+        }
+        const matches = await debouncedSearch(searchText);
+        // console.log('matches', matches);
+        setSearchMatches(List(matches));
+    };
+
     return (
         <div style={{ marginTop: '10px' }}>
             {canCreate && (
@@ -62,8 +86,16 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                     loading={isSaving}
                 />
             )}
+            <label>
+                Search
+                <input
+                    type="text"
+                    value={searchText}
+                    onChange={e => searchOnChange(e)}
+                />
+            </label>
             <div className="notesList">
-                {games.map(game => {
+                {(searchMatches.size ? searchMatches : games).map(game => {
                     return <GameComponent key={game!.id!} game={game!} />;
                 })}
             </div>

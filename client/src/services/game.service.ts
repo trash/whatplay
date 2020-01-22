@@ -30,6 +30,13 @@ class GameService {
         return games;
     }
 
+    async searchGames(searchText: string): Promise<Game[]> {
+        const games = await Api.get<GameServerJson[]>(
+            `/api/v1/games/search?search=${searchText}`
+        );
+        return games.map(g => GameUtilities.transformGameServertoGame(g));
+    }
+
     async createGame(game: GameStub): Promise<Game> {
         const newGame = await Api.post<GameStub, GameServerJson>(
             '/api/v1/games',

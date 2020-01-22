@@ -126,3 +126,37 @@ export const getAllGames: ControllerMethod = async (
     client.close();
     return response;
 };
+
+export const searchGames: ControllerMethod = async (req, res) => {
+    const searchTerm = req.query.search;
+    if (!searchTerm) {
+        return res.status(400).send('Missing search term.');
+    }
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+    try {
+        const collection = db.collection<GameServer>('games');
+
+        const matches = await collection
+            .aggregate([
+                {
+                    $match: {
+                        title: {
+                            $regex: searchTerm,
+                            $options: 'i'
+                        }
+                    }
+                }
+            ])
+            .toArray();
+        // console.log(matches);
+
+        response = res.status(200).send(matches);
+    } catch (e) {
+        console.log(e);
+        response = res.status(500).send(e);
+    }
+
+    client.close();
+    return response;
+};
