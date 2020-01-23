@@ -81,7 +81,18 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         }
     };
 
-    const resultsToShow = searchText ? searchMatches : games;
+    const resultsToShow = (searchText ? searchMatches : games)
+        // Sort client side for now
+        .sort((a, b) => {
+            const aSort = a.title.toLowerCase();
+            const bSort = b.title.toLowerCase();
+            if (aSort < bSort) {
+                return -1;
+            } else if (aSort > bSort) {
+                return 1;
+            }
+            return 0;
+        });
 
     return (
         <div style={{ marginTop: '10px' }}>
