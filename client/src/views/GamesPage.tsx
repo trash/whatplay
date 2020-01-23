@@ -14,13 +14,21 @@ import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
 import { Permission } from '@shared/models/permission.model';
 import { List } from 'immutable';
-import _ from 'lodash';
+import debounce from '../util/debounce';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
 };
 
 let calledOnce = false;
+
+const doSearch = async (searchText: string): Promise<Game[]> => {
+    const games = await gameService.searchGames(searchText);
+    // console.log('doSearch', searchText, games.length);
+    return games;
+};
+
+const debouncedSearch = debounce(doSearch, 250);
 
 export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     if (!calledOnce) {
@@ -56,13 +64,6 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         return;
     };
 
-    const doSearch = async (searchText: string): Promise<Game[]> => {
-        console.log('not fucking debounced');
-        return await gameService.searchGames(searchText);
-    };
-
-    const debouncedSearch = _.debounce(doSearch, 1000, { leading: true });
-
     const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const searchText = e.target.value;
         setSearchMatches(List());
@@ -70,10 +71,17 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         if (!searchText) {
             return;
         }
-        const matches = await debouncedSearch(searchText);
-        // console.log('matches', matches);
-        setSearchMatches(List(matches));
+        // Wrap the try for the case where it gets canceled
+        try {
+            const matches = await debouncedSearch(searchText);
+            // console.log('matches', matches);
+            setSearchMatches(List(matches));
+        } catch {
+            return;
+        }
     };
+
+    const resultsToShow = searchText ? searchMatches : games;
 
     return (
         <div style={{ marginTop: '10px' }}>
@@ -95,7 +103,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                 />
             </label>
             <div className="notesList">
-                {(searchMatches.size ? searchMatches : games).map(game => {
+                {resultsToShow.map(game => {
                     return <GameComponent key={game!.id!} game={game!} />;
                 })}
             </div>
