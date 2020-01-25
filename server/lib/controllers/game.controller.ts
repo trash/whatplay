@@ -145,7 +145,7 @@ export const searchGames: ControllerMethod = async (req, res) => {
         let matches: AggregationCursor<GameServer> | Cursor<GameServer>;
         let totalCount: number;
         if (!searchTerm) {
-            matches = await collection.find({});
+            matches = await collection.find({}).sort({ title: 1 });
             totalCount = await matches.count();
         } else {
             const regexMatch = {
@@ -156,7 +156,14 @@ export const searchGames: ControllerMethod = async (req, res) => {
                     }
                 }
             };
-            matches = await collection.aggregate([regexMatch]);
+            matches = await collection.aggregate([
+                regexMatch,
+                {
+                    $sort: {
+                        title: 1
+                    }
+                }
+            ]);
             const countCursor = (await collection.aggregate([
                 regexMatch,
                 {
