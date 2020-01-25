@@ -20,8 +20,11 @@ type GamesPageViewProps = {
     games: Immutable.List<Game>;
 };
 
-const doSearch = async (searchText: string): Promise<Game[]> => {
-    const games = await gameService.searchGames(searchText);
+const doSearch = async (
+    searchText: string,
+    currentPage: number
+): Promise<Game[]> => {
+    const games = await gameService.searchGames(searchText, currentPage);
     // console.log('doSearch', searchText, games.length);
     return games;
 };
@@ -34,6 +37,8 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             games: state.games.list
         };
     });
+    console.log(games);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [isLoadingResults, setIsLoadingResults] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>('');
@@ -44,8 +49,9 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         : false;
 
     const refetch = async () => {
-        await gameService.refetchAllGames();
-        setIsLoadingResults(false);
+        // await gameService.refetchAllGames();
+        runSearch('', currentPage);
+        // setIsLoadingResults(false);
     };
 
     React.useEffect(() => {
@@ -70,11 +76,14 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         return;
     };
 
-    const runSearch = async () => {
+    const runSearch = async (
+        runSearchText: string = searchText,
+        runSearchPage: number
+    ) => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
-            const matches = await debouncedSearch(searchText);
+            const matches = await debouncedSearch(runSearchText, runSearchPage);
             // console.log('matches', matches);
             setSearchMatches(List(matches));
             setIsLoadingResults(false);
@@ -87,32 +96,41 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         const searchText = e.target.value;
         setSearchMatches(List());
         setSearchText(searchText);
-        if (!searchText) {
-            return;
-        }
-        runSearch();
+        runSearch(searchText, currentPage);
     };
 
     // If there's an active search we need to refresh the results when there's a change
     // We could do this more efficiently but this is fine for now
     const onGameUpdate = () => {
         if (searchText) {
-            runSearch();
+            runSearch(searchText, currentPage);
         }
     };
 
-    const resultsToShow = (searchText ? searchMatches : games)
-        // Sort client side for now
-        .sort((a, b) => {
-            const aSort = a.title.toLowerCase();
-            const bSort = b.title.toLowerCase();
-            if (aSort < bSort) {
-                return -1;
-            } else if (aSort > bSort) {
-                return 1;
-            }
-            return 0;
-        });
+    const updatePage = (delta: number) => {
+        let nextPage = currentPage + delta;
+        if (nextPage < 0) {
+            nextPage = 0;
+        }
+        if (nextPage === currentPage) {
+            return;
+        }
+        setCurrentPage(nextPage);
+        runSearch(searchText, nextPage);
+    };
+
+    // Render stuff
+    // Sort client side for now
+    const resultsToShow = searchMatches.sort((a, b) => {
+        const aSort = a.title.toLowerCase();
+        const bSort = b.title.toLowerCase();
+        if (aSort < bSort) {
+            return -1;
+        } else if (aSort > bSort) {
+            return 1;
+        }
+        return 0;
+    });
     let resultsElements: JSX.Element[] | JSX.Element = [];
     if (isLoadingResults) {
         resultsElements = [];
@@ -153,6 +171,11 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             </label>
 
             {isLoadingResults && <h3 className="loading">Loading...</h3>}
+            <div className="paginationControls">
+                <button onClick={() => updatePage(-1)}>Previous</button>
+                <div>Page {currentPage}</div>
+                <button onClick={() => updatePage(+1)}>Next</button>
+            </div>
             <div className="notesList">{resultsElements}</div>
         </div>
     );

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
+import { ObjectId, AggregationCursor, Cursor } from 'mongodb';
 import {
     GameServer,
     GamePatch,
@@ -10,6 +10,7 @@ import { getCurrentUtcTime } from '../helpers.util';
 import { ControllerMethod } from './ControllerMethod';
 import { connectToDatabase } from '../database.util';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
+import { paginationMax } from '../constants';
 
 export const createGame: ControllerMethod = async (
     req: AuthenticatedRequest,
@@ -108,15 +109,20 @@ export const updateGame: ControllerMethod = async (req, res) => {
 };
 
 export const getAllGames: ControllerMethod = async (
-    _req: Request,
+    req: Request,
     res: Response
 ) => {
+    const page = req.query.page || 0;
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
         const collection = db.collection<GameServer>('games');
 
-        const matches = await collection.find({}).toArray();
+        const matches = await collection
+            .find({})
+            .limit(paginationMax)
+            .skip(page * paginationMax)
+            .toArray();
         // console.log(matches);
 
         response = res.status(200).send(matches);
@@ -129,16 +135,17 @@ export const getAllGames: ControllerMethod = async (
 
 export const searchGames: ControllerMethod = async (req, res) => {
     const searchTerm = req.query.search;
-    if (!searchTerm) {
-        return res.status(400).send('Missing search term.');
-    }
+    const page = req.query.page || 0;
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
         const collection = db.collection<GameServer>('games');
 
-        const matches = await collection
-            .aggregate([
+        let matches: AggregationCursor<GameServer> | Cursor<GameServer>;
+        if (!searchTerm) {
+            matches = await collection.find({});
+        } else {
+            matches = await collection.aggregate([
                 {
                     $match: {
                         title: {
@@ -147,11 +154,15 @@ export const searchGames: ControllerMethod = async (req, res) => {
                         }
                     }
                 }
-            ])
+            ]);
+        }
+        const arrayMatches = await matches
+            .limit(paginationMax)
+            .skip(page * paginationMax)
             .toArray();
-        // console.log(matches);
+        // console.log(arrayMatches);
 
-        response = res.status(200).send(matches);
+        response = res.status(200).send(arrayMatches);
     } catch (e) {
         console.log(e);
         response = res.status(500).send(e);
