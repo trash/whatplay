@@ -8,6 +8,7 @@ import { Permission } from '@shared/models/permission.model';
 type DeleteGameButtonProps = {
     gameId: string;
     loading?: boolean;
+    onDelete: Function;
 };
 
 export const DeleteGameButton: React.FC<DeleteGameButtonProps> = props => {
@@ -28,6 +29,7 @@ export const DeleteGameButton: React.FC<DeleteGameButtonProps> = props => {
         if (window.confirm('Are you sure you want to delete this game?')) {
             setIsDeleting(true);
             await gameService.deleteGame(props.gameId);
+            props.onDelete();
         }
     };
     return (

@@ -52,7 +52,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         refetch();
     }, []);
 
-    const handleSubmit = async (
+    const onCreateGame = async (
         event: React.FormEvent,
         game: GameStub
     ): Promise<void> => {
@@ -63,18 +63,14 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         setIsSaving(true);
         try {
             await gameService.createGame(game);
+            onGameUpdate();
         } catch (e) {}
         setIsSaving(false);
+
         return;
     };
 
-    const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchText = e.target.value;
-        setSearchMatches(List());
-        setSearchText(searchText);
-        if (!searchText) {
-            return;
-        }
+    const runSearch = async () => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
@@ -84,6 +80,24 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             setIsLoadingResults(false);
         } catch {
             return;
+        }
+    };
+
+    const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchText = e.target.value;
+        setSearchMatches(List());
+        setSearchText(searchText);
+        if (!searchText) {
+            return;
+        }
+        runSearch();
+    };
+
+    // If there's an active search we need to refresh the results when there's a change
+    // We could do this more efficiently but this is fine for now
+    const onGameUpdate = () => {
+        if (searchText) {
+            runSearch();
         }
     };
 
@@ -105,7 +119,13 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     } else if (resultsToShow.size) {
         resultsElements = resultsToShow
             .map(game => {
-                return <GameComponent key={game!.id!} game={game!} />;
+                return (
+                    <GameComponent
+                        key={game!.id!}
+                        game={game!}
+                        onUpdate={() => onGameUpdate()}
+                    />
+                );
             })
             .toArray();
     } else {
@@ -117,7 +137,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             {canCreate && (
                 <CreateGame
                     initialGameState={GameUtilities.newGameState()}
-                    onSubmit={handleSubmit}
+                    onSubmit={onCreateGame}
                     titleText="Add A New Game To The Database"
                     submitButtonText="Submit"
                     loading={isSaving}

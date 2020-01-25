@@ -12,6 +12,7 @@ import { ToggleGameFromLibraryButton } from './ToggleGameFromLibraryButton';
 
 type GameProps = {
     game: Game;
+    onUpdate: Function;
 };
 
 export const GameComponent: React.FC<GameProps> = props => {
@@ -24,7 +25,7 @@ export const GameComponent: React.FC<GameProps> = props => {
     }
 
     if (isEditing) {
-        const handleSubmit = async (
+        const handleEditSubmit = async (
             event: React.FormEvent,
             game: Game
         ): Promise<void> => {
@@ -37,13 +38,14 @@ export const GameComponent: React.FC<GameProps> = props => {
             // If it succeeds close the edit view
             setIsEditing(false);
             setIsSaving(false);
+            props.onUpdate();
             return;
         };
 
         return (
             <CreateGame
                 initialGameState={props.game}
-                onSubmit={handleSubmit}
+                onSubmit={handleEditSubmit}
                 titleText="Update Game"
                 submitButtonText="Save"
                 loading={isSaving}
@@ -77,6 +79,7 @@ export const GameComponent: React.FC<GameProps> = props => {
                     <DeleteGameButton
                         loading={isSaving}
                         gameId={props.game.id}
+                        onDelete={() => props.onUpdate()}
                     />
                 </div>
             </div>
