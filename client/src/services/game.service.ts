@@ -8,7 +8,8 @@ import {
     GameStub,
     GamePatch,
     GameServerJson,
-    GamePatchServer
+    GamePatchServer,
+    GameSearchResponse
 } from '@shared/models/game.model';
 import moment from 'moment';
 import {
@@ -31,10 +32,12 @@ class GameService {
     }
 
     async searchGames(searchText: string, page = 0): Promise<Game[]> {
-        const games = await Api.get<GameServerJson[]>(
+        const response = await Api.get<GameSearchResponse>(
             `/api/v1/games/search?search=${searchText}&page=${page}`
         );
-        return games.map(g => GameUtilities.transformGameServertoGame(g));
+        return response.results.map(g =>
+            GameUtilities.transformGameServertoGame(g)
+        );
     }
 
     async createGame(game: GameStub): Promise<Game> {

@@ -93,10 +93,13 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     };
 
     const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchText = e.target.value;
+        const newSearchText = e.target.value;
+        if (searchText !== newSearchText) {
+            setCurrentPage(0);
+        }
         setSearchMatches(List());
-        setSearchText(searchText);
-        runSearch(searchText, currentPage);
+        setSearchText(newSearchText);
+        runSearch(newSearchText, currentPage);
     };
 
     // If there's an active search we need to refresh the results when there's a change

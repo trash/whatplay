@@ -4,7 +4,8 @@ import {
     GameServer,
     GamePatch,
     GameNotSavedServer,
-    GamePatchServer
+    GamePatchServer,
+    GameSearchResponse
 } from '@shared/models/game.model';
 import { getCurrentUtcTime } from '../helpers.util';
 import { ControllerMethod } from './ControllerMethod';
@@ -142,27 +143,52 @@ export const searchGames: ControllerMethod = async (req, res) => {
         const collection = db.collection<GameServer>('games');
 
         let matches: AggregationCursor<GameServer> | Cursor<GameServer>;
+        let totalCount: number;
         if (!searchTerm) {
             matches = await collection.find({});
+            totalCount = await matches.count();
         } else {
-            matches = await collection.aggregate([
-                {
-                    $match: {
-                        title: {
-                            $regex: searchTerm,
-                            $options: 'i'
-                        }
+            const regexMatch = {
+                $match: {
+                    title: {
+                        $regex: searchTerm,
+                        $options: 'i'
                     }
                 }
-            ]);
+            };
+            matches = await collection.aggregate([regexMatch]);
+            const countCursor = (await collection.aggregate([
+                regexMatch,
+                {
+                    $count: 'count'
+                }
+            ])) as AggregationCursor<{ count: number }>;
+            const countResult = await countCursor.toArray();
+            if (countResult.length) {
+                totalCount = countResult[0].count;
+            } else {
+                totalCount = 0;
+            }
         }
+        // console.log(totalCount);
+
         const arrayMatches = await matches
             .limit(paginationMax)
             .skip(page * paginationMax)
             .toArray();
         // console.log(arrayMatches);
 
-        response = res.status(200).send(arrayMatches);
+        const responseBody: GameSearchResponse = {
+            totalCount,
+            results: arrayMatches.map(g =>
+                Object.assign({}, g, {
+                    _id: g._id.toHexString()
+                })
+            ),
+            maxPage: Math.floor(totalCount / paginationMax)
+        };
+
+        response = res.status(200).send(responseBody);
     } catch (e) {
         console.log(e);
         response = res.status(500).send(e);

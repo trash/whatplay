@@ -1,4 +1,5 @@
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
+import { PaginatedResponse } from './paginated.model';
 
 // The data the client send to the server for a PATCH
 export type GamePatch = {
@@ -28,3 +29,5 @@ export interface GameNotSavedServer extends GameStub {
 
 export interface GameServer extends MongoDocument, GameNotSavedServer {}
 export interface GameServerJson extends MongoDocumentJson, GameNotSavedServer {}
+
+export type GameSearchResponse = PaginatedResponse<GameServerJson>;
