@@ -20,8 +20,6 @@ type GamesPageViewProps = {
     games: Immutable.List<Game>;
 };
 
-let calledOnce = false;
-
 const doSearch = async (searchText: string): Promise<Game[]> => {
     const games = await gameService.searchGames(searchText);
     // console.log('doSearch', searchText, games.length);
@@ -31,22 +29,28 @@ const doSearch = async (searchText: string): Promise<Game[]> => {
 const debouncedSearch = debounce(doSearch, 250);
 
 export const GamesPageView: React.FC<GamesPageViewProps> = () => {
-    if (!calledOnce) {
-        gameService.refetchAllGames();
-        calledOnce = true;
-    }
     const { games } = useSelector<RootState, GamesPageViewProps>(state => {
         return {
             games: state.games.list
         };
     });
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [isLoadingResults, setIsLoadingResults] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>('');
     const [searchMatches, setSearchMatches] = useState<List<Game>>(List());
     const { user } = useAuth0();
     const canCreate = user
         ? userService.hasPermission(user, Permission.CreateGame)
         : false;
+
+    const refetch = async () => {
+        await gameService.refetchAllGames();
+        setIsLoadingResults(false);
+    };
+
+    React.useEffect(() => {
+        refetch();
+    }, []);
 
     const handleSubmit = async (
         event: React.FormEvent,
@@ -73,9 +77,11 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         }
         // Wrap the try for the case where it gets canceled
         try {
+            setIsLoadingResults(true);
             const matches = await debouncedSearch(searchText);
             // console.log('matches', matches);
             setSearchMatches(List(matches));
+            setIsLoadingResults(false);
         } catch {
             return;
         }
@@ -93,6 +99,18 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
             }
             return 0;
         });
+    let resultsElements: JSX.Element[] | JSX.Element = [];
+    if (isLoadingResults) {
+        resultsElements = [];
+    } else if (resultsToShow.size) {
+        resultsElements = resultsToShow
+            .map(game => {
+                return <GameComponent key={game!.id!} game={game!} />;
+            })
+            .toArray();
+    } else {
+        resultsElements = <h3>No results.</h3>;
+    }
 
     return (
         <div style={{ marginTop: '10px' }}>
@@ -113,11 +131,9 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                     onChange={e => searchOnChange(e)}
                 />
             </label>
-            <div className="notesList">
-                {resultsToShow.map(game => {
-                    return <GameComponent key={game!.id!} game={game!} />;
-                })}
-            </div>
+
+            {isLoadingResults && <h3 className="loading">Loading...</h3>}
+            <div className="notesList">{resultsElements}</div>
         </div>
     );
 };

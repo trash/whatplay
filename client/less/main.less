@@ -83,6 +83,17 @@ body {
     }
 }
 
+// Loading icon mixin
+.loading() {
+    &:before {
+        display: inline-block;
+        font-family: 'icomoon';
+        content: @spinner;
+        .spin();
+        margin-right: @iconMargin;
+    }
+}
+
 button {
     border: 0;
     cursor: pointer;
@@ -96,13 +107,6 @@ button {
         .button(@brandError);
     }
     &.loading {
-        &:before {
-            display: inline-block;
-            font-family: 'icomoon';
-            content: @spinner;
-            .spin();
-            margin-right: @iconMargin;
-        }
         [class^='icon-']{
             display: none;
         }
@@ -111,6 +115,11 @@ button {
     [class^='icon-']{
         margin-right: @iconMargin;
     }
+}
+
+// Add a spinning loading indicator to something
+.loading {
+    .loading();
 }
 
 label {
