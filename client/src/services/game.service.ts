@@ -13,31 +13,25 @@ import {
 } from '@shared/models/game.model';
 import moment from 'moment';
 import {
-    updateGames,
     addGame,
     updateGame,
-    deleteGame
+    deleteGame,
+    updateSearchResults
 } from '../redux/games/games.actions';
 
 class GameService {
-    private async getAllGames(): Promise<Game[]> {
-        const gamesServer = await Api.get<GameServerJson[]>(`/api/v1/games`);
-        return gamesServer.map(g => GameUtilities.transformGameServertoGame(g));
-    }
-
-    async refetchAllGames(): Promise<Game[]> {
-        let games = await this.getAllGames();
-        store.dispatch(updateGames(games));
-        return games;
-    }
-
     async searchGames(searchText: string, page = 0): Promise<Game[]> {
         const response = await Api.get<GameSearchResponse>(
             `/api/v1/games/search?search=${searchText}&page=${page}`
         );
-        return response.results.map(g =>
+
+        const matches = response.results.map(g =>
             GameUtilities.transformGameServertoGame(g)
         );
+        store.dispatch(
+            updateSearchResults(matches, response.totalCount, response.maxPage)
+        );
+        return matches;
     }
 
     async createGame(game: GameStub): Promise<Game> {
@@ -76,13 +70,5 @@ class GameService {
         await Api.delete(`/api/v1/games/${id}`);
         store.dispatch(deleteGame(id));
     }
-
-    // async updateNote(id: number, note: string): Promise<Note> {
-    //     await Api.patch<NotePatchServer, null>(`/api/v1/notes/${id}`, {
-    //         note
-    //     });
-    //     store.dispatch(updateNote(id, note));
-    //     return store.getState().notes.find(n => n!.id === id);
-    // }
 }
 export const gameService = new GameService();

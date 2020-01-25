@@ -14,11 +14,11 @@ import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
 import { Permission } from '@shared/models/permission.model';
 import debounce from '../util/debounce';
-import { updateGames } from '../redux/games/games.actions';
-import { store } from '../redux/store';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
+    searchResultsTotalMatches: number;
+    searchResultsMaxPage: number;
 };
 
 const searchApiCall = async (
@@ -33,9 +33,14 @@ const searchApiCall = async (
 const debouncedSearchApiCall = debounce(searchApiCall, 250);
 
 export const GamesPageView: React.FC<GamesPageViewProps> = () => {
-    const { games } = useSelector<RootState, GamesPageViewProps>(state => {
+    const { games, searchResultsMaxPage } = useSelector<
+        RootState,
+        GamesPageViewProps
+    >(state => {
         return {
-            games: state.games.searchResults
+            games: state.games.searchResults,
+            searchResultsMaxPage: state.games.searchResultsMaxPage,
+            searchResultsTotalMatches: state.games.searchResultsTotalMatches
         };
     });
     // console.log(games);
@@ -79,11 +84,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
-            const matches = await debouncedSearchApiCall(
-                runSearchText,
-                runSearchPage
-            );
-            store.dispatch(updateGames(matches));
+            await debouncedSearchApiCall(runSearchText, runSearchPage);
             // console.log('matches', matches);
             setIsLoadingResults(false);
         } catch {
@@ -158,9 +159,18 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
 
     const paginationControls = (
         <div className="paginationControls">
-            <button onClick={() => updatePage(-1)}>Previous</button>
-            <div>Page {currentPage + 1}</div>
-            <button onClick={() => updatePage(+1)}>Next</button>
+            <button disabled={currentPage === 0} onClick={() => updatePage(-1)}>
+                Previous
+            </button>
+            <div>
+                Page {currentPage + 1} of {searchResultsMaxPage + 1}
+            </div>
+            <button
+                disabled={currentPage === searchResultsMaxPage}
+                onClick={() => updatePage(+1)}
+            >
+                Next
+            </button>
         </div>
     );
 
