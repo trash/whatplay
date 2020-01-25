@@ -9,6 +9,7 @@ type CreateGameProps<T extends GameStub> = {
     titleText: string;
     submitButtonText: string;
     loading: boolean;
+    showHideButton?: boolean;
 };
 
 function updateGamePropertyGenerator<T extends GameStub>(
@@ -30,102 +31,136 @@ function onSubmit<T extends GameStub>(
     props.onSubmit(e, game);
     callback(game);
 }
+
 export const CreateGame: <T extends GameStub>(
     props: CreateGameProps<T>
 ) => React.ReactElement<CreateGameProps<T>> = props => {
     const [game, setGame] = useState(props.initialGameState);
+    const [isShowing, setIsShowing] = useState(true);
     const updateGameProperty = updateGamePropertyGenerator(setGame);
+
+    const toggleShowHide = (e: React.FormEvent<any>) => {
+        e.preventDefault();
+        setIsShowing(!isShowing);
+    };
+
     return (
         <form
             onSubmit={e =>
                 onSubmit(props, () => setGame(props.initialGameState), e, game)
             }
         >
-            <div className="form_title">{props.titleText}</div>
-            <div>
-                <label>
-                    Title
-                    <input
-                        required
-                        type="text"
-                        value={game.title}
-                        onChange={e =>
-                            updateGameProperty(game, 'title', e.target.value)
-                        }
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Time To Beat
-                    <input
-                        required
-                        type="number"
-                        value={game.timeToBeat}
-                        onChange={e =>
-                            updateGameProperty(
-                                game,
-                                'timeToBeat',
-                                parseFloat(e.target.value)
-                            )
-                        }
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Genre(s)
-                    <select
-                        multiple
-                        required
-                        value={game.genres}
-                        onChange={e =>
-                            updateGameProperty(
-                                game,
-                                'genres',
-                                Array.from(e.target.selectedOptions).map(
-                                    o => o.value
-                                )
-                            )
-                        }
-                    >
-                        {genres.map(g => (
-                            <option key={g}>{g}</option>
-                        ))}
-                    </select>
-                </label>
-            </div>
-            <div>
-                <label>
-                    System(s)
-                    <select
-                        multiple
-                        required
-                        value={game.systems}
-                        onChange={e =>
-                            updateGameProperty(
-                                game,
-                                'systems',
-                                Array.from(e.target.selectedOptions).map(
-                                    o => o.value
-                                )
-                            )
-                        }
-                    >
-                        {systems.map(s => (
-                            <option key={s}>{s}</option>
-                        ))}
-                    </select>
-                </label>
+            {props.showHideButton && (
+                <button
+                    onClick={e => toggleShowHide(e)}
+                    style={{ float: 'right' }}
+                >
+                    {isShowing ? 'Hide' : 'Show'}
+                </button>
+            )}
+            <div
+                className="form_title"
+                style={{
+                    marginTop: props.showHideButton ? '10px' : ''
+                }}
+            >
+                {props.titleText}
             </div>
 
-            <button
-                className={classNames('primary', {
-                    loading: props.loading
-                })}
-            >
-                {props.submitButtonText}
-            </button>
+            {isShowing && (
+                <React.Fragment>
+                    <div>
+                        <label>
+                            Title
+                            <input
+                                required
+                                type="text"
+                                value={game.title}
+                                onChange={e =>
+                                    updateGameProperty(
+                                        game,
+                                        'title',
+                                        e.target.value
+                                    )
+                                }
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Time To Beat
+                            <input
+                                required
+                                type="number"
+                                value={game.timeToBeat}
+                                onChange={e =>
+                                    updateGameProperty(
+                                        game,
+                                        'timeToBeat',
+                                        parseFloat(e.target.value)
+                                    )
+                                }
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Genre(s)
+                            <select
+                                multiple
+                                required
+                                value={game.genres}
+                                size={genres.length}
+                                onChange={e =>
+                                    updateGameProperty(
+                                        game,
+                                        'genres',
+                                        Array.from(
+                                            e.target.selectedOptions
+                                        ).map(o => o.value)
+                                    )
+                                }
+                            >
+                                {genres.map(g => (
+                                    <option key={g}>{g}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            System(s)
+                            <select
+                                multiple
+                                required
+                                value={game.systems}
+                                size={systems.length}
+                                onChange={e =>
+                                    updateGameProperty(
+                                        game,
+                                        'systems',
+                                        Array.from(
+                                            e.target.selectedOptions
+                                        ).map(o => o.value)
+                                    )
+                                }
+                            >
+                                {systems.map(s => (
+                                    <option key={s}>{s}</option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
+
+                    <button
+                        className={classNames('primary', {
+                            loading: props.loading
+                        })}
+                    >
+                        {props.submitButtonText}
+                    </button>
+                </React.Fragment>
+            )}
         </form>
     );
 };

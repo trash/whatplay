@@ -7,6 +7,15 @@ import { useAuth0 } from '../services/ReactAuth';
 type Props = {
     game: Game;
     loading?: boolean;
+    shortText?: boolean;
+};
+
+const getText = (hasGameInLibrary: boolean, shortText = false): string => {
+    if (!hasGameInLibrary) {
+        return shortText ? 'Add' : 'Add to Library';
+    } else {
+        return shortText ? 'Remove' : 'Remove from Library';
+    }
 };
 
 export const ToggleGameFromLibraryButton: React.FC<Props> = props => {
@@ -32,7 +41,7 @@ export const ToggleGameFromLibraryButton: React.FC<Props> = props => {
                     'icon-folder-minus': hasGameInLibrary
                 })}
             ></span>
-            {hasGameInLibrary ? 'Remove from Library' : 'Add to Library'}
+            {getText(hasGameInLibrary, props.shortText)}
         </button>
     );
 };

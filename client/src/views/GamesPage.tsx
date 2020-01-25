@@ -182,6 +182,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                     onSubmit={onCreateGame}
                     titleText="Add A New Game To The Database"
                     submitButtonText="Submit"
+                    showHideButton={true}
                     loading={isCreatingGame}
                 />
             )}

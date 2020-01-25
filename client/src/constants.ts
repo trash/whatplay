@@ -8,6 +8,7 @@ export const genres = [
     'Open World',
     'Shooter',
     'VR',
+    'Hack and Slash',
     'MMO',
     'Simulation',
     'Rhythm',

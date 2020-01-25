@@ -158,6 +158,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                             <td>
                                 <ToggleGameFromLibraryButton
                                     game={entry?.game!}
+                                    shortText={true}
                                 />
                             </td>
                         </tr>
