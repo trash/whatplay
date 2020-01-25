@@ -11,7 +11,8 @@ import { GameUtilities } from '../models/game.util';
 import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
 import {
     gameRatingsArray,
-    GameLibraryEntryClient
+    GameLibraryEntryClient,
+    backlogPriorityArray
 } from '@shared/models/game-library-entry.model';
 
 interface LibraryProps {}
@@ -107,7 +108,29 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                     ))}
                                 </select>
                             </td>
-                            <td>{entry?.gameLibraryEntry.backlogPriority}</td>
+                            <td>
+                                <select
+                                    onChange={e =>
+                                        updateFunction(
+                                            entry?.gameLibraryEntry!,
+                                            'backlogPriority',
+                                            parseInt(e.target.value)
+                                        )
+                                    }
+                                    value={
+                                        entry?.gameLibraryEntry.backlogPriority!
+                                    }
+                                >
+                                    {backlogPriorityArray.map(priority => (
+                                        <option
+                                            key={priority.value}
+                                            value={priority.value}
+                                        >
+                                            {priority.text}
+                                        </option>
+                                    ))}
+                                </select>
+                            </td>
                             <td style={{ display: 'none' }}>
                                 {entry?.gameLibraryEntry.systemsOwned}
                             </td>

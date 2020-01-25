@@ -14,7 +14,8 @@ import { AuthenticatedRequest } from './AuthenticatedRequest';
 import {
     GameLibraryEntryServer,
     PlayedStatus,
-    GameRating
+    GameRating,
+    BacklogPriority
 } from '@shared/models/game-library-entry.model';
 import { getUserIdFromRequest } from '../helpers.util';
 import { GameServer } from '@shared/models/game.model';
@@ -83,7 +84,7 @@ export const addGameToLibrary: ControllerMethod = async (
             playedStatus: PlayedStatus.NotPlayed,
             comments: '',
             dateCompleted: null,
-            backlogPriority: null,
+            backlogPriority: BacklogPriority.None,
             systemsOwned: []
         });
 

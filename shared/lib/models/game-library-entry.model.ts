@@ -34,6 +34,25 @@ export const gameRatingsArray = [
     }
 ];
 
+export const backlogPriorityArray = [
+    {
+        value: BacklogPriority.None,
+        text: 'Not set'
+    },
+    {
+        value: BacklogPriority.Low,
+        text: 'Low'
+    },
+    {
+        value: BacklogPriority.Medium,
+        text: 'Medium'
+    },
+    {
+        value: BacklogPriority.High,
+        text: 'High'
+    }
+];
+
 interface GameLibraryEntryShared {
     gameId: string;
     rating: GameRating;
