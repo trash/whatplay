@@ -13,14 +13,15 @@ import { RootState } from 'typesafe-actions';
 import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
 import { Permission } from '@shared/models/permission.model';
-import { List } from 'immutable';
 import debounce from '../util/debounce';
+import { updateGames } from '../redux/games/games.actions';
+import { store } from '../redux/store';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
 };
 
-const doSearch = async (
+const searchApiCall = async (
     searchText: string,
     currentPage: number
 ): Promise<Game[]> => {
@@ -29,33 +30,28 @@ const doSearch = async (
     return games;
 };
 
-const debouncedSearch = debounce(doSearch, 250);
+const debouncedSearchApiCall = debounce(searchApiCall, 250);
 
 export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     const { games } = useSelector<RootState, GamesPageViewProps>(state => {
         return {
-            games: state.games.list
+            games: state.games.searchResults
         };
     });
-    console.log(games);
+    // console.log(games);
+
     const [currentPage, setCurrentPage] = useState<number>(0);
-    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [isCreatingGame, setIsCreatingGame] = useState<boolean>(false);
     const [isLoadingResults, setIsLoadingResults] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>('');
-    const [searchMatches, setSearchMatches] = useState<List<Game>>(List());
     const { user } = useAuth0();
     const canCreate = user
         ? userService.hasPermission(user, Permission.CreateGame)
         : false;
 
-    const refetch = async () => {
-        // await gameService.refetchAllGames();
-        runSearch('', currentPage);
-        // setIsLoadingResults(false);
-    };
-
+    // Fetch initial results on first render
     React.useEffect(() => {
-        refetch();
+        runSearch('', currentPage);
     }, []);
 
     const onCreateGame = async (
@@ -63,15 +59,15 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         game: GameStub
     ): Promise<void> => {
         event.preventDefault();
-        if (isSaving) {
+        if (isCreatingGame) {
             return;
         }
-        setIsSaving(true);
+        setIsCreatingGame(true);
         try {
             await gameService.createGame(game);
             onGameUpdate();
         } catch (e) {}
-        setIsSaving(false);
+        setIsCreatingGame(false);
 
         return;
     };
@@ -83,9 +79,12 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
-            const matches = await debouncedSearch(runSearchText, runSearchPage);
+            const matches = await debouncedSearchApiCall(
+                runSearchText,
+                runSearchPage
+            );
+            store.dispatch(updateGames(matches));
             // console.log('matches', matches);
-            setSearchMatches(List(matches));
             setIsLoadingResults(false);
         } catch {
             return;
@@ -94,12 +93,13 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
 
     const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const newSearchText = e.target.value;
+        let page = currentPage;
         if (searchText !== newSearchText) {
             setCurrentPage(0);
+            page = 0;
         }
-        setSearchMatches(List());
         setSearchText(newSearchText);
-        runSearch(newSearchText, currentPage);
+        runSearch(newSearchText, page);
     };
 
     // If there's an active search we need to refresh the results when there's a change
@@ -122,9 +122,10 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         runSearch(searchText, nextPage);
     };
 
-    // Render stuff
+    // RENDERING STUFF
+
     // Sort client side for now
-    const resultsToShow = searchMatches.sort((a, b) => {
+    const resultsToShow = games.sort((a, b) => {
         const aSort = a.title.toLowerCase();
         const bSort = b.title.toLowerCase();
         if (aSort < bSort) {
@@ -134,6 +135,8 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         }
         return 0;
     });
+
+    // What to show for the list of games depending on current search/loading state
     let resultsElements: JSX.Element[] | JSX.Element = [];
     if (isLoadingResults) {
         resultsElements = [];
@@ -153,6 +156,14 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         resultsElements = <h3>No results.</h3>;
     }
 
+    const paginationControls = (
+        <div className="paginationControls">
+            <button onClick={() => updatePage(-1)}>Previous</button>
+            <div>Page {currentPage + 1}</div>
+            <button onClick={() => updatePage(+1)}>Next</button>
+        </div>
+    );
+
     return (
         <div style={{ marginTop: '10px' }}>
             {canCreate && (
@@ -161,7 +172,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                     onSubmit={onCreateGame}
                     titleText="Add A New Game To The Database"
                     submitButtonText="Submit"
-                    loading={isSaving}
+                    loading={isCreatingGame}
                 />
             )}
             <label>
@@ -173,13 +184,10 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
                 />
             </label>
 
+            {paginationControls}
             {isLoadingResults && <h3 className="loading">Loading...</h3>}
-            <div className="paginationControls">
-                <button onClick={() => updatePage(-1)}>Previous</button>
-                <div>Page {currentPage}</div>
-                <button onClick={() => updatePage(+1)}>Next</button>
-            </div>
             <div className="notesList">{resultsElements}</div>
+            {!isLoadingResults && resultsToShow.size > 0 && paginationControls}
         </div>
     );
 };

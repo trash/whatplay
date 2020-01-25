@@ -7,10 +7,10 @@ import { addGame, deleteGame, updateGame, updateGames } from './games.actions';
 // Should be able to delete this when the types are properly fixed for inference
 // on reducers
 export type GamesReducersType = {
-    list: List<Game>;
+    searchResults: List<Game>;
 };
 
-export const list = createReducer(List() as List<Game>)
+export const searchResults = createReducer(List() as List<Game>)
     .handleAction(addGame, (state, action) => state.push(action.payload))
     .handleAction(deleteGame, (state, action) => {
         const id = action.payload;
@@ -26,5 +26,5 @@ export const list = createReducer(List() as List<Game>)
     .handleAction(updateGames, (_state, action) => List(action.payload));
 
 export const gamesReducers = combineReducers<GamesReducersType>({
-    list
+    searchResults
 });
