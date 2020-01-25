@@ -1,12 +1,14 @@
 import { Moment } from 'moment';
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
 
+// Ordered from lowest priority to highest priority in terms of what
+// people likely want to play next/finish first
 export enum PlayedStatus {
-    Playing,
-    PlayedWantToComplete,
-    NotPlayed,
+    PlayedNotGoingToComplete,
     Completed,
-    PlayedNotGoingToComplete
+    NotPlayed,
+    PlayedWantToComplete,
+    Playing
 }
 
 export enum BacklogPriority {
@@ -50,6 +52,29 @@ export const backlogPriorityArray = [
     {
         value: BacklogPriority.High,
         text: 'High'
+    }
+];
+
+export const playedStatusArray = [
+    {
+        value: PlayedStatus.PlayedNotGoingToComplete,
+        text: 'Played. Not going to complete.'
+    },
+    {
+        value: PlayedStatus.Completed,
+        text: 'Completed.'
+    },
+    {
+        value: PlayedStatus.NotPlayed,
+        text: 'Not played.'
+    },
+    {
+        value: PlayedStatus.PlayedWantToComplete,
+        text: 'Played at some point. Want to complete.'
+    },
+    {
+        value: PlayedStatus.Playing,
+        text: 'Current playing'
     }
 ];
 

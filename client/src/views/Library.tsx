@@ -7,12 +7,12 @@ import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { List } from 'immutable';
 import { userService } from '../services/user.service';
 import { HydratedGameLibraryClient } from '../models/user.model';
-import { GameUtilities } from '../models/game.util';
 import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
 import {
     gameRatingsArray,
     GameLibraryEntryClient,
-    backlogPriorityArray
+    backlogPriorityArray,
+    playedStatusArray
 } from '@shared/models/game-library-entry.model';
 
 interface LibraryProps {}
@@ -83,9 +83,27 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                             <td>{entry?.game.title}</td>
                             <td>{entry?.game.timeToBeat}</td>
                             <td>
-                                {GameUtilities.playedStatus(
-                                    entry?.gameLibraryEntry.playedStatus!
-                                )}
+                                <select
+                                    onChange={e =>
+                                        updateFunction(
+                                            entry?.gameLibraryEntry!,
+                                            'playedStatus',
+                                            parseInt(e.target.value)
+                                        )
+                                    }
+                                    value={
+                                        entry?.gameLibraryEntry.playedStatus!
+                                    }
+                                >
+                                    {playedStatusArray.map(playedStatus => (
+                                        <option
+                                            key={playedStatus.value}
+                                            value={playedStatus.value}
+                                        >
+                                            {playedStatus.text}
+                                        </option>
+                                    ))}
+                                </select>
                             </td>
                             <td>
                                 <select
