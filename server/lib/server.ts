@@ -15,7 +15,6 @@ const port = process.env.port || process.env.PORT || 5000;
 // Express settings
 import { config } from './config';
 import routes from './routes';
-import { sslRedirectMiddleware } from './middleware/sslRedirect';
 
 const app = express();
 
@@ -113,7 +112,7 @@ export const authorizedRoutes: {
         actions: ['GET']
     }
 ];
-app.use(sslRedirectMiddleware());
+// app.use(sslRedirectMiddleware());
 // Use JWT from auth0 for apis
 app.use('/api', (req, res, next) => {
     const fullPath = `/api${req.path}`;
