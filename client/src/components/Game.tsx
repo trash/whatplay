@@ -87,7 +87,7 @@ export const GameComponent: React.FC<GameProps> = props => {
                 <tbody>
                     <tr>
                         <th>Time To Beat</th>
-                        <td>{props.game.timeToBeat}</td>
+                        <td>{props.game.timeToBeat} hours</td>
                     </tr>
                     <tr>
                         <th>Genre(s)</th>

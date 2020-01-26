@@ -9,7 +9,9 @@ export function HeaderView() {
         <div className="header">
             <div className="header_inner maxWidth">
                 <div className="header_brand">
-                    <NavLink to="">What To Play Next</NavLink>
+                    <NavLink to="">
+                        <img src="/images/logo.png" />
+                    </NavLink>
                 </div>
                 <div className="header_navlist">
                     <NavLink
