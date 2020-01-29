@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import { userService } from '../services/user.service';
 import { Game } from '../models/game.model';
 import { useAuth0 } from '../services/ReactAuth';
+import { gameLibraryService } from '../services/game-library.service';
 
 type Props = {
     game: Game;
@@ -22,10 +22,10 @@ export const ToggleGameFromLibraryButton: React.FC<Props> = props => {
     const { user } = useAuth0();
     let hasGameInLibrary = false;
     if (user) {
-        hasGameInLibrary = userService.hasGameInLibrary(props.game);
+        hasGameInLibrary = gameLibraryService.hasGameInLibrary(props.game);
     }
     const toggleGameFromLibrary = (game: Game) => {
-        return userService.toggleGameFromLibrary(game);
+        return gameLibraryService.toggleGameFromLibrary(game);
     };
     return (
         <button

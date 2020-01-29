@@ -5,7 +5,6 @@ import { useAuth0 } from '../services/ReactAuth';
 import { RootState } from 'typesafe-actions';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { List } from 'immutable';
-import { userService } from '../services/user.service';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@shared/models/game-library-entry.model';
 import { useState } from 'react';
 import { gameService } from '../services/game.service';
+import { gameLibraryService } from '../services/game-library.service';
 
 interface LibraryProps {}
 
@@ -61,7 +61,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     };
 
     const fetchFunc = async () => {
-        await userService.getAllLibraryGames(library);
+        await gameLibraryService.getAllLibraryGames(library);
         setIsLoadingResults(false);
     };
 
@@ -89,7 +89,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
         value: GameLibraryEntryClient[K]
     ) {
         console.log(gameLibraryEntryToUpdate, property, value);
-        userService.updateGameLibraryEntry(gameLibraryEntryToUpdate, {
+        gameLibraryService.updateGameLibraryEntry(gameLibraryEntryToUpdate, {
             [property]: value
         });
     }
