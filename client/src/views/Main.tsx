@@ -32,6 +32,14 @@ function MainView() {
                 />
                 <Route path="/games" component={GamesPageView} />
             </div>
+            <footer>
+                <div>Welcome to the WhatPlay alpha!</div>
+                <div>
+                    Got feedback?{' '}
+                    <a href="mailto:stefan@whatplay.io">Contact Us</a>
+                </div>
+                <div>Made by Stefan Valentin</div>
+            </footer>
         </Router>
     );
 }

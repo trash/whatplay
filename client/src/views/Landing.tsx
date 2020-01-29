@@ -16,6 +16,14 @@ export class LandingPage extends React.Component<HomeViewProps, HomeViewState> {
         return (
             <section>
                 <h1>Landing Page</h1>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
+                <p>I really need to write some content to go here.</p>
             </section>
         );
     }

@@ -46,6 +46,7 @@ export const CreateGame: <T extends GameStub>(
 
     return (
         <form
+            className="card"
             onSubmit={e =>
                 onSubmit(props, () => setGame(props.initialGameState), e, game)
             }
@@ -88,7 +89,7 @@ export const CreateGame: <T extends GameStub>(
                     </div>
                     <div>
                         <label>
-                            Time To Beat
+                            Estimated Time To Beat
                             <input
                                 required
                                 type="number"

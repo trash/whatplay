@@ -24,13 +24,28 @@
     animation-timing-function: linear;
 }
 
-
-
-
 body {
     // font-family: 'Segoe UI','Source Sans Pro', sans-serif;
     font-family: Whitney, Helvetica, sans-serif;
+    background: @brand;
+}
+
+#root {
     background: @backgroundColor;
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    background: @brand;
+    padding: 10px;
+    text-align: center;
+    border-top: 4px solid @brand2;
+
+    a {
+        color: @brand3;
+    }
 }
 
 .maxWidth {
@@ -169,4 +184,15 @@ input, select {
 // Changes to make Whitney font look better
 th {
     padding-bottom: 5px;
+}
+
+.card() {
+    padding: 10px;
+    background: @lightBackgroundColor;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px @boxShadowColor;
+}
+
+.card {
+    .card();
 }

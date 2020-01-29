@@ -41,10 +41,6 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
 
     // console.log(hydratedGameLibrary);
 
-    if (hydratedGameLibrary === null) {
-        return null;
-    }
-
     function updateFunction<K extends keyof GameLibraryEntryClient>(
         gameLibraryEntryToUpdate: GameLibraryEntryClient,
         property: K,
@@ -56,19 +52,13 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
         });
     }
 
-    return (
-        <section>
-            <h1>Game Library</h1>
-            <img
-                style={{ width: '100px', height: '100px', display: 'none' }}
-                src={user.picture}
-                alt="Profile"
-            />
+    const tableContent =
+        hydratedGameLibrary !== null ? (
             <table className="table">
                 <thead>
                     <tr>
                         <th>Game</th>
-                        <th>Time To Beat</th>
+                        <th>Estimated Time To Beat</th>
                         <th>Played Status</th>
                         <th>Your Rating</th>
                         <th>Backlog Priority</th>
@@ -165,6 +155,16 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                     ))}
                 </tbody>
             </table>
+        ) : (
+            <div className="loading" style={{ marginBottom: '10px' }}>
+                Loading...
+            </div>
+        );
+
+    return (
+        <section>
+            <h1>Game Library</h1>
+            {tableContent}
         </section>
     );
 };
