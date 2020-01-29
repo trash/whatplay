@@ -22,20 +22,21 @@ function requirePermissions(permission: string, cb: ControllerMethod) {
 export default function(app: Application) {
     app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+    // GAME LIBRARY
+    app.post('/api/v1/library/getAll', (req, res) =>
+        api.gameLibrary.getGameLibrary(req, res)
+    );
+    app.post('/api/v1/library', (req, res) =>
+        api.gameLibrary.addGameToLibrary(req, res)
+    );
+    app.patch('/api/v1/library/:gameLibraryEntryId', (req, res) =>
+        api.gameLibrary.updateGameLibraryEntry(req, res)
+    );
+    app.delete('/api/v1/library/:gameId', (req, res) =>
+        api.gameLibrary.deleteGameFromLibrary(req, res)
+    );
+
     // USERS
-    // Library end points
-    app.post('/api/v1/users/library/getAll', (req, res) =>
-        api.user.getGameLibrary(req, res)
-    );
-    app.post('/api/v1/users/library', (req, res) =>
-        api.user.addGameToLibrary(req, res)
-    );
-    app.patch('/api/v1/users/library/:gameLibraryEntryId', (req, res) =>
-        api.user.updateGameLibraryEntry(req, res)
-    );
-    app.delete('/api/v1/users/library/:gameId', (req, res) =>
-        api.user.deleteGameFromLibrary(req, res)
-    );
     // Get user data
     app.get('/api/v1/users/:auth0Id', (req, res) => api.user.getUser(req, res));
 

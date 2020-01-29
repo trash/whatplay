@@ -17,7 +17,8 @@ import {
     updateGame,
     deleteGame,
     updateSearchResults
-} from '../redux/games/games.actions';
+} from '../redux/games/index.actions';
+import debounce from '../util/debounce';
 
 class GameService {
     async searchGames(searchText: string, page = 0): Promise<Game[]> {
@@ -33,6 +34,8 @@ class GameService {
         );
         return matches;
     }
+
+    debouncedSearchGames = debounce(this.searchGames, 250);
 
     async createGame(game: GameStub): Promise<Game> {
         const newGame = await Api.post<GameStub, GameServerJson>(

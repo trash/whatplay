@@ -1,7 +1,9 @@
-import * as gamesActions from '../games/games.actions';
-import * as userActions from '../user/user.actions';
+import * as gamesActions from '../games/index.actions';
+import * as userActions from '../user/index.actions';
+import * as gameLibraryActions from '../game-library/index.actions';
 
 export default {
     game: gamesActions,
-    user: userActions
+    user: userActions,
+    gameLibrary: gameLibraryActions
 };

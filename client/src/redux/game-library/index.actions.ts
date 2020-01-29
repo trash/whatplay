@@ -1,14 +1,10 @@
-import { User, HydratedGameLibraryClient } from 'client/src/models/user.model';
+import { HydratedGameLibraryClient } from 'client/src/models/user.model';
 import { createAction } from 'typesafe-actions';
 import {
     GameLibraryEntryReferenceClient,
     UpdateGameLibraryEntryPatch
 } from '@shared/models/user.model';
 import { GameLibraryEntryClient } from '@shared/models/game-library-entry.model';
-
-export const updateUser = createAction('UPDATE_USER', (user: User) => user)<
-    User
->();
 
 export const addGameToLibrary = createAction(
     'ADD_GAME_TO_LIBRARY',

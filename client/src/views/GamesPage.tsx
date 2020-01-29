@@ -13,24 +13,12 @@ import { RootState } from 'typesafe-actions';
 import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
 import { Permission } from '@shared/models/permission.model';
-import debounce from '../util/debounce';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
     searchResultsTotalMatches: number;
     searchResultsMaxPage: number;
 };
-
-const searchApiCall = async (
-    searchText: string,
-    currentPage: number
-): Promise<Game[]> => {
-    const games = await gameService.searchGames(searchText, currentPage);
-    // console.log('doSearch', searchText, games.length);
-    return games;
-};
-
-const debouncedSearchApiCall = debounce(searchApiCall, 250);
 
 export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     const { games, searchResultsMaxPage } = useSelector<
@@ -84,7 +72,10 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
-            await debouncedSearchApiCall(runSearchText, runSearchPage);
+            await gameService.debouncedSearchGames(
+                runSearchText,
+                runSearchPage
+            );
             // console.log('matches', matches);
             setIsLoadingResults(false);
         } catch {

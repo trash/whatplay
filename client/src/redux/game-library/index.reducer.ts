@@ -1,22 +1,15 @@
 import { createReducer } from 'typesafe-actions';
 import {
-    updateUser,
     addGameToLibrary,
     removeGameFromLibrary,
     updateHydratedGameLibrary,
     updateHydratedGameLibraryEntry
-} from './user.actions';
+} from './index.actions';
 import { combineReducers } from 'redux';
 import { List } from 'immutable';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { HydratedGameLibraryClient } from '../../models/user.model';
-
-export const isAdmin = createReducer(false).handleAction(
-    updateUser,
-    (_state, action) => {
-        return action.payload.isAdmin;
-    }
-);
+import { updateUser } from '../user/index.actions';
 
 export const hydratedGameLibrary = createReducer<HydratedGameLibraryClient | null>(
     null
@@ -56,14 +49,12 @@ export const gameLibrary = createReducer(
     );
 
 // Can delete when types fixed in lib
-export type UserReducersType = {
-    isAdmin: boolean;
+export type GameLibraryReducersType = {
     gameLibrary: List<GameLibraryEntryReferenceClient>;
     hydratedGameLibrary: HydratedGameLibraryClient;
 };
 
-export const userReducers = combineReducers<UserReducersType>({
-    isAdmin,
+export const gameLibraryReducers = combineReducers<GameLibraryReducersType>({
     gameLibrary,
     hydratedGameLibrary
 });

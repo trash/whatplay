@@ -7,7 +7,7 @@ import {
     deleteGame,
     updateGame,
     updateSearchResults
-} from './games.actions';
+} from './index.actions';
 
 // Should be able to delete this when the types are properly fixed for inference
 // on reducers

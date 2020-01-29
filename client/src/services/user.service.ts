@@ -17,16 +17,16 @@ import {
 import { Game } from '../models/game.model';
 import { GameUtilities } from '../models/game.util';
 import moment from 'moment';
-import {
-    updateUser,
-    addGameToLibrary,
-    removeGameFromLibrary,
-    updateHydratedGameLibrary,
-    updateHydratedGameLibraryEntry
-} from '../redux/user/user.actions';
+import { updateUser } from '../redux/user/index.actions';
 import { store } from '../redux/store';
 import { List } from 'immutable';
 import { GameLibraryEntryClient } from '@shared/models/game-library-entry.model';
+import {
+    removeGameFromLibrary,
+    addGameToLibrary,
+    updateHydratedGameLibrary,
+    updateHydratedGameLibraryEntry
+} from '../redux/game-library/index.actions';
 // Intermediate type just to convert the "_id" ObjectId into a string "id"
 type ClientUserServer = {
     id: string;
@@ -53,7 +53,7 @@ class UserService {
     hasGameInLibrary(game: Game): boolean {
         return store
             .getState()
-            .user.gameLibrary.some(entry => entry?.gameId === game.id);
+            .gameLibrary.gameLibrary.some(entry => entry?.gameId === game.id);
     }
 
     hasPermission(user: User, permission: Permission): boolean {
@@ -69,7 +69,7 @@ class UserService {
     }
 
     private async removeGameFromLibrary(game: Game) {
-        await Api.delete(`/api/v1/users/library/${game.id}`);
+        await Api.delete(`/api/v1/library/${game.id}`);
         store.dispatch(removeGameFromLibrary(game.id));
         return;
     }
@@ -77,7 +77,7 @@ class UserService {
         const server = await Api.post<
             AddGamePost,
             GameLibraryEntryReferenceServer
-        >(`/api/v1/users/library`, {
+        >(`/api/v1/library`, {
             gameId: game.id
         });
         store.dispatch(addGameToLibrary(server));
@@ -131,7 +131,7 @@ class UserService {
         const server = await Api.post<
             GetGameLibraryPostClient,
             GetGameLibraryPostServer
-        >(`/api/v1/users/library/getAll`, {
+        >(`/api/v1/library/getAll`, {
             gameLibrary: library.toArray()
         });
         const hydrated = this.gameLibraryTransform(server);
@@ -144,7 +144,7 @@ class UserService {
         update: UpdateGameLibraryEntryPatch
     ): Promise<void> {
         await Api.patch<UpdateGameLibraryEntryPatch>(
-            `/api/v1/users/library/${gameLibraryEntry._id}`,
+            `/api/v1/library/${gameLibraryEntry._id}`,
             update
         );
         store.dispatch(

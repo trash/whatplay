@@ -96,15 +96,15 @@ export const authorizedRoutes: {
         actions: ['DELETE', 'PATCH']
     },
     {
-        route: pathToRegexp('/api/v1/users/library'),
+        route: pathToRegexp('/api/v1/library'),
         actions: ['POST']
     },
     {
-        route: pathToRegexp('/api/v1/users/library/getAll'),
+        route: pathToRegexp('/api/v1/library/getAll'),
         actions: ['POST']
     },
     {
-        route: pathToRegexp('/api/v1/users/library/:id'),
+        route: pathToRegexp('/api/v1/library/:id'),
         actions: ['DELETE', 'PATCH']
     },
     {
