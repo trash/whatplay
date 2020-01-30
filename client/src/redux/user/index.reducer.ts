@@ -1,19 +1,12 @@
 import { createReducer } from 'typesafe-actions';
-import { updateUser } from './index.actions';
 import { combineReducers } from 'redux';
 
-export const isAdmin = createReducer(false).handleAction(
-    updateUser,
-    (_state, action) => {
-        return action.payload.isAdmin;
-    }
-);
-
+export const placeholder = createReducer(false);
 // Can delete when types fixed in lib
 export type UserReducersType = {
-    isAdmin: boolean;
+    placeholder: boolean;
 };
 
 export const userReducers = combineReducers<UserReducersType>({
-    isAdmin
+    placeholder
 });

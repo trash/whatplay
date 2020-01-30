@@ -14,7 +14,6 @@ export type GameLibraryEntryReferenceClient = {
 
 export interface UserNotSavedServer {
     auth0Id: string;
-    isAdmin: boolean;
     gameLibrary: GameLibraryEntryReferenceServer[];
 }
 

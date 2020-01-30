@@ -20,7 +20,7 @@ export const getUser: ControllerMethod = async (
             },
             {
                 $setOnInsert: {
-                    isAdmin: false
+                    gameLibrary: []
                 }
             },
             {

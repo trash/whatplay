@@ -13,7 +13,6 @@ import { List } from 'immutable';
 type ClientUserServer = {
     id: string;
     auth0Id: string;
-    isAdmin: boolean;
     permissions: Permission[];
     gameLibrary: List<GameLibraryEntryReferenceClient>;
 };
@@ -26,7 +25,6 @@ class UserService {
         return {
             id: server._id,
             auth0Id: server.auth0Id,
-            isAdmin: server.isAdmin,
             permissions: server.permissions,
             gameLibrary: List(server.gameLibrary)
         };

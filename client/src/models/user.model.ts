@@ -10,7 +10,6 @@ export interface User {
     email: string;
     picture: string;
     updatedAt: Moment;
-    isAdmin: boolean;
     permissions: string[];
     gameLibrary: List<GameLibraryEntryReferenceClient>;
 }
