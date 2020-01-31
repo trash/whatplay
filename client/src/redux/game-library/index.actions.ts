@@ -16,10 +16,22 @@ export const removeGameFromLibrary = createAction(
     (gameId: string) => gameId
 )<string>();
 
-export const updateHydratedGameLibrary = createAction(
+export const updateLibrarySearchResults = createAction(
     'UPDATE_HYDRATED_GAME_LIBRARY',
-    (hydratedGameLibrary: HydratedGameLibraryClient) => hydratedGameLibrary
-)<HydratedGameLibraryClient>();
+    (
+        results: HydratedGameLibraryClient,
+        totalMatches: number,
+        maxPage: number
+    ) => ({
+        results,
+        totalMatches,
+        maxPage
+    })
+)<{
+    results: HydratedGameLibraryClient;
+    totalMatches: number;
+    maxPage: number;
+}>();
 
 export const updateHydratedGameLibraryEntry = createAction(
     'UPDATE_HYDRATED_GAME_LIBRARY_ENTRY',

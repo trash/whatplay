@@ -196,7 +196,7 @@ export const getGameLibrary: ControllerMethod = async (
             resultsWrap
         ];
         if (searchTerm) {
-            aggregationSteps.splice(1, 0, regexMatch);
+            aggregationSteps.splice(2, 0, regexMatch);
         }
         const before = performance.now();
         const aggregateResultList = ((await libraryEntryCollection
@@ -211,7 +211,7 @@ export const getGameLibrary: ControllerMethod = async (
 
         // console.log(aggregateResult);
 
-        const totalCount = aggregateResult.totalCount[0].count;
+        const totalCount = aggregateResult.totalCount[0]?.count || 0;
 
         const responseBody: GameLibrarySearchResponse = {
             totalCount,

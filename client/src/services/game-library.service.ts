@@ -18,7 +18,7 @@ import {
 import {
     removeGameFromLibrary,
     addGameToLibrary,
-    updateHydratedGameLibrary,
+    updateLibrarySearchResults,
     updateHydratedGameLibraryEntry
 } from '../redux/game-library/index.actions';
 import debounce from '../util/debounce';
@@ -94,7 +94,13 @@ class GameLibraryService {
         );
         console.log(server);
         const hydrated = this.gameLibraryTransform(server.results);
-        store.dispatch(updateHydratedGameLibrary(hydrated));
+        store.dispatch(
+            updateLibrarySearchResults(
+                hydrated,
+                server.totalCount,
+                server.maxPage
+            )
+        );
         return hydrated;
     }
 

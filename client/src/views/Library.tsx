@@ -20,23 +20,36 @@ import {
     PaginationHelpers
 } from '../components/PaginationControls';
 
-interface LibraryProps {}
+interface LibraryProps {
+    results: HydratedGameLibraryClient;
+    resultsTotalMatches: number;
+    resultsMaxPage: number;
+}
 
 export const LibraryPage: React.FC<LibraryProps> = () => {
     const { user } = useAuth0();
     if (!user) {
         return null;
     }
-    const { library, hydratedLibrary: hydratedGameLibrary } = useSelector<
+    const {
+        library,
+        results,
+        // resultsTotalMatches,
+        resultsMaxPage
+    } = useSelector<
         RootState,
         {
             library: List<GameLibraryEntryReferenceClient>;
-            hydratedLibrary: HydratedGameLibraryClient;
+            results: HydratedGameLibraryClient;
+            // resultsTotalMatches: number;
+            resultsMaxPage: number;
         }
     >(state => {
         return {
             library: state.gameLibrary.gameLibrary,
-            hydratedLibrary: state.gameLibrary.hydratedGameLibrary
+            results: state.gameLibrary.searchResults,
+            // resultsTotalMatches: state.gameLibrary.searchResultsTotalMatches,
+            resultsMaxPage: state.gameLibrary.searchResultsMaxPage
         };
     });
 
@@ -113,7 +126,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     const paginationControls = (
         <PaginationControls
             currentPage={currentPage}
-            resultsMaxPage={1}
+            resultsMaxPage={resultsMaxPage}
             updatePage={d => updatePage(d)}
         />
     );
@@ -135,7 +148,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {hydratedGameLibrary.map(entry => (
+                    {results.map(entry => (
                         <tr key={entry?.gameLibraryEntry._id}>
                             <td>{entry?.game.title}</td>
                             <td>{entry?.game.timeToBeat}</td>

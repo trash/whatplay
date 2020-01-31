@@ -2,7 +2,7 @@ import { createReducer } from 'typesafe-actions';
 import {
     addGameToLibrary,
     removeGameFromLibrary,
-    updateHydratedGameLibrary,
+    updateLibrarySearchResults,
     updateHydratedGameLibraryEntry
 } from './index.actions';
 import { combineReducers } from 'redux';
@@ -11,10 +11,13 @@ import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { HydratedGameLibraryClient } from '../../models/user.model';
 import { updateUser } from '../user/index.actions';
 
-export const hydratedGameLibrary = createReducer<HydratedGameLibraryClient | null>(
+export const searchResults = createReducer<HydratedGameLibraryClient | null>(
     null
 )
-    .handleAction(updateHydratedGameLibrary, (_state, action) => action.payload)
+    .handleAction(
+        updateLibrarySearchResults,
+        (_state, action) => action.payload.results
+    )
     .handleAction(updateHydratedGameLibraryEntry, (state, action) => {
         // This is kind of a mess. I'm beginning to wonder if Immutable is
         // actually just a huge PITA
@@ -37,6 +40,16 @@ export const hydratedGameLibrary = createReducer<HydratedGameLibraryClient | nul
         return filtered.push(removed);
     });
 
+export const searchResultsMaxPage = createReducer(0).handleAction(
+    updateLibrarySearchResults,
+    (_state, action) => action.payload.maxPage
+);
+
+export const searchResultsTotalMatches = createReducer(0).handleAction(
+    updateLibrarySearchResults,
+    (_state, action) => action.payload.totalMatches
+);
+
 export const gameLibrary = createReducer(
     List<GameLibraryEntryReferenceClient>()
 )
@@ -51,10 +64,14 @@ export const gameLibrary = createReducer(
 // Can delete when types fixed in lib
 export type GameLibraryReducersType = {
     gameLibrary: List<GameLibraryEntryReferenceClient>;
-    hydratedGameLibrary: HydratedGameLibraryClient;
+    searchResults: HydratedGameLibraryClient;
+    searchResultsMaxPage: number;
+    searchResultsTotalMatches: number;
 };
 
 export const gameLibraryReducers = combineReducers<GameLibraryReducersType>({
     gameLibrary,
-    hydratedGameLibrary
+    searchResults,
+    searchResultsMaxPage,
+    searchResultsTotalMatches
 });
