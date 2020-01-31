@@ -2,10 +2,10 @@ import { Api } from './Api';
 import {
     GameLibraryEntryReferenceClient,
     AddGamePost,
-    GameLibraryEntryReferenceServer,
     GetGameLibraryPostClient,
     GetGameLibraryPostServer,
-    UpdateGameLibraryEntryPatch
+    UpdateGameLibraryEntryPatch,
+    GameLibraryEntryReferenceServerJson
 } from '@shared/models/user.model';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { Game } from '../models/game.model';
@@ -44,7 +44,7 @@ class GameLibraryService {
     private async addGameToLibrary(game: Game) {
         const server = await Api.post<
             AddGamePost,
-            GameLibraryEntryReferenceServer
+            GameLibraryEntryReferenceServerJson
         >(`/api/v1/library`, {
             gameId: game.id
         });

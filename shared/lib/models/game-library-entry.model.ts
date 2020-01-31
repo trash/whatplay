@@ -1,5 +1,6 @@
 import { Moment } from 'moment';
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
+import { ObjectId } from 'mongodb';
 
 // Ordered from lowest priority to highest priority in terms of what
 // people likely want to play next/finish first
@@ -79,28 +80,32 @@ export const playedStatusArray = [
 ];
 
 interface GameLibraryEntryShared {
-    gameId: string;
+    // gameId: string;
     rating: GameRating;
     playedStatus: PlayedStatus;
     comments: string;
     backlogPriority: BacklogPriority | null;
     systemsOwned: string[];
+    userAuth0Id: string;
 }
 
 export interface GameLibraryEntryServer
     extends MongoDocument,
         GameLibraryEntryShared {
     dateCompleted: string | null;
+    gameId: ObjectId;
 }
 
 export interface GameLibraryEntryServerJson
     extends MongoDocumentJson,
         GameLibraryEntryShared {
     dateCompleted: string | null;
+    gameId: string;
 }
 
 export interface GameLibraryEntryClient
     extends GameLibraryEntryShared,
         MongoDocumentJson {
     dateCompleted: Moment | null;
+    gameId: string;
 }

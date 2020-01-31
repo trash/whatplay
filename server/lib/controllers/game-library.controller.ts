@@ -38,7 +38,8 @@ export const addGameToLibrary: ControllerMethod = async (
             'gameLibraryEntry'
         );
         const libEntryResult = await libraryEntryCollection.insertOne({
-            gameId: body.gameId,
+            gameId: new ObjectId(body.gameId),
+            userAuth0Id: getUserIdFromRequest(req),
             rating: GameRating.NotRated,
             playedStatus: PlayedStatus.NotPlayed,
             comments: '',
@@ -55,8 +56,8 @@ export const addGameToLibrary: ControllerMethod = async (
         // 2) Create a LibraryEntryReference in the User document referencing
         // this newly created document
         const userLibraryEntry: GameLibraryEntryReferenceServer = {
-            gameId: body.gameId,
-            gameLibraryEntryId: libEntry._id.toHexString()
+            gameId: new ObjectId(body.gameId),
+            gameLibraryEntryId: libEntry._id
         };
         const userCollection = db.collection<UserServer>('users');
         const userUpdate = await userCollection.updateOne(
@@ -88,7 +89,7 @@ export const deleteGameFromLibrary: ControllerMethod = async (
     const [client, db] = await connectToDatabase();
     let response: Response;
 
-    const gameId = req.params.gameId;
+    const gameId = new ObjectId(req.params.gameId);
     try {
         // 1) Delete the LibraryEntry
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
@@ -181,7 +182,8 @@ export const getGameLibrary: ControllerMethod = async (
                     {},
                     foundGameLibraryEntry,
                     {
-                        _id: foundGameLibraryEntry._id.toHexString()
+                        _id: foundGameLibraryEntry._id.toHexString(),
+                        gameId: foundGameLibraryEntry.gameId.toHexString()
                     }
                 );
 
