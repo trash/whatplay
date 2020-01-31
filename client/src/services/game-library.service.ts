@@ -1,11 +1,9 @@
 import { Api } from './Api';
 import {
-    GameLibraryEntryReferenceClient,
     AddGamePost,
-    GetGameLibraryPostClient,
-    GetGameLibraryPostServer,
     UpdateGameLibraryEntryPatch,
-    GameLibraryEntryReferenceServerJson
+    GameLibraryEntryReferenceServerJson,
+    HydratedGameLibraryEntryServer
 } from '@shared/models/user.model';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { Game } from '../models/game.model';
@@ -13,13 +11,17 @@ import { GameUtilities } from '../models/game.util';
 import moment from 'moment';
 import { store } from '../redux/store';
 import { List } from 'immutable';
-import { GameLibraryEntryClient } from '@shared/models/game-library-entry.model';
+import {
+    GameLibraryEntryClient,
+    GameLibrarySearchResponse
+} from '@shared/models/game-library-entry.model';
 import {
     removeGameFromLibrary,
     addGameToLibrary,
     updateHydratedGameLibrary,
     updateHydratedGameLibraryEntry
 } from '../redux/game-library/index.actions';
+import debounce from '../util/debounce';
 
 class GameLibraryService {
     hasGameInLibrary(game: Game): boolean {
@@ -53,10 +55,10 @@ class GameLibraryService {
     }
 
     private gameLibraryTransform(
-        server: GetGameLibraryPostServer
+        server: HydratedGameLibraryEntryServer[]
     ): HydratedGameLibraryClient {
         return List(
-            server.gameLibraryEntries.map(entry => {
+            server.map(entry => {
                 const game = GameUtilities.transformGameServertoGame(
                     entry.game
                 );
@@ -80,18 +82,23 @@ class GameLibraryService {
     }
 
     async getAllLibraryGames(
-        library: List<GameLibraryEntryReferenceClient>
+        searchText: string = '',
+        page: number = 0
     ): Promise<HydratedGameLibraryClient> {
-        const server = await Api.post<
-            GetGameLibraryPostClient,
-            GetGameLibraryPostServer
-        >(`/api/v1/library/getAll`, {
-            gameLibrary: library.toArray()
-        });
-        const hydrated = this.gameLibraryTransform(server);
+        const server = await Api.get<GameLibrarySearchResponse>(
+            `/api/v1/library`,
+            {
+                page,
+                search: searchText
+            }
+        );
+        console.log(server);
+        const hydrated = this.gameLibraryTransform(server.results);
         store.dispatch(updateHydratedGameLibrary(hydrated));
         return hydrated;
     }
+
+    debouncedGetAllLibraryGames = debounce(this.getAllLibraryGames, 250);
 
     async updateGameLibraryEntry(
         gameLibraryEntry: GameLibraryEntryClient,

@@ -13,6 +13,10 @@ import { RootState } from 'typesafe-actions';
 import { userService } from '../services/user.service';
 import { useAuth0 } from '../services/ReactAuth';
 import { Permission } from '@shared/models/permission.model';
+import {
+    PaginationControls,
+    PaginationHelpers
+} from '../components/PaginationControls';
 
 type GamesPageViewProps = {
     games: Immutable.List<Game>;
@@ -102,17 +106,14 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         }
     };
 
-    const updatePage = (delta: number) => {
-        let nextPage = currentPage + delta;
-        if (nextPage < 0) {
-            nextPage = 0;
-        }
-        if (nextPage === currentPage) {
-            return;
-        }
-        setCurrentPage(nextPage);
-        runSearch(searchText, nextPage);
-    };
+    const updatePage = (delta: number) =>
+        PaginationHelpers.updatePage(
+            searchText,
+            currentPage,
+            delta,
+            setCurrentPage,
+            runSearch
+        );
 
     // RENDERING STUFF
 
@@ -149,20 +150,11 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     }
 
     const paginationControls = (
-        <div className="paginationControls">
-            <button disabled={currentPage === 0} onClick={() => updatePage(-1)}>
-                Previous
-            </button>
-            <div>
-                Page {currentPage + 1} of {searchResultsMaxPage + 1}
-            </div>
-            <button
-                disabled={currentPage === searchResultsMaxPage}
-                onClick={() => updatePage(+1)}
-            >
-                Next
-            </button>
-        </div>
+        <PaginationControls
+            currentPage={currentPage}
+            resultsMaxPage={searchResultsMaxPage}
+            updatePage={d => updatePage(d)}
+        />
     );
 
     return (

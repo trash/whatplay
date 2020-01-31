@@ -6,8 +6,6 @@ import {
     UserServer,
     AddGamePost,
     GameLibraryEntryReferenceServer,
-    GetGameLibraryPostClient,
-    GetGameLibraryPostServer,
     UpdateGameLibraryEntryPatch
 } from '@shared/models/user.model';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
@@ -15,10 +13,14 @@ import {
     GameLibraryEntryServer,
     PlayedStatus,
     GameRating,
-    BacklogPriority
+    BacklogPriority,
+    GameLibraryEntryServerWithGame,
+    GameLibrarySearchResponse
 } from '@shared/models/game-library-entry.model';
-import { getUserIdFromRequest } from '../helpers.util';
-import { GameServer } from '@shared/models/game.model';
+import { getUserIdFromRequest as getUserAuth0IdFromRequest } from '../helpers.util';
+import { paginationMax } from '../constants';
+import { performance } from 'perf_hooks';
+import { MongoDto } from '../models/database.model';
 
 export const addGameToLibrary: ControllerMethod = async (
     req: AuthenticatedRequest,
@@ -39,7 +41,7 @@ export const addGameToLibrary: ControllerMethod = async (
         );
         const libEntryResult = await libraryEntryCollection.insertOne({
             gameId: new ObjectId(body.gameId),
-            userAuth0Id: getUserIdFromRequest(req),
+            userAuth0Id: getUserAuth0IdFromRequest(req),
             rating: GameRating.NotRated,
             playedStatus: PlayedStatus.NotPlayed,
             comments: '',
@@ -62,7 +64,7 @@ export const addGameToLibrary: ControllerMethod = async (
         const userCollection = db.collection<UserServer>('users');
         const userUpdate = await userCollection.updateOne(
             {
-                auth0Id: getUserIdFromRequest(req)
+                auth0Id: getUserAuth0IdFromRequest(req)
             },
             {
                 $push: {
@@ -107,7 +109,7 @@ export const deleteGameFromLibrary: ControllerMethod = async (
         const userCollection = db.collection<UserServer>('users');
         const userUpdate = await userCollection.updateOne(
             {
-                auth0Id: getUserIdFromRequest(req)
+                auth0Id: getUserAuth0IdFromRequest(req)
             },
             {
                 $pull: {
@@ -136,56 +138,93 @@ export const getGameLibrary: ControllerMethod = async (
     const [client, db] = await connectToDatabase();
     let response: Response;
 
-    const body: GetGameLibraryPostClient = req.body;
-    if (!body.gameLibrary) {
-        const e = new Error('Missing game library data.');
-        return res.status(400).send(e);
-    }
+    const page = req.query.page || 0;
+    const searchTerm = req.query.search || '';
     try {
-        // 1) Get all game library entries
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
             'gameLibraryEntry'
         );
-        const libEntries = await libraryEntryCollection
-            .find({
-                _id: {
-                    $in: body.gameLibrary.map(
-                        e => new ObjectId(e.gameLibraryEntryId)
-                    )
-                }
-            })
-            .toArray();
 
-        // 2) Get all games
-        const gameCollection = db.collection<GameServer>('games');
-        const games = await gameCollection
-            .find({
-                _id: {
-                    $in: body.gameLibrary.map(e => new ObjectId(e.gameId))
-                }
-            })
-            .toArray();
-        const responseBody: GetGameLibraryPostServer = {
-            gameLibraryEntries: body.gameLibrary.map(gl => {
-                const foundGame = games.find(
-                    g => g._id.toHexString() === gl.gameId
-                )!;
-                const jsonIdGame = Object.assign({}, foundGame, {
-                    _id: foundGame._id.toHexString()
-                });
+        const gameLibraryFindFilter = {
+            $match: {
+                userAuth0Id: getUserAuth0IdFromRequest(req)
+            }
+        };
 
-                const foundGameLibraryEntry = libEntries.find(
-                    l => l._id.toHexString() === gl.gameLibraryEntryId
-                )!;
-                // console.log('matching game lib entry', foundGameLibraryEntry);
-                const jsonIdGameLibraryEntry = Object.assign(
-                    {},
-                    foundGameLibraryEntry,
+        const gameLibraryJoin = {
+            $lookup: {
+                from: 'games',
+                localField: 'gameId',
+                foreignField: '_id',
+                as: 'game'
+            }
+        };
+
+        const regexMatch = {
+            $match: {
+                'game.title': {
+                    $regex: searchTerm,
+                    $options: 'i'
+                }
+            }
+        };
+
+        const gameLibrarySort = {
+            $sort: {
+                'game.title': 1
+            }
+        };
+
+        const resultsWrap = {
+            $facet: {
+                results: [
+                    { $skip: page * paginationMax },
+                    { $limit: paginationMax }
+                ],
+                totalCount: [
                     {
-                        _id: foundGameLibraryEntry._id.toHexString(),
-                        gameId: foundGameLibraryEntry.gameId.toHexString()
+                        $count: 'count'
                     }
-                );
+                ]
+            }
+        };
+
+        const aggregationSteps: object[] = [
+            gameLibraryFindFilter,
+            gameLibraryJoin,
+            gameLibrarySort,
+            resultsWrap
+        ];
+        if (searchTerm) {
+            aggregationSteps.splice(1, 0, regexMatch);
+        }
+        const before = performance.now();
+        const aggregateResultList = ((await libraryEntryCollection
+            .aggregate(aggregationSteps)
+            .toArray()) as unknown) as MongoDto<GameLibraryEntryServerWithGame>;
+        const aggregateResult = aggregateResultList[0];
+
+        const libEntries = aggregateResult.results;
+
+        const queryTime = performance.now() - before;
+        console.log(queryTime);
+
+        // console.log(aggregateResult);
+
+        const totalCount = aggregateResult.totalCount[0].count;
+
+        const responseBody: GameLibrarySearchResponse = {
+            totalCount,
+            maxPage: Math.floor(totalCount / paginationMax),
+            results: libEntries.map(libEntry => {
+                const game = libEntry.game[0];
+                const jsonIdGame = Object.assign({}, game, {
+                    _id: game._id.toHexString()
+                });
+                const jsonIdGameLibraryEntry = Object.assign({}, libEntry, {
+                    _id: libEntry._id.toHexString(),
+                    gameId: libEntry.gameId.toHexString()
+                });
 
                 return {
                     game: jsonIdGame,

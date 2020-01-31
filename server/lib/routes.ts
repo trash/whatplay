@@ -23,7 +23,7 @@ export default function(app: Application) {
     app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     // GAME LIBRARY
-    app.post('/api/v1/library/getAll', (req, res) =>
+    app.get('/api/v1/library', (req, res) =>
         api.gameLibrary.getGameLibrary(req, res)
     );
     app.post('/api/v1/library', (req, res) =>

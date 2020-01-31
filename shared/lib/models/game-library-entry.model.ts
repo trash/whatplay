@@ -1,6 +1,9 @@
 import { Moment } from 'moment';
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
 import { ObjectId } from 'mongodb';
+import { GameServer } from './game.model';
+import { HydratedGameLibraryEntryServer } from './user.model';
+import { PaginatedResponse } from './paginated.model';
 
 // Ordered from lowest priority to highest priority in terms of what
 // people likely want to play next/finish first
@@ -96,6 +99,10 @@ export interface GameLibraryEntryServer
     gameId: ObjectId;
 }
 
+export interface GameLibraryEntryServerWithGame extends GameLibraryEntryServer {
+    game: [GameServer];
+}
+
 export interface GameLibraryEntryServerJson
     extends MongoDocumentJson,
         GameLibraryEntryShared {
@@ -109,3 +116,7 @@ export interface GameLibraryEntryClient
     dateCompleted: Moment | null;
     gameId: string;
 }
+
+export type GameLibrarySearchResponse = PaginatedResponse<
+    HydratedGameLibraryEntryServer
+>;

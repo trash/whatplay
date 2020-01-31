@@ -23,7 +23,11 @@ import debounce from '../util/debounce';
 class GameService {
     async searchGames(searchText: string, page = 0): Promise<Game[]> {
         const response = await Api.get<GameSearchResponse>(
-            `/api/v1/games/search?search=${searchText}&page=${page}`
+            `/api/v1/games/search`,
+            {
+                page,
+                search: searchText
+            }
         );
 
         const matches = response.results.map(g =>

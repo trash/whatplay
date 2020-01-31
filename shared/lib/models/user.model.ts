@@ -33,10 +33,6 @@ export type AddGamePost = {
     gameId: string;
 };
 
-export type GetGameLibraryPostClient = {
-    gameLibrary: GameLibraryEntryReferenceClient[];
-};
-
 export type HydratedGameLibraryEntryServer = {
     game: GameServerJson;
     gameLibraryEntry: GameLibraryEntryServerJson;
