@@ -10,6 +10,7 @@ import { List } from 'immutable';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { HydratedGameLibraryClient } from '../../models/user.model';
 import { updateUser } from '../user/index.actions';
+import { cloneDeep } from 'lodash';
 
 export const searchResults = createReducer<HydratedGameLibraryClient | null>(
     null
@@ -19,25 +20,24 @@ export const searchResults = createReducer<HydratedGameLibraryClient | null>(
         (_state, action) => action.payload.results
     )
     .handleAction(updateHydratedGameLibraryEntry, (state, action) => {
-        // This is kind of a mess. I'm beginning to wonder if Immutable is
-        // actually just a huge PITA
         if (!state) {
             return null;
         }
-        const grouped = state.groupBy(
+        // Find the place to update
+        const indexToUpdate = state.findIndex(
             e => e?.gameLibraryEntry._id === action.payload.gameLibraryEntry._id
         );
-        const filtered = grouped.get(false)?.toList();
-        const removed = grouped.get(true).get(0);
-        removed.gameLibraryEntry = Object.assign(
+        // Apply the update to the game library entry
+        const updatedGameLibraryEntry = Object.assign(
             {},
             action.payload.gameLibraryEntry,
             action.payload.update
         );
-        if (!filtered) {
-            return List([removed]);
-        }
-        return filtered.push(removed);
+        // Clone and copy over the game library entry update to hydrated entry
+        const clonedEntry = cloneDeep(state.get(indexToUpdate));
+        clonedEntry.gameLibraryEntry = updatedGameLibraryEntry;
+        // Update the list
+        return state.set(indexToUpdate, clonedEntry);
     });
 
 export const searchResultsMaxPage = createReducer(0).handleAction(
