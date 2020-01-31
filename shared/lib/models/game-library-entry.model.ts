@@ -28,6 +28,58 @@ export enum GameRating {
     Liked = 2
 }
 
+export enum GameLibrarySort {
+    GameTitle,
+    BacklogPriority,
+    Rating,
+    PlayedStatus,
+    TimeToBeat
+}
+
+export const gameLibrarySortMap: Map<
+    GameLibrarySort,
+    {
+        sortKey: string;
+        defaultSort: 1 | -1;
+    }
+> = new Map([
+    [
+        GameLibrarySort.GameTitle,
+        {
+            sortKey: 'game.title',
+            defaultSort: 1
+        }
+    ],
+    [
+        GameLibrarySort.BacklogPriority,
+        {
+            sortKey: 'backlogPriority',
+            defaultSort: -1
+        }
+    ],
+    [
+        GameLibrarySort.Rating,
+        {
+            sortKey: 'rating',
+            defaultSort: 1
+        }
+    ],
+    [
+        GameLibrarySort.PlayedStatus,
+        {
+            sortKey: 'playedStatus',
+            defaultSort: 1
+        }
+    ],
+    [
+        GameLibrarySort.TimeToBeat,
+        {
+            sortKey: 'game.timeToBeat',
+            defaultSort: 1
+        }
+    ]
+]);
+
 export const gameRatingsArray = [
     {
         value: GameRating.NotRated,

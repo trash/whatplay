@@ -13,7 +13,8 @@ import { store } from '../redux/store';
 import { List } from 'immutable';
 import {
     GameLibraryEntryClient,
-    GameLibrarySearchResponse
+    GameLibrarySearchResponse,
+    GameLibrarySort
 } from '@shared/models/game-library-entry.model';
 import {
     removeGameFromLibrary,
@@ -89,7 +90,8 @@ class GameLibraryService {
             `/api/v1/library`,
             {
                 page,
-                search: searchText
+                search: searchText,
+                sort: GameLibrarySort.BacklogPriority
             }
         );
         console.log(server);

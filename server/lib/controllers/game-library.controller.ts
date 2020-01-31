@@ -15,7 +15,8 @@ import {
     GameRating,
     BacklogPriority,
     GameLibraryEntryServerWithGame,
-    GameLibrarySearchResponse
+    GameLibrarySearchResponse,
+    gameLibrarySortMap
 } from '@shared/models/game-library-entry.model';
 import { getUserIdFromRequest as getUserAuth0IdFromRequest } from '../helpers.util';
 import { paginationMax } from '../constants';
@@ -140,6 +141,8 @@ export const getGameLibrary: ControllerMethod = async (
 
     const page = req.query.page || 0;
     const searchTerm = req.query.search || '';
+    const sortInQuery = req.query.sort;
+    const sort = gameLibrarySortMap.get(parseInt(sortInQuery));
     try {
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
             'gameLibraryEntry'
@@ -169,11 +172,24 @@ export const getGameLibrary: ControllerMethod = async (
             }
         };
 
-        const gameLibrarySort = {
+        const sortByGameTitle = {
             $sort: {
                 'game.title': 1
             }
         };
+
+        const sorts: object[] = [sortByGameTitle];
+        console.log(sortInQuery, sort);
+        if (sort) {
+            const secondarySort = {
+                $sort: {
+                    [sort.sortKey]: sort.defaultSort
+                }
+            };
+            console.log(secondarySort);
+
+            sorts.push(secondarySort);
+        }
 
         const resultsWrap = {
             $facet: {
@@ -192,7 +208,7 @@ export const getGameLibrary: ControllerMethod = async (
         const aggregationSteps: object[] = [
             gameLibraryFindFilter,
             gameLibraryJoin,
-            gameLibrarySort,
+            ...sorts,
             resultsWrap
         ];
         if (searchTerm) {

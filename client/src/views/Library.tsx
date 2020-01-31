@@ -83,6 +83,17 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
         setIsLoadingResults(false);
     };
 
+    const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newSearchText = e.target.value;
+        let page = currentPage;
+        if (searchText !== newSearchText) {
+            setCurrentPage(0);
+            page = 0;
+        }
+        setSearchText(newSearchText);
+        runSearch(newSearchText, page);
+    };
+
     const updatePage = (delta: number) =>
         PaginationHelpers.updatePage(
             searchText,
@@ -98,19 +109,6 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     React.useEffect(() => {
         fetchFunc();
     }, [library]);
-
-    const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSearchText = e.target.value;
-        let page = currentPage;
-        if (searchText !== newSearchText) {
-            setCurrentPage(0);
-            page = 0;
-        }
-        setSearchText(newSearchText);
-        runSearch(newSearchText, page);
-    };
-
-    // console.log(hydratedGameLibrary);
 
     function updateFunction<K extends keyof GameLibraryEntryClient>(
         gameLibraryEntryToUpdate: GameLibraryEntryClient,
