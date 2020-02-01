@@ -11,7 +11,8 @@ import {
     gameRatingsArray,
     GameLibraryEntryClient,
     backlogPriorityArray,
-    playedStatusArray
+    playedStatusArray,
+    GameLibrarySort
 } from '@shared/models/game-library-entry.model';
 import { useState } from 'react';
 import { gameLibraryService } from '../services/game-library.service';
@@ -19,6 +20,7 @@ import {
     PaginationControls,
     PaginationHelpers
 } from '../components/PaginationControls';
+import classNames from 'classnames';
 
 interface LibraryProps {
     results: HydratedGameLibraryClient;
@@ -105,6 +107,25 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     //
     //
 
+    //
+    // Sort stuff
+
+    const [currentSort, setCurrentSort] = useState<GameLibrarySort>(
+        GameLibrarySort.GameTitle
+    );
+    const [isSortReversed, setIsSortReversed] = useState<boolean>(false);
+    const sortClick = (e: React.MouseEvent, sort: GameLibrarySort) => {
+        e.preventDefault();
+        if (currentSort !== sort) {
+            setCurrentSort(sort);
+            setIsSortReversed(false);
+        } else {
+            setIsSortReversed(!isSortReversed);
+        }
+    };
+    //
+    //
+
     // Fetch all lib games
     React.useEffect(() => {
         fetchFunc();
@@ -132,107 +153,130 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
     const tableContent = !isLoadingResults ? (
         <React.Fragment>
             {paginationControls}
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Game</th>
-                        <th>Estimated Time To Beat</th>
-                        <th>Played Status</th>
-                        <th>Your Rating</th>
-                        <th>Backlog Priority</th>
-                        <th style={{ display: 'none' }}>Systems Owned</th>
-                        <th style={{ display: 'none' }}>Id</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {results.map(entry => (
-                        <tr key={entry?.gameLibraryEntry._id}>
-                            <td>{entry?.game.title}</td>
-                            <td>{entry?.game.timeToBeat}</td>
-                            <td>
-                                <select
-                                    onChange={e =>
-                                        updateFunction(
-                                            entry?.gameLibraryEntry!,
-                                            'playedStatus',
-                                            parseInt(e.target.value)
-                                        )
-                                    }
-                                    value={
-                                        entry?.gameLibraryEntry.playedStatus!
-                                    }
-                                >
-                                    {playedStatusArray.map(playedStatus => (
-                                        <option
-                                            key={playedStatus.value}
-                                            value={playedStatus.value}
-                                        >
-                                            {playedStatus.text}
-                                        </option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td>
-                                <select
-                                    onChange={e =>
-                                        updateFunction(
-                                            entry?.gameLibraryEntry!,
-                                            'rating',
-                                            parseInt(e.target.value)
-                                        )
-                                    }
-                                    value={entry?.gameLibraryEntry.rating!}
-                                >
-                                    {gameRatingsArray.map(rating => (
-                                        <option
-                                            key={rating.value}
-                                            value={rating.value}
-                                        >
-                                            {rating.text}
-                                        </option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td>
-                                <select
-                                    onChange={e =>
-                                        updateFunction(
-                                            entry?.gameLibraryEntry!,
-                                            'backlogPriority',
-                                            parseInt(e.target.value)
-                                        )
-                                    }
-                                    value={
-                                        entry?.gameLibraryEntry.backlogPriority!
-                                    }
-                                >
-                                    {backlogPriorityArray.map(priority => (
-                                        <option
-                                            key={priority.value}
-                                            value={priority.value}
-                                        >
-                                            {priority.text}
-                                        </option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td style={{ display: 'none' }}>
-                                {entry?.gameLibraryEntry.systemsOwned}
-                            </td>
-                            <td style={{ display: 'none' }}>
-                                {entry?.gameLibraryEntry._id}
-                            </td>
-                            <td>
-                                <ToggleGameFromLibraryButton
-                                    game={entry?.game!}
-                                    shortText={true}
-                                />
-                            </td>
+            <div className="tableWrap">
+                <table className="table libraryTable">
+                    <thead>
+                        <tr>
+                            <th className="gameTitleColumn">Game</th>
+                            <th
+                                className={classNames('x-sortableColumn', {
+                                    'sortableColumn--active':
+                                        currentSort
+                                        === GameLibrarySort.BacklogPriority,
+                                    'sortableColumn--reversed': isSortReversed
+                                })}
+                                onClick={e =>
+                                    sortClick(
+                                        e,
+                                        GameLibrarySort.BacklogPriority
+                                    )
+                                }
+                            >
+                                Backlog Priority
+                            </th>
+                            <th className="timeToBeatColumn">
+                                Estimated Time To Beat
+                            </th>
+                            <th>Played Status</th>
+                            <th>Your Rating</th>
+                            <th style={{ display: 'none' }}>Systems Owned</th>
+                            <th style={{ display: 'none' }}>Id</th>
+                            <th></th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {results.map(entry => (
+                            <tr key={entry?.gameLibraryEntry._id}>
+                                <td>{entry?.game.title}</td>
+                                <td>
+                                    <select
+                                        onChange={e =>
+                                            updateFunction(
+                                                entry?.gameLibraryEntry!,
+                                                'backlogPriority',
+                                                parseInt(e.target.value)
+                                            )
+                                        }
+                                        value={
+                                            entry?.gameLibraryEntry
+                                                .backlogPriority!
+                                        }
+                                    >
+                                        {backlogPriorityArray.map(priority => (
+                                            <option
+                                                key={priority.value}
+                                                value={priority.value}
+                                            >
+                                                {priority.text}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>{entry?.game.timeToBeat}</td>
+                                <td>
+                                    <select
+                                        onChange={e =>
+                                            updateFunction(
+                                                entry?.gameLibraryEntry!,
+                                                'playedStatus',
+                                                parseInt(e.target.value)
+                                            )
+                                        }
+                                        value={
+                                            entry?.gameLibraryEntry
+                                                .playedStatus!
+                                        }
+                                    >
+                                        {playedStatusArray.map(playedStatus => (
+                                            <option
+                                                key={playedStatus.value}
+                                                value={playedStatus.value}
+                                            >
+                                                {playedStatus.text}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select
+                                        onChange={e =>
+                                            updateFunction(
+                                                entry?.gameLibraryEntry!,
+                                                'rating',
+                                                parseInt(e.target.value)
+                                            )
+                                        }
+                                        value={entry?.gameLibraryEntry.rating!}
+                                    >
+                                        {gameRatingsArray.map(rating => (
+                                            <option
+                                                key={rating.value}
+                                                value={rating.value}
+                                            >
+                                                {rating.text}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+
+                                <td style={{ display: 'none' }}>
+                                    {entry?.gameLibraryEntry.systemsOwned}
+                                </td>
+                                <td style={{ display: 'none' }}>
+                                    {entry?.gameLibraryEntry._id}
+                                </td>
+                                <td>
+                                    <ToggleGameFromLibraryButton
+                                        game={entry?.game!}
+                                        shortText={true}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             {paginationControls}
         </React.Fragment>
     ) : (

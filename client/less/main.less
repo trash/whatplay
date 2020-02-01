@@ -1,4 +1,5 @@
 @import 'reset';
+@import 'fonts';
 @import 'code';
 @import 'colors';
 @import 'game';
@@ -9,6 +10,9 @@
 @iconMargin: 6px;
 
 @spinner: '\e97b';
+@sortAsc: '\ea4c';
+@sortDesc: '\ea4d';
+
 @keyframes spin {
     from {
         transform:rotate(0deg);
@@ -111,12 +115,16 @@ select option {
     }
 }
 
+.icon(@content) {
+    font-family: 'icomoon';
+    content: @content;
+}
+
 // Loading icon mixin
 .loading() {
     &:before {
         display: inline-block;
-        font-family: 'icomoon';
-        content: @spinner;
+        .icon(@spinner);
         .spin();
         margin-right: @iconMargin;
     }
@@ -142,7 +150,7 @@ button {
     }
 
     &[disabled] {
-        color: #ccc;
+        color: @disabledText;
     }
 
     [class^='icon-']{

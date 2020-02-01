@@ -1,32 +1,13 @@
 @font-face {
     font-family: 'icomoon';
-    src: url('icomoon.eot?91yzdl');
-    src: url('icomoon.eot?91yzdl#iefix') format('embedded-opentype'),
-        url('icomoon.ttf?91yzdl') format('truetype'),
-        url('icomoon.woff?91yzdl') format('woff'),
-        url('icomoon.svg?91yzdl#icomoon') format('svg');
+    src: url('icomoon.eot?u08rlt');
+    src: url('icomoon.eot?u08rlt#iefix') format('embedded-opentype'),
+        url('icomoon.ttf?u08rlt') format('truetype'),
+        url('icomoon.woff?u08rlt') format('woff'),
+        url('icomoon.svg?u08rlt#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
     font-display: block;
-}
-
-/* Add Whitney fonts */
-@font-face {
-    font-family: 'Whitney';
-    src: url('whitney-medium.otf') format('opentype');
-}
-
-@font-face {
-    font-family: 'Whitney';
-    src: url('whitney-bold.otf') format('opentype');
-    font-weight: 700;
-    font-weight: bold;
-}
-
-@font-face {
-    font-family: 'Whitney';
-    src: url('whitney-semibold.otf') format('opentype');
-    font-weight: 600;
 }
 
 [class^='icon-'],
@@ -297,15 +278,6 @@
 .icon-menu:before {
     content: '\e9bd';
 }
-.icon-menu2:before {
-    content: '\e9be';
-}
-.icon-menu3:before {
-    content: '\e9bf';
-}
-.icon-menu4:before {
-    content: '\e9c0';
-}
 .icon-sphere:before {
     content: '\e9c9';
 }
@@ -350,6 +322,12 @@
 }
 .icon-checkmark2:before {
     content: '\ea11';
+}
+.icon-sort-amount-asc:before {
+    content: '\ea4c';
+}
+.icon-sort-amount-desc:before {
+    content: '\ea4d';
 }
 .icon-checkbox-checked:before {
     content: '\ea52';

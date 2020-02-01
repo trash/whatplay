@@ -29,3 +29,37 @@
         color: @lighterText;
     }
 }
+
+
+.tableWrap {
+    overflow-x: scroll;
+}
+.libraryTable {
+    th {
+        min-width: 150px;
+    }
+    .gameTitleColumn {
+        min-width: 240px;
+    }
+
+    .timeToBeatColumn {
+        min-width: 50px;
+    }
+}
+
+.sortableColumn {
+    cursor: pointer;
+    &:after {
+        .icon(@sortAsc);
+        color: @disabledText;
+        vertical-align: middle;;
+    }
+
+    &.sortableColumn--active:after {
+        color: @darkerText;
+    }
+
+    &.sortableColumn--reversed:after {
+        transform: scaleX(-1);
+    }
+}
