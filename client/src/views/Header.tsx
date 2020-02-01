@@ -15,8 +15,9 @@ export function HeaderView() {
                 </div>
                 <div className="header_navlist">
                     <NavLink
+                        exact
                         className="header_navlist_item"
-                        to="/games"
+                        to="/"
                         activeClassName="selected"
                     >
                         Browse Games
@@ -32,6 +33,13 @@ export function HeaderView() {
                             </NavLink>
                         </React.Fragment>
                     )}
+                    <NavLink
+                        className="header_navlist_item"
+                        to="/about"
+                        activeClassName="selected"
+                    >
+                        About
+                    </NavLink>
                 </div>
                 <button
                     onClick={() =>

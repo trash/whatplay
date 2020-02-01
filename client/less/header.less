@@ -1,0 +1,42 @@
+.header {
+    background: @brand;
+    border-bottom: 4px solid @brand2;
+    color: @lightBackgroundColor;
+
+    .header_inner {
+        display: flex;
+    }
+
+    a, button {
+        color: @lightBackgroundColor;
+        margin: auto 0;
+    }
+
+    .header_brand {
+        flex: 0 1 auto;
+        margin-right: 20px;
+        font-weight: @heavyFontWeight;
+        img {
+            height: 50px;
+        }
+    }
+    .header_navlist {
+        flex: auto;
+        display: flex;
+    }
+    .header_navlist_item {
+        margin-right: 20px;
+        display: block;
+        text-decoration: none;
+
+        &.selected {
+            text-decoration: underline;
+            // padding: 13px 5px;
+            // background: @brand2;
+        }
+    }
+
+    button {
+        background: @primaryButtonOnBrand;
+    }
+}

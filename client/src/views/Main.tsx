@@ -25,12 +25,12 @@ function MainView() {
         <Router history={history}>
             <HeaderView />
             <div className="maxWidth">
-                <Route exact path="/" component={ConnectedHomeView} />
+                <Route exact path="/" component={GamesPageView} />
+                <Route exact path="/about" component={ConnectedHomeView} />
                 <PrivateRoute
                     path="/library"
                     component={ConnectedLibraryPage}
                 />
-                <Route path="/games" component={GamesPageView} />
             </div>
             <footer>
                 <div>Welcome to the WhatPlay alpha!</div>
