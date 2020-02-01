@@ -3,13 +3,13 @@ import { Router, Route } from 'react-router-dom';
 
 import { history } from '../services/history';
 
-import { ConnectedHomeView } from './Landing';
 import { GamesPageView } from './GamesPage';
 // import { TestView } from './Test';
 import { HeaderView } from './Header';
 import { useAuth0 } from '../services/ReactAuth';
 import { PrivateRoute } from './PrivateRoute';
 import { ConnectedLibraryPage } from './Library';
+import { AboutPage } from './About';
 
 function MainView() {
     const { loading } = useAuth0();
@@ -26,7 +26,7 @@ function MainView() {
             <HeaderView />
             <div className="maxWidth">
                 <Route exact path="/" component={GamesPageView} />
-                <Route exact path="/about" component={ConnectedHomeView} />
+                <Route exact path="/about" component={AboutPage} />
                 <PrivateRoute
                     path="/library"
                     component={ConnectedLibraryPage}
@@ -36,7 +36,7 @@ function MainView() {
                 <div>Welcome to the WhatPlay alpha!</div>
                 <div>
                     Got feedback?{' '}
-                    <a href="mailto:stefan@whatplay.io">Contact Us</a>
+                    <a href="mailto:feedback@whatplay.io">Contact Us</a>
                 </div>
                 <div>Made by Stefan Valentin</div>
             </footer>
