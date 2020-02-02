@@ -99,7 +99,8 @@ export const deleteGameFromLibrary: ControllerMethod = async (
             'gameLibraryEntry'
         );
         const libEntryResult = await libraryEntryCollection.deleteOne({
-            gameId
+            gameId,
+            userAuth0Id: getUserAuth0IdFromRequest(req)
         });
 
         if (!libEntryResult.result.ok || libEntryResult.result.n === 0) {
