@@ -24,8 +24,11 @@ export enum BacklogPriority {
 
 export enum GameRating {
     NotRated = 0,
-    Disliked = 1,
-    Liked = 2
+    DidNotLike = 1,
+    ItWasOkay = 2,
+    LikedIt = 3,
+    ReallyLikedIt = 4,
+    ItWasAmazing = 5
 }
 
 export enum GameLibrarySort {
@@ -85,10 +88,13 @@ export const gameRatingsArray = [
         value: GameRating.NotRated,
         text: 'Not rated'
     },
-    { value: GameRating.Disliked, text: '👎 Disiked' },
+    { value: GameRating.DidNotLike, text: '1: Did not like it' },
+    { value: GameRating.ItWasOkay, text: '2: It was okay' },
+    { value: GameRating.LikedIt, text: '3: Liked it' },
+    { value: GameRating.ReallyLikedIt, text: '4: Really liked it' },
     {
-        value: GameRating.Liked,
-        text: '👍 Liked'
+        value: GameRating.ItWasAmazing,
+        text: '5: It was amazing'
     }
 ];
 

@@ -1,7 +1,10 @@
 import { MongoDocument, MongoDocumentJson } from './mongoDocument';
 import { Permission } from './permission.model';
 import { GameServerJson } from './game.model';
-import { GameLibraryEntryServerJson } from './game-library-entry.model';
+import {
+    GameLibraryEntryServerJson,
+    GameLibraryEntryServer
+} from './game-library-entry.model';
 import { ObjectId } from 'mongodb';
 
 export type GameLibraryEntryReferenceServer = {
@@ -42,4 +45,6 @@ export type GetGameLibraryPostServer = {
     gameLibraryEntries: HydratedGameLibraryEntryServer[];
 };
 
-export type UpdateGameLibraryEntryPatch = Partial<Omit<GameServerJson, '_id'>>;
+export type UpdateGameLibraryEntryPatch = Partial<
+    Omit<GameLibraryEntryServer, '_id'>
+>;

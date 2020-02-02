@@ -268,6 +268,9 @@ export const updateGameLibraryEntry: ControllerMethod = async (
     if (!body) {
         return res.status(400).send('Invalid patch request data.');
     }
+    if (body.rating && GameRating[body.rating] === undefined) {
+        return res.status(400).send('Invalid rating value.');
+    }
 
     const gameLibraryEntryId = req.params.gameLibraryEntryId;
     try {
