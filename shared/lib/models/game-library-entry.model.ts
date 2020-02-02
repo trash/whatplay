@@ -83,62 +83,68 @@ export const gameLibrarySortMap: Map<
     ]
 ]);
 
-export const gameRatingsArray = [
-    {
-        value: GameRating.NotRated,
-        text: 'Not rated'
-    },
-    { value: GameRating.DidNotLike, text: '1: Did not like it' },
-    { value: GameRating.ItWasOkay, text: '2: It was okay' },
-    { value: GameRating.LikedIt, text: '3: Liked it' },
-    { value: GameRating.ReallyLikedIt, text: '4: Really liked it' },
-    {
-        value: GameRating.ItWasAmazing,
-        text: '5: It was amazing'
-    }
-];
+export const ratingHumanReadableMap: Map<GameRating, string> = new Map([
+    [GameRating.NotRated, 'Not rated'],
+    [GameRating.DidNotLike, '1: Did not like it'],
+    [GameRating.ItWasOkay, '2: It was okay'],
+    [GameRating.LikedIt, '3: Liked it'],
+    [GameRating.ReallyLikedIt, '4: Really liked it'],
+    [GameRating.ItWasAmazing, '5: It was amazing']
+]);
+
+export const ratingArray = [
+    GameRating.NotRated,
+    GameRating.DidNotLike,
+    GameRating.ItWasOkay,
+    GameRating.LikedIt,
+    GameRating.ReallyLikedIt,
+    GameRating.ItWasAmazing
+].map(value => ({
+    value,
+    text: ratingHumanReadableMap.get(value)
+}));
+
+export const backlogPriorityHumanReadableMap: Map<
+    BacklogPriority,
+    string
+> = new Map([
+    [BacklogPriority.None, 'Not set'],
+    [BacklogPriority.Low, 'Low'],
+    [BacklogPriority.Medium, 'Medium'],
+    [BacklogPriority.High, 'High']
+]);
 
 export const backlogPriorityArray = [
-    {
-        value: BacklogPriority.None,
-        text: 'Not set'
-    },
-    {
-        value: BacklogPriority.Low,
-        text: 'Low'
-    },
-    {
-        value: BacklogPriority.Medium,
-        text: 'Medium'
-    },
-    {
-        value: BacklogPriority.High,
-        text: 'High'
-    }
-];
+    BacklogPriority.None,
+    BacklogPriority.Low,
+    BacklogPriority.Medium,
+    BacklogPriority.High
+].map(value => ({
+    value,
+    text: backlogPriorityHumanReadableMap.get(value)
+}));
+
+export const playedStatusHumanReadableMap: Map<PlayedStatus, string> = new Map([
+    [PlayedStatus.PlayedNotGoingToComplete, 'Played. Not going to complete.'],
+    [PlayedStatus.Completed, 'Completed.'],
+    [PlayedStatus.NotPlayed, 'Not played.'],
+    [
+        PlayedStatus.PlayedWantToComplete,
+        'Played at some point. Want to complete.'
+    ],
+    [PlayedStatus.Playing, 'Currently playing.']
+]);
 
 export const playedStatusArray = [
-    {
-        value: PlayedStatus.PlayedNotGoingToComplete,
-        text: 'Played. Not going to complete.'
-    },
-    {
-        value: PlayedStatus.Completed,
-        text: 'Completed.'
-    },
-    {
-        value: PlayedStatus.NotPlayed,
-        text: 'Not played.'
-    },
-    {
-        value: PlayedStatus.PlayedWantToComplete,
-        text: 'Played at some point. Want to complete.'
-    },
-    {
-        value: PlayedStatus.Playing,
-        text: 'Current playing'
-    }
-];
+    PlayedStatus.PlayedNotGoingToComplete,
+    PlayedStatus.Completed,
+    PlayedStatus.NotPlayed,
+    PlayedStatus.PlayedWantToComplete,
+    PlayedStatus.Playing
+].map(value => ({
+    value,
+    text: playedStatusHumanReadableMap.get(value)
+}));
 
 interface GameLibraryEntryShared {
     // gameId: string;

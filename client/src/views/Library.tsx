@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { connect, useSelector } from 'react-redux';
 
-import { useAuth0 } from '../services/ReactAuth';
 import { RootState } from 'typesafe-actions';
 import { GameLibraryEntryReferenceClient } from '@shared/models/user.model';
 import { List } from 'immutable';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
 import {
-    gameRatingsArray,
     GameLibraryEntryClient,
     backlogPriorityArray,
     playedStatusArray,
-    GameLibrarySort
+    GameLibrarySort,
+    ratingArray
 } from '@shared/models/game-library-entry.model';
 import { useState } from 'react';
 import { gameLibraryService } from '../services/game-library.service';
@@ -21,6 +20,9 @@ import {
     PaginationHelpers
 } from '../components/PaginationControls';
 import classNames from 'classnames';
+import { useParams } from 'react-router';
+import { useAuth0 } from '../services/ReactAuth';
+import { GameUtilities } from '../models/game.util';
 
 interface LibraryProps {
     results: HydratedGameLibraryClient;
@@ -30,9 +32,13 @@ interface LibraryProps {
 
 export const LibraryPage: React.FC<LibraryProps> = () => {
     const { user } = useAuth0();
-    if (!user) {
+    const { userId } = useParams();
+    console.log('get lib for', userId);
+    // const user =
+    if (!userId) {
         return null;
     }
+    const canEdit = user?.auth0Id === userId;
     const {
         library,
         results,
@@ -69,6 +75,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
         try {
             setIsLoadingResults(true);
             await gameLibraryService.debouncedGetAllLibraryGames(
+                userId,
                 runSearchText,
                 runSearchPage
             );
@@ -189,74 +196,100 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                             <tr key={entry?.gameLibraryEntry._id}>
                                 <td>{entry?.game.title}</td>
                                 <td>
-                                    <select
-                                        onChange={e =>
-                                            updateFunction(
-                                                entry?.gameLibraryEntry!,
-                                                'backlogPriority',
-                                                parseInt(e.target.value)
-                                            )
-                                        }
-                                        value={
-                                            entry?.gameLibraryEntry
-                                                .backlogPriority!
-                                        }
-                                    >
-                                        {backlogPriorityArray.map(priority => (
-                                            <option
-                                                key={priority.value}
-                                                value={priority.value}
-                                            >
-                                                {priority.text}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    {canEdit ? (
+                                        <select
+                                            onChange={e =>
+                                                updateFunction(
+                                                    entry?.gameLibraryEntry!,
+                                                    'backlogPriority',
+                                                    parseInt(e.target.value)
+                                                )
+                                            }
+                                            value={
+                                                entry?.gameLibraryEntry
+                                                    .backlogPriority!
+                                            }
+                                        >
+                                            {backlogPriorityArray.map(
+                                                priority => (
+                                                    <option
+                                                        key={priority.value}
+                                                        value={priority.value}
+                                                    >
+                                                        {priority.text}
+                                                    </option>
+                                                )
+                                            )}
+                                        </select>
+                                    ) : (
+                                        GameUtilities.backlogPriority(
+                                            entry?.gameLibraryEntry!
+                                        )
+                                    )}
                                 </td>
                                 <td>{entry?.game.timeToBeat}</td>
                                 <td>
-                                    <select
-                                        onChange={e =>
-                                            updateFunction(
-                                                entry?.gameLibraryEntry!,
-                                                'playedStatus',
-                                                parseInt(e.target.value)
-                                            )
-                                        }
-                                        value={
-                                            entry?.gameLibraryEntry
-                                                .playedStatus!
-                                        }
-                                    >
-                                        {playedStatusArray.map(playedStatus => (
-                                            <option
-                                                key={playedStatus.value}
-                                                value={playedStatus.value}
-                                            >
-                                                {playedStatus.text}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    {canEdit ? (
+                                        <select
+                                            onChange={e =>
+                                                updateFunction(
+                                                    entry?.gameLibraryEntry!,
+                                                    'playedStatus',
+                                                    parseInt(e.target.value)
+                                                )
+                                            }
+                                            value={
+                                                entry?.gameLibraryEntry
+                                                    .playedStatus!
+                                            }
+                                        >
+                                            {playedStatusArray.map(
+                                                playedStatus => (
+                                                    <option
+                                                        key={playedStatus.value}
+                                                        value={
+                                                            playedStatus.value
+                                                        }
+                                                    >
+                                                        {playedStatus.text}
+                                                    </option>
+                                                )
+                                            )}
+                                        </select>
+                                    ) : (
+                                        GameUtilities.playedStatus(
+                                            entry?.gameLibraryEntry!
+                                        )
+                                    )}
                                 </td>
                                 <td>
-                                    <select
-                                        onChange={e =>
-                                            updateFunction(
-                                                entry?.gameLibraryEntry!,
-                                                'rating',
-                                                parseInt(e.target.value)
-                                            )
-                                        }
-                                        value={entry?.gameLibraryEntry.rating!}
-                                    >
-                                        {gameRatingsArray.map(rating => (
-                                            <option
-                                                key={rating.value}
-                                                value={rating.value}
-                                            >
-                                                {rating.text}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    {canEdit ? (
+                                        <select
+                                            onChange={e =>
+                                                updateFunction(
+                                                    entry?.gameLibraryEntry!,
+                                                    'rating',
+                                                    parseInt(e.target.value)
+                                                )
+                                            }
+                                            value={
+                                                entry?.gameLibraryEntry.rating!
+                                            }
+                                        >
+                                            {ratingArray.map(rating => (
+                                                <option
+                                                    key={rating.value}
+                                                    value={rating.value}
+                                                >
+                                                    {rating.text}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        GameUtilities.rating(
+                                            entry?.gameLibraryEntry!
+                                        )
+                                    )}
                                 </td>
 
                                 <td style={{ display: 'none' }}>
@@ -265,12 +298,14 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                 <td style={{ display: 'none' }}>
                                     {entry?.gameLibraryEntry._id}
                                 </td>
-                                <td>
-                                    <ToggleGameFromLibraryButton
-                                        game={entry?.game!}
-                                        shortText={true}
-                                    />
-                                </td>
+                                {canEdit ? (
+                                    <td>
+                                        <ToggleGameFromLibraryButton
+                                            game={entry?.game!}
+                                            shortText={true}
+                                        />
+                                    </td>
+                                ) : null}
                             </tr>
                         ))}
                     </tbody>

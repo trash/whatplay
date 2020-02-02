@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth0 } from '../services/ReactAuth';
 
 export function HeaderView() {
-    const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+    const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
     return (
         <div className="header">
             <div className="header_inner maxWidth">
@@ -26,7 +26,7 @@ export function HeaderView() {
                         <React.Fragment>
                             <NavLink
                                 className="header_navlist_item"
-                                to="/library"
+                                to={`/library/${user?.auth0Id}`}
                                 activeClassName="selected"
                             >
                                 My Library

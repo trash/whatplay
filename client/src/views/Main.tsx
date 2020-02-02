@@ -7,7 +7,6 @@ import { GamesPageView } from './GamesPage';
 // import { TestView } from './Test';
 import { HeaderView } from './Header';
 import { useAuth0 } from '../services/ReactAuth';
-import { PrivateRoute } from './PrivateRoute';
 import { ConnectedLibraryPage } from './Library';
 import { AboutPage } from './About';
 
@@ -27,8 +26,8 @@ function MainView() {
             <div className="maxWidth">
                 <Route exact path="/" component={GamesPageView} />
                 <Route exact path="/about" component={AboutPage} />
-                <PrivateRoute
-                    path="/library"
+                <Route
+                    path="/library/:userId"
                     component={ConnectedLibraryPage}
                 />
             </div>

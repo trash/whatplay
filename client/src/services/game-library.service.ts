@@ -83,12 +83,14 @@ class GameLibraryService {
     }
 
     async getAllLibraryGames(
+        userId: string,
         searchText: string = '',
         page: number = 0
     ): Promise<HydratedGameLibraryClient> {
         const server = await Api.get<GameLibrarySearchResponse>(
             `/api/v1/library`,
             {
+                userId,
                 page,
                 search: searchText,
                 sort: GameLibrarySort.BacklogPriority

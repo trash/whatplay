@@ -140,6 +140,10 @@ export const getGameLibrary: ControllerMethod = async (
     const [client, db] = await connectToDatabase();
     let response: Response;
 
+    const userId = req.query.userId;
+    if (!userId) {
+        return res.status(400).send('Missing userId.');
+    }
     const page = req.query.page || 0;
     const searchTerm = req.query.search || '';
     const sortInQuery = req.query.sort;
@@ -151,7 +155,7 @@ export const getGameLibrary: ControllerMethod = async (
 
         const gameLibraryFindFilter = {
             $match: {
-                userAuth0Id: getUserAuth0IdFromRequest(req)
+                userAuth0Id: userId
             }
         };
 

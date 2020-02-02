@@ -97,7 +97,7 @@ export const authorizedRoutes: {
     },
     {
         route: pathToRegexp('/api/v1/library'),
-        actions: ['GET', 'POST']
+        actions: ['POST']
     },
     {
         route: pathToRegexp('/api/v1/library/:id'),

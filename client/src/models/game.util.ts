@@ -1,13 +1,12 @@
 import { GameStub, GameServerJson } from '@shared/models/game.model';
 import moment from 'moment';
 import { Game } from './game.model';
-import { PlayedStatus } from '@shared/models/game-library-entry.model';
-
-const humanReadablePlayStatusMap: {
-    [key: number]: string;
-} = {
-    [PlayedStatus.NotPlayed]: 'Not played'
-};
+import {
+    GameLibraryEntryClient,
+    backlogPriorityHumanReadableMap,
+    playedStatusHumanReadableMap,
+    ratingHumanReadableMap
+} from '@shared/models/game-library-entry.model';
 
 // Maybe go OO at some point
 export class GameUtilities {
@@ -55,8 +54,31 @@ export class GameUtilities {
         return game[timeKey].format('LL LTS');
     }
 
-    // Move to a separate util?
-    static playedStatus(playedStatus: PlayedStatus): string {
-        return humanReadablePlayStatusMap[playedStatus];
+    static backlogPriority(gameLibraryEntry: GameLibraryEntryClient): string {
+        if (gameLibraryEntry.backlogPriority === null) {
+            return '';
+        }
+        return (
+            backlogPriorityHumanReadableMap.get(
+                gameLibraryEntry.backlogPriority
+            ) || ''
+        );
+    }
+
+    static playedStatus(gameLibraryEntry: GameLibraryEntryClient): string {
+        if (gameLibraryEntry.playedStatus === null) {
+            return '';
+        }
+        return (
+            playedStatusHumanReadableMap.get(gameLibraryEntry.playedStatus)
+            || ''
+        );
+    }
+
+    static rating(gameLibraryEntry: GameLibraryEntryClient): string {
+        if (gameLibraryEntry.rating === null) {
+            return '';
+        }
+        return ratingHumanReadableMap.get(gameLibraryEntry.rating) || '';
     }
 }
