@@ -58,6 +58,12 @@ export const AboutPage: React.FC = () => {
             <p>
                 <a href="mailto:feedback@whatplay.io">feedback@whatplay.io</a>
             </p>
+            <p>
+                You can also stay up to date by{' '}
+                <a href="https://mailchi.mp/2da2bb5f6559/whatplay">
+                    subscribing to our mailing list.
+                </a>
+            </p>
         </section>
     );
 };

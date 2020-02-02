@@ -97,11 +97,11 @@ export const GameComponent: React.FC<GameProps> = props => {
                         <th>System(s)</th>
                         <td>{GameUtilities.outputSystems(props.game)}</td>
                     </tr>
-                    <tr>
+                    <tr style={{ display: 'none' }}>
                         <th>Id</th>
                         <td>{props.game.id}</td>
                     </tr>
-                    <tr>
+                    <tr style={{ display: 'none' }}>
                         <th>Time Created</th>
                         <td>
                             {GameUtilities.displayTime(

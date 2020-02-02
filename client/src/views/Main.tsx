@@ -38,7 +38,11 @@ function MainView() {
                     Got feedback?{' '}
                     <a href="mailto:feedback@whatplay.io">Contact Us</a>
                 </div>
-                <div>Made by Stefan Valentin</div>
+                <div>
+                    <a href="https://mailchi.mp/2da2bb5f6559/whatplay">
+                        Stay up to date
+                    </a>
+                </div>
             </footer>
         </Router>
     );
