@@ -11,7 +11,7 @@ import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';
 import { RootState } from 'typesafe-actions';
 // import { userService } from '../services/user.service';
-// import { useAuth0 } from '../services/ReactAuth';
+import { useAuth0 } from '../services/ReactAuth';
 // import { Permission } from '@shared/models/permission.model';
 import {
     PaginationControls,
@@ -42,11 +42,11 @@ export const CreateGamesPage: React.FC<CreateGamesPageProps> = () => {
     const [isCreatingGame, setIsCreatingGame] = useState<boolean>(false);
     const [isLoadingResults, setIsLoadingResults] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>('');
-    // const { user } = useAuth0();
+    const { user } = useAuth0();
     // const canCreate = user
     //     ? userService.hasPermission(user, Permission.CreateGame)
     //     : false;
-    const canCreate = true;
+    const canCreate = !!user;
 
     if (!canCreate) {
         return <NeedToLogin />;
