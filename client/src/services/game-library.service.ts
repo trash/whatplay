@@ -14,7 +14,8 @@ import { List } from 'immutable';
 import {
     GameLibraryEntryClient,
     GameLibrarySearchResponse,
-    GameLibrarySort
+    GameLibrarySort,
+    GameRating
 } from '@shared/models/game-library-entry.model';
 import {
     removeGameFromLibrary,
@@ -24,7 +25,7 @@ import {
 } from '../redux/game-library/index.actions';
 import debounce from '../util/debounce';
 
-class GameLibraryService {
+export class GameLibraryService {
     hasGameInLibrary(game: Game): boolean {
         return store
             .getState()
@@ -44,11 +45,15 @@ class GameLibraryService {
         store.dispatch(removeGameFromLibrary(game.id));
         return;
     }
-    private async addGameToLibrary(game: Game) {
+    private async addGameToLibrary(
+        game: Game,
+        rating: GameRating = GameRating.NotRated
+    ) {
         const server = await Api.post<
             AddGamePost,
             GameLibraryEntryReferenceServerJson
         >(`/api/v1/library`, {
+            rating,
             gameId: game.id
         });
         store.dispatch(addGameToLibrary(server));
@@ -122,6 +127,10 @@ class GameLibraryService {
             updateHydratedGameLibraryEntry(gameLibraryEntry, update)
         );
         return;
+    }
+
+    async setRatingAndAddGameToLibrary(game: Game, rating: GameRating) {
+        return this.addGameToLibrary(game, rating);
     }
 }
 export const gameLibraryService = new GameLibraryService();

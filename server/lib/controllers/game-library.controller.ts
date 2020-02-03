@@ -35,6 +35,9 @@ export const addGameToLibrary: ControllerMethod = async (
         const e = new Error('Missing game id');
         return res.status(400).send(e);
     }
+    if (body.rating !== undefined && !validateRating(body.rating)) {
+        return res.status(400).send('Invalid rating value.');
+    }
     try {
         // 1) Create a LibraryEntry for the game
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
@@ -43,7 +46,7 @@ export const addGameToLibrary: ControllerMethod = async (
         const libEntryResult = await libraryEntryCollection.insertOne({
             gameId: new ObjectId(body.gameId),
             userAuth0Id: getUserAuth0IdFromRequest(req),
-            rating: GameRating.NotRated,
+            rating: body.rating || GameRating.NotRated,
             playedStatus: PlayedStatus.NotPlayed,
             comments: '',
             dateCompleted: null,
@@ -262,6 +265,10 @@ export const getGameLibrary: ControllerMethod = async (
     return response;
 };
 
+const validateRating = (rating: GameRating | null | undefined): boolean => {
+    return !!rating && GameRating[rating] !== undefined;
+};
+
 export const updateGameLibraryEntry: ControllerMethod = async (
     req: AuthenticatedRequest,
     res
@@ -272,7 +279,7 @@ export const updateGameLibraryEntry: ControllerMethod = async (
     if (!body) {
         return res.status(400).send('Invalid patch request data.');
     }
-    if (body.rating && GameRating[body.rating] === undefined) {
+    if (!validateRating(body.rating)) {
         return res.status(400).send('Invalid rating value.');
     }
 

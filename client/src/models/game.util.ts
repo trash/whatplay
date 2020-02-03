@@ -7,6 +7,7 @@ import {
     playedStatusHumanReadableMap,
     ratingHumanReadableMap
 } from '@shared/models/game-library-entry.model';
+import { GameLibraryService } from '../services/game-library.service';
 
 // Maybe go OO at some point
 export class GameUtilities {
@@ -80,5 +81,17 @@ export class GameUtilities {
             return '';
         }
         return ratingHumanReadableMap.get(gameLibraryEntry.rating) || '';
+    }
+
+    static updateGameLibraryEntry<K extends keyof GameLibraryEntryClient>(
+        gameLibraryService: GameLibraryService,
+        gameLibraryEntryToUpdate: GameLibraryEntryClient,
+        property: K,
+        value: GameLibraryEntryClient[K]
+    ) {
+        console.log(gameLibraryEntryToUpdate, property, value);
+        gameLibraryService.updateGameLibraryEntry(gameLibraryEntryToUpdate, {
+            [property]: value
+        });
     }
 }

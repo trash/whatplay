@@ -9,6 +9,9 @@ import { userService } from '../services/user.service';
 import { Permission } from '@shared/models/permission.model';
 import { DeleteGameButton } from './DeleteGameButton';
 import { ToggleGameFromLibraryButton } from './ToggleGameFromLibraryButton';
+import { gameLibraryService } from '../services/game-library.service';
+import { GameRating } from '@shared/models/game-library-entry.model';
+import { RatingSelect } from './RatingSelect';
 
 type GameProps = {
     game: Game;
@@ -18,6 +21,7 @@ type GameProps = {
 export const GameComponent: React.FC<GameProps> = props => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [rating, setRating] = useState<GameRating>(GameRating.NotRated);
     const { user, isAuthenticated } = useAuth0();
     let canEdit = false;
     if (user) {
@@ -52,6 +56,7 @@ export const GameComponent: React.FC<GameProps> = props => {
             />
         );
     }
+    const hasGameInLibrary = gameLibraryService.hasGameInLibrary(props.game);
 
     return (
         <div className="game">
@@ -59,10 +64,25 @@ export const GameComponent: React.FC<GameProps> = props => {
                 <span>{props.game.title}</span>
                 <div className="game_title_controls">
                     {isAuthenticated && (
-                        <ToggleGameFromLibraryButton
-                            loading={isSaving}
-                            game={props.game}
-                        />
+                        <React.Fragment>
+                            {!hasGameInLibrary && (
+                                <RatingSelect
+                                    rating={rating}
+                                    onChange={async updatedRating => {
+                                        setRating(updatedRating);
+                                        await gameLibraryService.setRatingAndAddGameToLibrary(
+                                            props.game,
+                                            updatedRating
+                                        );
+                                        setRating(GameRating.NotRated);
+                                    }}
+                                />
+                            )}
+                            <ToggleGameFromLibraryButton
+                                loading={isSaving}
+                                game={props.game}
+                            />
+                        </React.Fragment>
                     )}
 
                     {canEdit && (

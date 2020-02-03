@@ -3,7 +3,8 @@ import { Permission } from './permission.model';
 import { GameServerJson } from './game.model';
 import {
     GameLibraryEntryServerJson,
-    GameLibraryEntryServer
+    GameLibraryEntryServer,
+    GameRating
 } from './game-library-entry.model';
 import { ObjectId } from 'mongodb';
 
@@ -34,6 +35,7 @@ export interface UserServerJson extends MongoDocumentJson, UserServerShared {
 
 export type AddGamePost = {
     gameId: string;
+    rating?: GameRating;
 };
 
 export type HydratedGameLibraryEntryServer = {

@@ -7,11 +7,9 @@ import { List } from 'immutable';
 import { HydratedGameLibraryClient } from '../models/user.model';
 import { ToggleGameFromLibraryButton } from '../components/ToggleGameFromLibraryButton';
 import {
-    GameLibraryEntryClient,
     backlogPriorityArray,
     playedStatusArray,
-    GameLibrarySort,
-    ratingArray
+    GameLibrarySort
 } from '@shared/models/game-library-entry.model';
 import { useState } from 'react';
 import { gameLibraryService } from '../services/game-library.service';
@@ -23,6 +21,7 @@ import classNames from 'classnames';
 import { useParams } from 'react-router';
 import { useAuth0 } from '../services/ReactAuth';
 import { GameUtilities } from '../models/game.util';
+import { RatingSelect } from '../components/RatingSelect';
 
 interface LibraryProps {
     results: HydratedGameLibraryClient;
@@ -138,17 +137,6 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
         fetchFunc();
     }, [library]);
 
-    function updateFunction<K extends keyof GameLibraryEntryClient>(
-        gameLibraryEntryToUpdate: GameLibraryEntryClient,
-        property: K,
-        value: GameLibraryEntryClient[K]
-    ) {
-        console.log(gameLibraryEntryToUpdate, property, value);
-        gameLibraryService.updateGameLibraryEntry(gameLibraryEntryToUpdate, {
-            [property]: value
-        });
-    }
-
     const paginationControls = (
         <PaginationControls
             currentPage={currentPage}
@@ -199,7 +187,8 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                     {canEdit ? (
                                         <select
                                             onChange={e =>
-                                                updateFunction(
+                                                GameUtilities.updateGameLibraryEntry(
+                                                    gameLibraryService,
                                                     entry?.gameLibraryEntry!,
                                                     'backlogPriority',
                                                     parseInt(e.target.value)
@@ -232,7 +221,8 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                     {canEdit ? (
                                         <select
                                             onChange={e =>
-                                                updateFunction(
+                                                GameUtilities.updateGameLibraryEntry(
+                                                    gameLibraryService,
                                                     entry?.gameLibraryEntry!,
                                                     'playedStatus',
                                                     parseInt(e.target.value)
@@ -264,27 +254,19 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                 </td>
                                 <td>
                                     {canEdit ? (
-                                        <select
-                                            onChange={e =>
-                                                updateFunction(
-                                                    entry?.gameLibraryEntry!,
-                                                    'rating',
-                                                    parseInt(e.target.value)
-                                                )
-                                            }
-                                            value={
+                                        <RatingSelect
+                                            rating={
                                                 entry?.gameLibraryEntry.rating!
                                             }
-                                        >
-                                            {ratingArray.map(rating => (
-                                                <option
-                                                    key={rating.value}
-                                                    value={rating.value}
-                                                >
-                                                    {rating.text}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            onChange={updatedRating =>
+                                                GameUtilities.updateGameLibraryEntry(
+                                                    gameLibraryService,
+                                                    entry?.gameLibraryEntry!,
+                                                    'rating',
+                                                    updatedRating
+                                                )
+                                            }
+                                        />
                                     ) : (
                                         GameUtilities.rating(
                                             entry?.gameLibraryEntry!
@@ -322,7 +304,9 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
 
     return (
         <section>
-            <h1>Game Library</h1>
+            <h1>
+                {canEdit ? 'My Game Library' : "Someone Else's Game Library"}
+            </h1>
             <label>
                 Search
                 <input
