@@ -9,7 +9,8 @@ import {
     GamePatch,
     GameServerJson,
     GamePatchServer,
-    GameSearchResponse
+    GameSearchResponse,
+    GameExactMatchServer
 } from '@shared/models/game.model';
 import moment from 'moment';
 import {
@@ -21,7 +22,10 @@ import {
 import debounce from '../util/debounce';
 
 class GameService {
-    async searchGames(searchText: string, page = 0): Promise<Game[]> {
+    private async internalSearchGames(
+        searchText: string,
+        page = 0
+    ): Promise<Game[]> {
         const response = await Api.get<GameSearchResponse>(
             `/api/v1/games/search`,
             {
@@ -39,7 +43,23 @@ class GameService {
         return matches;
     }
 
-    debouncedSearchGames = debounce(this.searchGames, 250);
+    private async internalCheckExactTitleMatch(
+        title: string
+    ): Promise<boolean> {
+        const response = await Api.get<GameExactMatchServer>(
+            `/api/v1/games/exactMatch`,
+            {
+                title
+            }
+        );
+
+        console.log(response);
+
+        return response;
+    }
+
+    checkExactTitleMatch = debounce(this.internalCheckExactTitleMatch, 250);
+    searchGames = debounce(this.internalSearchGames, 250);
 
     async createGame(game: GameStub): Promise<Game> {
         const newGame = await Api.post<GameStub, GameServerJson>(

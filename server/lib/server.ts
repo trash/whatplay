@@ -100,6 +100,10 @@ export const authorizedRoutes: {
         actions: ['POST']
     },
     {
+        route: pathToRegexp('/api/v1/library/exactMatch'),
+        actions: ['GET']
+    },
+    {
         route: pathToRegexp('/api/v1/library/:id'),
         actions: ['DELETE', 'PATCH']
     },

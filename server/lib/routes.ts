@@ -44,6 +44,9 @@ export default function(app: Application) {
     app.get('/api/v1/games', (req, res) => {
         api.game.getAllGames(req, res);
     });
+    app.get('/api/v1/games/exactMatch', (req, res) => {
+        api.game.getExactTitleMatch(req, res);
+    });
     app.post('/api/v1/games', (req, res) => api.game.createGame(req, res));
     app.get('/api/v1/games/search', (req, res) => {
         api.game.searchGames(req, res);

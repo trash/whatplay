@@ -42,6 +42,10 @@ export const CreateGamesPage: React.FC<CreateGamesPageProps> = () => {
     const [isCreatingGame, setIsCreatingGame] = useState<boolean>(false);
     const [isLoadingResults, setIsLoadingResults] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>('');
+    const [isCheckingExactMatch, setIsCheckingExactMatch] = useState<boolean>(
+        false
+    );
+    const [isExactMatch, setIsExactMatch] = useState<boolean>(false);
     const { user } = useAuth0();
     // const canCreate = user
     //     ? userService.hasPermission(user, Permission.CreateGame)
@@ -82,10 +86,7 @@ export const CreateGamesPage: React.FC<CreateGamesPageProps> = () => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
-            await gameService.debouncedSearchGames(
-                runSearchText,
-                runSearchPage
-            );
+            await gameService.searchGames(runSearchText, runSearchPage);
             // console.log('matches', matches);
             setIsLoadingResults(false);
         } catch {
@@ -162,16 +163,28 @@ export const CreateGamesPage: React.FC<CreateGamesPageProps> = () => {
         />
     );
 
+    const onTitleChange = async (text: string) => {
+        if (text) {
+            setIsCheckingExactMatch(true);
+            const exactMatch = await gameService.checkExactTitleMatch(text);
+            setIsExactMatch(exactMatch);
+            setIsCheckingExactMatch(false);
+        }
+        searchOnChange(text);
+    };
+
     return (
         <div className="sideBySide" style={{ marginTop: '10px' }}>
             <div>
                 <CreateGame
-                    onTitleChange={text => searchOnChange(text)}
+                    onTitleChange={text => onTitleChange(text)}
                     initialGameState={GameUtilities.newGameState()}
                     onSubmit={onCreateGame}
                     titleText="Add A New Game To The Database"
                     submitButtonText="Submit"
-                    loading={isCreatingGame}
+                    loading={isCreatingGame || isCheckingExactMatch}
+                    disabled={isCheckingExactMatch || isExactMatch}
+                    titleError={isExactMatch}
                 />
             </div>
 

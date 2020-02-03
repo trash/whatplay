@@ -5,7 +5,8 @@ import {
     GamePatch,
     GameNotSavedServer,
     GamePatchServer,
-    GameSearchResponse
+    GameSearchResponse,
+    GameExactMatchServer
 } from '@shared/models/game.model';
 import { getCurrentUtcTime } from '../helpers.util';
 import { ControllerMethod } from './ControllerMethod';
@@ -104,6 +105,36 @@ export const updateGame: ControllerMethod = async (req, res) => {
         }
     } catch (e) {
         console.error(e);
+        response = res.status(500).send(e);
+    }
+    client.close();
+    return response;
+};
+
+export const getExactTitleMatch: ControllerMethod = async (
+    req: Request,
+    res: Response
+) => {
+    const title = req.query.title || '';
+    if (!title) {
+        return res.status(400).send('Missing title param.');
+    }
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+    try {
+        const collection = db.collection<GameServer>('games');
+
+        const match = await collection.findOne({
+            title: {
+                $regex: `^${title}$`,
+                $options: 'i'
+            }
+        });
+
+        const responsePayload: GameExactMatchServer = !!match;
+
+        response = res.status(200).send(responsePayload);
+    } catch (e) {
         response = res.status(500).send(e);
     }
     client.close();

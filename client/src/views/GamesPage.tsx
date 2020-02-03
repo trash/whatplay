@@ -48,10 +48,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         // Wrap the try for the case where it gets canceled
         try {
             setIsLoadingResults(true);
-            await gameService.debouncedSearchGames(
-                runSearchText,
-                runSearchPage
-            );
+            await gameService.searchGames(runSearchText, runSearchPage);
             // console.log('matches', matches);
             setIsLoadingResults(false);
         } catch {

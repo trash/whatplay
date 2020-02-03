@@ -120,6 +120,7 @@ button {
     }
 
     &[disabled] {
+        .button(@plainButton);
         color: @disabledText;
     }
 
@@ -151,6 +152,11 @@ form {
     font-size: 20px;
     border-bottom: 1px solid @inputBorder;
     margin-bottom: 10px;
+}
+
+.form_error {
+    color: @brandError;
+    margin-bottom: 5px;
 }
 
 input, select {
@@ -187,16 +193,19 @@ th {
     padding: 10px;
 }
 
-.sideBySide {
-    display: flex;
-    > * {
-        width: 50%;
-        margin-right: 20px;
-    }
-    > :last-child {
-        margin-right: 0;
+@media all and (min-width: 720px) {
+    .sideBySide {
+        display: flex;
+        > * {
+            width: 50%;
+            margin-right: 20px;
+        }
+        > :last-child {
+            margin-right: 0;
+        }
     }
 }
+
 
 .quoteImage {
     background: #000;

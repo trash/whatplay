@@ -32,3 +32,5 @@ export interface GameServer extends MongoDocument, GameNotSavedServer {}
 export interface GameServerJson extends MongoDocumentJson, GameNotSavedServer {}
 
 export type GameSearchResponse = PaginatedResponse<GameServerJson>;
+
+export type GameExactMatchServer = boolean;

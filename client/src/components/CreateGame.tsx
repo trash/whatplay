@@ -10,6 +10,8 @@ type CreateGameProps<T extends GameStub> = {
     titleText: string;
     submitButtonText: string;
     loading: boolean;
+    disabled?: boolean;
+    titleError?: boolean;
 };
 
 function updateGamePropertyGenerator<T extends GameStub>(
@@ -71,6 +73,11 @@ export const CreateGame: <T extends GameStub>(
                                 onChange={e => updateGameTitle(e)}
                             />
                         </label>
+                        {props.titleError ? (
+                            <div className="form_error">
+                                A game with this title already exists.
+                            </div>
+                        ) : null}
                     </div>
                     <div>
                         <label>
@@ -96,7 +103,6 @@ export const CreateGame: <T extends GameStub>(
                                 multiple
                                 required
                                 value={game.genres}
-                                size={genres.length}
                                 onChange={e =>
                                     updateGameProperty(
                                         game,
@@ -120,7 +126,6 @@ export const CreateGame: <T extends GameStub>(
                                 multiple
                                 required
                                 value={game.systems}
-                                size={systems.length}
                                 onChange={e =>
                                     updateGameProperty(
                                         game,
@@ -139,6 +144,7 @@ export const CreateGame: <T extends GameStub>(
                     </div>
 
                     <button
+                        disabled={props.disabled || false}
                         className={classNames('primary', {
                             loading: props.loading
                         })}
