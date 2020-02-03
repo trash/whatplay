@@ -21,6 +21,7 @@ export const createGame: ControllerMethod = async (
         title: req.body.title,
         systems: req.body.systems,
         genres: req.body.genres,
+        isModerated: false,
         timeToBeat: req.body.timeToBeat,
         lastModifiedTime: getCurrentUtcTime(),
         createdTime: getCurrentUtcTime()

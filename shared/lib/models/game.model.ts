@@ -20,6 +20,7 @@ export interface GameStub {
     systems: string[];
     genres: string[];
     timeToBeat: number;
+    isModerated: boolean;
 }
 
 export interface GameNotSavedServer extends GameStub {

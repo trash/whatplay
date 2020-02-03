@@ -17,6 +17,7 @@ export class GameUtilities {
             title: gameServer.title,
             genres: gameServer.genres,
             systems: gameServer.systems,
+            isModerated: gameServer.isModerated,
             timeToBeat: gameServer.timeToBeat,
             lastModifiedTime: moment(
                 gameServer.lastModifiedTime
@@ -32,6 +33,7 @@ export class GameUtilities {
         return {
             title: '',
             systems: [],
+            isModerated: false,
             genres: [],
             timeToBeat: 0
         };
