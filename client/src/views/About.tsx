@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export const AboutPage: React.FC = () => {
     return (
-        <section>
+        <section className="maxWidth">
             <h1>Welcome to the WhatPlay alpha!</h1>
             <h3>What is it?</h3>
             <p>

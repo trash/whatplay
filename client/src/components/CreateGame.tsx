@@ -6,10 +6,10 @@ import classNames from 'classnames';
 type CreateGameProps<T extends GameStub> = {
     initialGameState: T;
     onSubmit: (event: FormEvent, game: T) => Promise<void>;
+    onTitleChange?: (updatedTitle: string) => Promise<void>;
     titleText: string;
     submitButtonText: string;
     loading: boolean;
-    showHideButton?: boolean;
 };
 
 function updateGamePropertyGenerator<T extends GameStub>(
@@ -36,39 +36,30 @@ export const CreateGame: <T extends GameStub>(
     props: CreateGameProps<T>
 ) => React.ReactElement<CreateGameProps<T>> = props => {
     const [game, setGame] = useState(props.initialGameState);
-    const [isShowing, setIsShowing] = useState(true);
     const updateGameProperty = updateGamePropertyGenerator(setGame);
 
-    const toggleShowHide = (e: React.FormEvent<any>) => {
-        e.preventDefault();
-        setIsShowing(!isShowing);
+    const updateGameTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const updatedValue = e.target.value;
+        if (props.onTitleChange) {
+            props.onTitleChange(updatedValue);
+        }
+        updateGameProperty(game, 'title', updatedValue);
     };
 
     return (
-        <form
-            className="card"
-            onSubmit={e =>
-                onSubmit(props, () => setGame(props.initialGameState), e, game)
-            }
-        >
-            {props.showHideButton && (
-                <button
-                    onClick={e => toggleShowHide(e)}
-                    style={{ float: 'right' }}
-                >
-                    {isShowing ? 'Hide' : 'Show'}
-                </button>
-            )}
-            <div
-                className="form_title"
-                style={{
-                    marginTop: props.showHideButton ? '10px' : ''
-                }}
+        <React.Fragment>
+            <h3 className="">{props.titleText}</h3>
+            <form
+                className="card"
+                onSubmit={e =>
+                    onSubmit(
+                        props,
+                        () => setGame(props.initialGameState),
+                        e,
+                        game
+                    )
+                }
             >
-                {props.titleText}
-            </div>
-
-            {isShowing && (
                 <React.Fragment>
                     <div>
                         <label>
@@ -77,13 +68,7 @@ export const CreateGame: <T extends GameStub>(
                                 required
                                 type="text"
                                 value={game.title}
-                                onChange={e =>
-                                    updateGameProperty(
-                                        game,
-                                        'title',
-                                        e.target.value
-                                    )
-                                }
+                                onChange={e => updateGameTitle(e)}
                             />
                         </label>
                     </div>
@@ -161,7 +146,7 @@ export const CreateGame: <T extends GameStub>(
                         {props.submitButtonText}
                     </button>
                 </React.Fragment>
-            )}
-        </form>
+            </form>
+        </React.Fragment>
     );
 };

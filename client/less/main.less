@@ -55,13 +55,16 @@ footer {
     }
 }
 
-.maxWidth {
+.mainWrap {
     margin: auto;
-    max-width: 1280px;
     padding: 0 20px;
     overflow: hidden;
 }
 
+.maxWidth {
+    max-width: 720px;
+    margin: auto;
+}
 
 
 select option {
@@ -132,6 +135,10 @@ label {
     font-weight: 600;
 }
 
+img {
+    display: block;
+}
+
 form {
     background: @lightBackgroundColor;
     padding: 10px;
@@ -175,4 +182,23 @@ th {
 .infoBox {
     background: @infoBoxBackground;
     padding: 10px;
+}
+
+.sideBySide {
+    display: flex;
+    > * {
+        width: 50%;
+        margin-right: 20px;
+    }
+    > :last-child {
+        margin-right: 0;
+    }
+}
+
+.quoteImage {
+    background: #000;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    padding: 20px;
 }

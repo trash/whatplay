@@ -5,24 +5,30 @@ import * as Immutable from 'immutable';
 import { GameComponent } from '../components/Game';
 import { gameService } from '../services/game.service';
 import { Game } from '../models/game.model';
+import { GameUtilities } from '../models/game.util';
+import { CreateGame } from '../components/CreateGame';
+import { GameStub } from '@shared/models/game.model';
 import { useState } from 'react';
 import { RootState } from 'typesafe-actions';
+// import { userService } from '../services/user.service';
+// import { useAuth0 } from '../services/ReactAuth';
+// import { Permission } from '@shared/models/permission.model';
 import {
     PaginationControls,
     PaginationHelpers
 } from '../components/PaginationControls';
-import { Link } from 'react-router-dom';
+import { NeedToLogin } from './NeedToLogin';
 
-type GamesPageViewProps = {
+type CreateGamesPageProps = {
     games: Immutable.List<Game>;
     searchResultsTotalMatches: number;
     searchResultsMaxPage: number;
 };
 
-export const GamesPageView: React.FC<GamesPageViewProps> = () => {
+export const CreateGamesPage: React.FC<CreateGamesPageProps> = () => {
     const { games, searchResultsMaxPage } = useSelector<
         RootState,
-        GamesPageViewProps
+        CreateGamesPageProps
     >(state => {
         return {
             games: state.games.searchResults,
@@ -33,13 +39,41 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     // console.log(games);
 
     const [currentPage, setCurrentPage] = useState<number>(0);
+    const [isCreatingGame, setIsCreatingGame] = useState<boolean>(false);
     const [isLoadingResults, setIsLoadingResults] = useState<boolean>(true);
     const [searchText, setSearchText] = useState<string>('');
+    // const { user } = useAuth0();
+    // const canCreate = user
+    //     ? userService.hasPermission(user, Permission.CreateGame)
+    //     : false;
+    const canCreate = true;
+
+    if (!canCreate) {
+        return <NeedToLogin />;
+    }
 
     // Fetch initial results on first render
     React.useEffect(() => {
         runSearch('', currentPage);
     }, []);
+
+    const onCreateGame = async (
+        event: React.FormEvent,
+        game: GameStub
+    ): Promise<void> => {
+        event.preventDefault();
+        if (isCreatingGame) {
+            return;
+        }
+        setIsCreatingGame(true);
+        try {
+            await gameService.createGame(game);
+            onGameUpdate();
+        } catch (e) {}
+        setIsCreatingGame(false);
+
+        return;
+    };
 
     const runSearch = async (
         runSearchText: string = searchText,
@@ -59,8 +93,7 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
         }
     };
 
-    const searchOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newSearchText = e.target.value;
+    const searchOnChange = async (newSearchText: string) => {
         let page = currentPage;
         if (searchText !== newSearchText) {
             setCurrentPage(0);
@@ -130,27 +163,27 @@ export const GamesPageView: React.FC<GamesPageViewProps> = () => {
     );
 
     return (
-        <div style={{ marginTop: '10px' }}>
-            <label>
-                Search
-                <input
-                    type="text"
-                    value={searchText}
-                    onChange={e => searchOnChange(e)}
+        <div className="sideBySide" style={{ marginTop: '10px' }}>
+            <div>
+                <CreateGame
+                    onTitleChange={text => searchOnChange(text)}
+                    initialGameState={GameUtilities.newGameState()}
+                    onSubmit={onCreateGame}
+                    titleText="Add A New Game To The Database"
+                    submitButtonText="Submit"
+                    loading={isCreatingGame}
                 />
-            </label>
+            </div>
 
-            {paginationControls}
-            <Link
-                to="/create"
-                style={{ marginBottom: '10px', display: 'block' }}
-            >
-                Don't see what you're looking for? Add a new game to the
-                database!
-            </Link>
-            {isLoadingResults && <h3 className="loading">Loading...</h3>}
-            <div className="notesList">{resultsElements}</div>
-            {!isLoadingResults && resultsToShow.size > 0 && paginationControls}
+            <div>
+                <h3>Matches In Existing Games</h3>
+                {paginationControls}
+                {isLoadingResults && <h3 className="loading">Loading...</h3>}
+                <div className="notesList">{resultsElements}</div>
+                {!isLoadingResults
+                    && resultsToShow.size > 0
+                    && paginationControls}
+            </div>
         </div>
     );
 };

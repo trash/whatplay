@@ -6,12 +6,12 @@ import swaggerDocument from '../openapi.json';
 import { ControllerMethod } from './controllers/ControllerMethod';
 import { AuthenticatedRequest } from './controllers/AuthenticatedRequest';
 
-function requirePermissions(_permission: string, cb: ControllerMethod) {
+function requirePermissions(permission: string, cb: ControllerMethod) {
     return (req: AuthenticatedRequest, res: Response) => {
-        // if (!req.user || !req.user.permissions.includes(permission)) {
-        //     const errorMessage = `Missing proper permissions: ${permission}`;
-        //     return res.status(403).send(errorMessage);
-        // }
+        if (!req.user || !req.user.permissions.includes(permission)) {
+            const errorMessage = `Missing proper permissions: ${permission}`;
+            return res.status(403).send(errorMessage);
+        }
         cb(req, res);
     };
 }
@@ -44,12 +44,7 @@ export default function(app: Application) {
     app.get('/api/v1/games', (req, res) => {
         api.game.getAllGames(req, res);
     });
-    app.post(
-        '/api/v1/games',
-        requirePermissions('create:game', (req, res) =>
-            api.game.createGame(req, res)
-        )
-    );
+    app.post('/api/v1/games', (req, res) => api.game.createGame(req, res));
     app.get('/api/v1/games/search', (req, res) => {
         api.game.searchGames(req, res);
     });

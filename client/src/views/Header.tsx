@@ -7,7 +7,7 @@ export function HeaderView() {
     const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
     return (
         <div className="header">
-            <div className="header_inner maxWidth">
+            <div className="header_inner mainWrap">
                 <div className="header_brand">
                     <NavLink to="">
                         <img src="/images/logo.png" />

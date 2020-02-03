@@ -10,6 +10,7 @@ import { useAuth0 } from '../services/ReactAuth';
 import { ConnectedLibraryPage } from './Library';
 import { AboutPage } from './About';
 import { NoMatch } from './NoMatch';
+import { CreateGamesPage } from './CreateGamesPage';
 
 function MainView() {
     const { loading } = useAuth0();
@@ -24,10 +25,11 @@ function MainView() {
     return (
         <Router history={history}>
             <HeaderView />
-            <div className="maxWidth">
+            <div className="mainWrap">
                 <Switch>
                     <Route exact path="/" component={GamesPageView} />
                     <Route exact path="/about" component={AboutPage} />
+                    <Route exact path="/create" component={CreateGamesPage} />
                     <Route
                         path="/library/:userId"
                         component={ConnectedLibraryPage}
