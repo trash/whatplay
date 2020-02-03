@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 
 import { history } from '../services/history';
 
@@ -9,6 +9,7 @@ import { HeaderView } from './Header';
 import { useAuth0 } from '../services/ReactAuth';
 import { ConnectedLibraryPage } from './Library';
 import { AboutPage } from './About';
+import { NoMatch } from './NoMatch';
 
 function MainView() {
     const { loading } = useAuth0();
@@ -24,12 +25,17 @@ function MainView() {
         <Router history={history}>
             <HeaderView />
             <div className="maxWidth">
-                <Route exact path="/" component={GamesPageView} />
-                <Route exact path="/about" component={AboutPage} />
-                <Route
-                    path="/library/:userId"
-                    component={ConnectedLibraryPage}
-                />
+                <Switch>
+                    <Route exact path="/" component={GamesPageView} />
+                    <Route exact path="/about" component={AboutPage} />
+                    <Route
+                        path="/library/:userId"
+                        component={ConnectedLibraryPage}
+                    />
+                    <Route path="*">
+                        <NoMatch />
+                    </Route>
+                </Switch>
             </div>
             <footer>
                 <div>Welcome to the WhatPlay alpha!</div>
