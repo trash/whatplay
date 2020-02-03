@@ -152,6 +152,8 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                     <thead>
                         <tr>
                             <th className="gameTitleColumn">Game</th>
+                            <th>Your Rating</th>
+                            <th>Played Status</th>
                             <th
                                 className={classNames('x-sortableColumn', {
                                     'sortableColumn--active':
@@ -168,13 +170,11 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                             >
                                 Backlog Priority
                             </th>
+                            <th style={{ display: 'none' }}>Systems Owned</th>
+                            <th style={{ display: 'none' }}>Id</th>
                             <th className="timeToBeatColumn">
                                 Estimated Time To Beat
                             </th>
-                            <th>Played Status</th>
-                            <th>Your Rating</th>
-                            <th style={{ display: 'none' }}>Systems Owned</th>
-                            <th style={{ display: 'none' }}>Id</th>
                             {canEdit ? <th></th> : null}
                         </tr>
                     </thead>
@@ -184,38 +184,25 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                 <td>{entry?.game.title}</td>
                                 <td>
                                     {canEdit ? (
-                                        <select
-                                            onChange={e =>
+                                        <RatingSelect
+                                            rating={
+                                                entry?.gameLibraryEntry.rating!
+                                            }
+                                            onChange={updatedRating =>
                                                 GameUtilities.updateGameLibraryEntry(
                                                     gameLibraryService,
                                                     entry?.gameLibraryEntry!,
-                                                    'backlogPriority',
-                                                    parseInt(e.target.value)
+                                                    'rating',
+                                                    updatedRating
                                                 )
                                             }
-                                            value={
-                                                entry?.gameLibraryEntry
-                                                    .backlogPriority!
-                                            }
-                                        >
-                                            {backlogPriorityArray.map(
-                                                priority => (
-                                                    <option
-                                                        key={priority.value}
-                                                        value={priority.value}
-                                                    >
-                                                        {priority.text}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
+                                        />
                                     ) : (
-                                        GameUtilities.backlogPriority(
+                                        GameUtilities.rating(
                                             entry?.gameLibraryEntry!
                                         )
                                     )}
                                 </td>
-                                <td>{entry?.game.timeToBeat}</td>
                                 <td>
                                     {canEdit ? (
                                         <select
@@ -251,23 +238,36 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                         )
                                     )}
                                 </td>
+
                                 <td>
                                     {canEdit ? (
-                                        <RatingSelect
-                                            rating={
-                                                entry?.gameLibraryEntry.rating!
-                                            }
-                                            onChange={updatedRating =>
+                                        <select
+                                            onChange={e =>
                                                 GameUtilities.updateGameLibraryEntry(
                                                     gameLibraryService,
                                                     entry?.gameLibraryEntry!,
-                                                    'rating',
-                                                    updatedRating
+                                                    'backlogPriority',
+                                                    parseInt(e.target.value)
                                                 )
                                             }
-                                        />
+                                            value={
+                                                entry?.gameLibraryEntry
+                                                    .backlogPriority!
+                                            }
+                                        >
+                                            {backlogPriorityArray.map(
+                                                priority => (
+                                                    <option
+                                                        key={priority.value}
+                                                        value={priority.value}
+                                                    >
+                                                        {priority.text}
+                                                    </option>
+                                                )
+                                            )}
+                                        </select>
                                     ) : (
-                                        GameUtilities.rating(
+                                        GameUtilities.backlogPriority(
                                             entry?.gameLibraryEntry!
                                         )
                                     )}
@@ -279,6 +279,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                                 <td style={{ display: 'none' }}>
                                     {entry?.gameLibraryEntry._id}
                                 </td>
+                                <td>{entry?.game.timeToBeat}</td>
                                 {canEdit ? (
                                     <td>
                                         <ToggleGameFromLibraryButton

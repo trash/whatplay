@@ -265,8 +265,12 @@ export const getGameLibrary: ControllerMethod = async (
     return response;
 };
 
+// Return true if it's valid
 const validateRating = (rating: GameRating | null | undefined): boolean => {
-    return !!rating && GameRating[rating] !== undefined;
+    if (rating === null || rating === undefined) {
+        return true;
+    }
+    return GameRating[rating] !== undefined;
 };
 
 export const updateGameLibraryEntry: ControllerMethod = async (
