@@ -32,7 +32,6 @@ interface LibraryProps {
 export const LibraryPage: React.FC<LibraryProps> = () => {
     const { user } = useAuth0();
     const { userId } = useParams();
-    console.log('get lib for', userId);
     // const user =
     if (!userId) {
         return null;
@@ -307,6 +306,13 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
             <h1>
                 {canEdit ? 'My Game Library' : "Someone Else's Game Library"}
             </h1>
+            {canEdit ? (
+                <p className="infoBox">
+                    This page is publicly viewable and you can share it with
+                    your friends with this link:{' '}
+                    <code>{window.location.toString()}</code>
+                </p>
+            ) : null}
             <label>
                 Search
                 <input
