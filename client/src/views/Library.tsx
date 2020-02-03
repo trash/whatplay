@@ -175,7 +175,7 @@ export const LibraryPage: React.FC<LibraryProps> = () => {
                             <th>Your Rating</th>
                             <th style={{ display: 'none' }}>Systems Owned</th>
                             <th style={{ display: 'none' }}>Id</th>
-                            <th></th>
+                            {canEdit ? <th></th> : null}
                         </tr>
                     </thead>
                     <tbody>
