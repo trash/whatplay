@@ -41,9 +41,6 @@ export default function(app: Application) {
     app.get('/api/v1/users/:auth0Id', (req, res) => api.user.getUser(req, res));
 
     // GAMES
-    app.get('/api/v1/games', (req, res) => {
-        api.game.getAllGames(req, res);
-    });
     app.get('/api/v1/games/exactMatch', (req, res) => {
         api.game.getExactTitleMatch(req, res);
     });

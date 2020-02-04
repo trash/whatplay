@@ -141,29 +141,8 @@ export const getExactTitleMatch: ControllerMethod = async (
     return response;
 };
 
-export const getAllGames: ControllerMethod = async (
-    req: Request,
-    res: Response
-) => {
-    const page = req.query.page || 0;
-    const [client, db] = await connectToDatabase();
-    let response: Response;
-    try {
-        const collection = db.collection<GameServer>('games');
-
-        const matches = await collection
-            .find({})
-            .limit(paginationMax)
-            .skip(page * paginationMax)
-            .toArray();
-        // console.log(matches);
-
-        response = res.status(200).send(matches);
-    } catch (e) {
-        response = res.status(500).send(e);
-    }
-    client.close();
-    return response;
+export type GameLibraryCount = {
+    [key: string]: number;
 };
 
 export const searchGames: ControllerMethod = async (req, res) => {
@@ -173,6 +152,14 @@ export const searchGames: ControllerMethod = async (req, res) => {
     let response: Response;
     try {
         const collection = db.collection<GameServer>('games');
+
+        const gameLibraryCountCollection = db.collection<GameLibraryCount>(
+            'gameLibraryCount'
+        );
+        // TODO: Speed up this call by parallelizing some of it
+        const gameLibraryCountMap = (await gameLibraryCountCollection.findOne(
+            {}
+        ))!;
 
         let matches: AggregationCursor<GameServer> | Cursor<GameServer>;
         let totalCount: number;
@@ -219,11 +206,14 @@ export const searchGames: ControllerMethod = async (req, res) => {
 
         const responseBody: GameSearchResponse = {
             totalCount,
-            results: arrayMatches.map(g =>
-                Object.assign({}, g, {
-                    _id: g._id.toHexString()
-                })
-            ),
+            results: arrayMatches.map(g => {
+                const gameId = g._id.toHexString();
+
+                return Object.assign({}, g, {
+                    _id: gameId,
+                    libraryCount: gameLibraryCountMap[gameId]
+                });
+            }),
             maxPage: Math.floor(totalCount / paginationMax)
         };
 

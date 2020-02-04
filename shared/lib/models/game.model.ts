@@ -30,7 +30,12 @@ export interface GameNotSavedServer extends GameStub {
 
 export interface GameServer extends MongoDocument, GameNotSavedServer {}
 export interface GameServerJson extends MongoDocumentJson, GameNotSavedServer {}
+export interface GameServerJsonWithLibraryCount extends GameServerJson {
+    libraryCount: number;
+}
 
-export type GameSearchResponse = PaginatedResponse<GameServerJson>;
+export type GameSearchResponse = PaginatedResponse<
+    GameServerJsonWithLibraryCount
+>;
 
 export type GameExactMatchServer = boolean;
