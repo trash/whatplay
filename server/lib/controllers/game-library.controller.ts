@@ -106,8 +106,13 @@ export const deleteGameFromLibrary: ControllerMethod = async (
             userAuth0Id: getUserAuth0IdFromRequest(req)
         });
 
-        if (!libEntryResult.result.ok || libEntryResult.result.n === 0) {
+        if (!libEntryResult.result.ok) {
             throw new Error('Error deleting Game Library Entry.');
+        }
+
+        // Don't error so that the rest of the delete still goes through
+        if (libEntryResult.result.n === 0) {
+            console.error('Could not find game library entry to delete');
         }
 
         // 2) Delete the entry from the users's gameLibrary list
