@@ -13,6 +13,7 @@ import { ControllerMethod } from './ControllerMethod';
 import { connectToDatabase } from '../database.util';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
 import { paginationMax } from '../constants';
+import { GameLibraryCountHelper } from '@shared/util/game-library-count';
 
 export const createGame: ControllerMethod = async (
     req: AuthenticatedRequest,
@@ -141,10 +142,6 @@ export const getExactTitleMatch: ControllerMethod = async (
     return response;
 };
 
-export type GameLibraryCount = {
-    [key: string]: number;
-};
-
 export const searchGames: ControllerMethod = async (req, res) => {
     const searchTerm = req.query.search;
     const page = req.query.page || 0;
@@ -153,13 +150,9 @@ export const searchGames: ControllerMethod = async (req, res) => {
     try {
         const collection = db.collection<GameServer>('games');
 
-        const gameLibraryCountCollection = db.collection<GameLibraryCount>(
-            'gameLibraryCount'
-        );
         // TODO: Speed up this call by parallelizing some of it
-        const gameLibraryCountMap = (await gameLibraryCountCollection.findOne(
-            {}
-        ))!;
+        const gameLibraryCount = new GameLibraryCountHelper(db);
+        const gameLibraryCountMap = await gameLibraryCount.get();
 
         let matches: AggregationCursor<GameServer> | Cursor<GameServer>;
         let totalCount: number;

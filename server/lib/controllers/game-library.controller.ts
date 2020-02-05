@@ -22,6 +22,7 @@ import { getUserIdFromRequest as getUserAuth0IdFromRequest } from '../helpers.ut
 import { paginationMax } from '../constants';
 import { performance } from 'perf_hooks';
 import { MongoDto } from '../models/database.model';
+import { GameLibraryCountHelper } from '@shared/util/game-library-count';
 
 export const addGameToLibrary: ControllerMethod = async (
     req: AuthenticatedRequest,
@@ -76,9 +77,16 @@ export const addGameToLibrary: ControllerMethod = async (
                 }
             }
         );
+
         if (!userUpdate.result.ok || userUpdate.result.nModified === 0) {
             throw new Error('Error updating User.');
         }
+
+        // 3) Update count for game
+        // TODO: parallelize
+        const gameLibraryCount = new GameLibraryCountHelper(db);
+        await gameLibraryCount.incrementGameCount(body.gameId);
+
         response = res.status(200).send(userLibraryEntry);
     } catch (e) {
         console.error(e);
@@ -132,6 +140,12 @@ export const deleteGameFromLibrary: ControllerMethod = async (
         if (!userUpdate.result.ok || userUpdate.result.nModified === 0) {
             throw new Error('Error updating User.');
         }
+
+        // 3) Update game count
+        // TODO: parallelize this
+        const gameLibraryCount = new GameLibraryCountHelper(db);
+        await gameLibraryCount.decrementGameCount(req.params.gameId);
+
         response = res.status(204).send();
     } catch (e) {
         console.error(e);
