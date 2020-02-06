@@ -5,4 +5,5 @@ export interface Game extends GameStub {
     id: string;
     lastModifiedTime: Moment;
     createdTime: Moment;
+    libraryCount: number | null;
 }

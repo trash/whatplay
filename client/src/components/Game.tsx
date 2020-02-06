@@ -139,6 +139,12 @@ export const GameComponent: React.FC<GameProps> = props => {
                             )}
                         </td>
                     </tr>
+                    {props.game.libraryCount !== null ? (
+                        <tr>
+                            <th># of Libraries In</th>
+                            <td>{props.game.libraryCount}</td>
+                        </tr>
+                    ) : null}
                 </tbody>
             </table>
         </div>

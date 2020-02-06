@@ -204,7 +204,7 @@ export const searchGames: ControllerMethod = async (req, res) => {
 
                 return Object.assign({}, g, {
                     _id: gameId,
-                    libraryCount: gameLibraryCountMap[gameId]
+                    libraryCount: gameLibraryCountMap[gameId] || 0
                 });
             }),
             maxPage: Math.floor(totalCount / paginationMax)

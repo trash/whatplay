@@ -1,6 +1,5 @@
 import { GameStub, GameServerJson } from '@shared/models/game.model';
 import moment from 'moment';
-import { Game } from './game.model';
 import {
     GameLibraryEntryClient,
     backlogPriorityHumanReadableMap,
@@ -8,11 +7,16 @@ import {
     ratingHumanReadableMap
 } from '@shared/models/game-library-entry.model';
 import { GameLibraryService } from '../services/game-library.service';
+import { Game } from './game.model';
 
 // Maybe go OO at some point
 export class GameUtilities {
-    static transformGameServertoGame(gameServer: GameServerJson): Game {
+    static transformGameServertoGame(
+        gameServer: GameServerJson,
+        libraryCount: number | null = null
+    ): Game {
         return {
+            libraryCount,
             id: gameServer._id,
             title: gameServer.title,
             genres: gameServer.genres,

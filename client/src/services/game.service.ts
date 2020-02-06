@@ -35,7 +35,7 @@ class GameService {
         );
 
         const matches = response.results.map(g =>
-            GameUtilities.transformGameServertoGame(g)
+            GameUtilities.transformGameServertoGame(g, g.libraryCount)
         );
         store.dispatch(
             updateSearchResults(matches, response.totalCount, response.maxPage)
