@@ -33,7 +33,7 @@ export default function(app: Application) {
         api.gameLibrary.updateGameLibraryEntry(req, res)
     );
     app.delete('/api/v1/library/:gameId', (req, res) =>
-        api.gameLibrary.deleteGameFromLibrary(req, res)
+        api.gameLibrary.removeGameFromLibrary(req, res)
     );
 
     // USERS

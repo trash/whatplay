@@ -1,7 +1,7 @@
 import { ControllerMethod } from './ControllerMethod';
 import { connectToDatabase } from '../database.util';
 import { Response } from 'express';
-import { ObjectId } from 'mongodb';
+import { ObjectId, Db } from 'mongodb';
 import {
     UserServer,
     AddGamePost,
@@ -24,6 +24,14 @@ import { performance } from 'perf_hooks';
 import { MongoDto } from '../models/database.model';
 import { GameLibraryCountHelper } from '@shared/util/game-library-count';
 
+const updateGameLibraryCount = async (db: Db, gameId: string) => {
+    // 3) Update count for game
+    // TODO: parallelize
+    const gameLibraryCount = new GameLibraryCountHelper(db);
+    await gameLibraryCount.incrementGameCount(gameId);
+    return;
+};
+
 export const addGameToLibrary: ControllerMethod = async (
     req: AuthenticatedRequest,
     res
@@ -40,20 +48,24 @@ export const addGameToLibrary: ControllerMethod = async (
         return res.status(400).send('Invalid rating value.');
     }
     try {
-        // 1) Create a LibraryEntry for the game
+        // 1) Create a LibraryEntry for the game AND increment game lib count
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
             'gameLibraryEntry'
         );
-        const libEntryResult = await libraryEntryCollection.insertOne({
-            gameId: new ObjectId(body.gameId),
-            userAuth0Id: getUserAuth0IdFromRequest(req),
-            rating: body.rating || GameRating.NotRated,
-            playedStatus: PlayedStatus.NotPlayed,
-            comments: '',
-            dateCompleted: null,
-            backlogPriority: BacklogPriority.None,
-            systemsOwned: []
-        });
+
+        const [libEntryResult] = await Promise.all([
+            libraryEntryCollection.insertOne({
+                gameId: new ObjectId(body.gameId),
+                userAuth0Id: getUserAuth0IdFromRequest(req),
+                rating: body.rating || GameRating.NotRated,
+                playedStatus: PlayedStatus.NotPlayed,
+                comments: '',
+                dateCompleted: null,
+                backlogPriority: BacklogPriority.None,
+                systemsOwned: []
+            }),
+            updateGameLibraryCount(db, body.gameId)
+        ]);
 
         if (!libEntryResult.result.ok) {
             throw new Error('Error storing Game Library Entry.');
@@ -82,11 +94,6 @@ export const addGameToLibrary: ControllerMethod = async (
             throw new Error('Error updating User.');
         }
 
-        // 3) Update count for game
-        // TODO: parallelize
-        const gameLibraryCount = new GameLibraryCountHelper(db);
-        await gameLibraryCount.incrementGameCount(body.gameId);
-
         response = res.status(200).send(userLibraryEntry);
     } catch (e) {
         console.error(e);
@@ -96,7 +103,14 @@ export const addGameToLibrary: ControllerMethod = async (
     return response;
 };
 
-export const deleteGameFromLibrary: ControllerMethod = async (
+const decrementGameLibraryCount = async (db: Db, gameId: string) => {
+    // 3) Update game count
+    // TODO: parallelize this
+    const gameLibraryCount = new GameLibraryCountHelper(db);
+    await gameLibraryCount.decrementGameCount(gameId);
+};
+
+export const removeGameFromLibrary: ControllerMethod = async (
     req: AuthenticatedRequest,
     res
 ) => {
@@ -105,14 +119,17 @@ export const deleteGameFromLibrary: ControllerMethod = async (
 
     const gameId = new ObjectId(req.params.gameId);
     try {
-        // 1) Delete the LibraryEntry
+        // 1) Delete game lib entry AND decrement game lib count
         const libraryEntryCollection = db.collection<GameLibraryEntryServer>(
             'gameLibraryEntry'
         );
-        const libEntryResult = await libraryEntryCollection.deleteOne({
-            gameId,
-            userAuth0Id: getUserAuth0IdFromRequest(req)
-        });
+        const [libEntryResult] = await Promise.all([
+            libraryEntryCollection.deleteOne({
+                gameId,
+                userAuth0Id: getUserAuth0IdFromRequest(req)
+            }),
+            decrementGameLibraryCount(db, req.params.gameId)
+        ]);
 
         if (!libEntryResult.result.ok) {
             throw new Error('Error deleting Game Library Entry.');
@@ -140,11 +157,6 @@ export const deleteGameFromLibrary: ControllerMethod = async (
         if (!userUpdate.result.ok || userUpdate.result.nModified === 0) {
             throw new Error('Error updating User.');
         }
-
-        // 3) Update game count
-        // TODO: parallelize this
-        const gameLibraryCount = new GameLibraryCountHelper(db);
-        await gameLibraryCount.decrementGameCount(req.params.gameId);
 
         response = res.status(204).send();
     } catch (e) {
