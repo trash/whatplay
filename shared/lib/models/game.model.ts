@@ -26,10 +26,13 @@ export interface GameStub {
 export interface GameNotSavedServer extends GameStub {
     lastModifiedTime: string;
     createdTime: string;
+    createdByAuth0Id: string;
 }
 
 export interface GameServer extends MongoDocument, GameNotSavedServer {}
-export interface GameServerJson extends MongoDocumentJson, GameNotSavedServer {}
+interface _GameServerJson extends MongoDocumentJson, GameNotSavedServer {}
+// Do NOT send "createdByAuth0Id" to the client.
+export type GameServerJson = Omit<_GameServerJson, 'createdByAuth0Id'>;
 export interface GameServerJsonWithLibraryCount extends GameServerJson {
     libraryCount: number;
 }

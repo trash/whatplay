@@ -8,12 +8,13 @@ import {
     GameSearchResponse,
     GameExactMatchServer
 } from '@shared/models/game.model';
-import { getCurrentUtcTime } from '../helpers.util';
+import { getCurrentUtcTime, getAuth0UserIdFromRequest } from '../helpers.util';
 import { ControllerMethod } from './ControllerMethod';
 import { connectToDatabase } from '../database.util';
 import { AuthenticatedRequest } from './AuthenticatedRequest';
 import { paginationMax } from '../constants';
 import { GameLibraryCountHelper } from '@shared/util/game-library-count';
+import { GameServerTransformer } from '../models/game.model';
 
 export const createGame: ControllerMethod = async (
     req: AuthenticatedRequest,
@@ -26,7 +27,8 @@ export const createGame: ControllerMethod = async (
         isModerated: false,
         timeToBeat: req.body.timeToBeat,
         lastModifiedTime: getCurrentUtcTime(),
-        createdTime: getCurrentUtcTime()
+        createdTime: getCurrentUtcTime(),
+        createdByAuth0Id: getAuth0UserIdFromRequest(req)
     };
 
     const [client, db] = await connectToDatabase();
@@ -202,8 +204,9 @@ export const searchGames: ControllerMethod = async (req, res) => {
             results: arrayMatches.map(g => {
                 const gameId = g._id.toHexString();
 
-                return Object.assign({}, g, {
-                    _id: gameId,
+                const game = GameServerTransformer.getGameServerJson(g);
+
+                return Object.assign({}, game, {
                     libraryCount: gameLibraryCountMap[gameId] || 0
                 });
             }),

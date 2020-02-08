@@ -54,7 +54,8 @@ const jwtParameters = {
     issuer: `https://${process.env.AUTH0_DOMAIN}/`
 };
 
-const jwtCheck = jwt({
+const jwtOptions = (credentialsRequired: boolean = true) => ({
+    credentialsRequired,
     secret: jwks.expressJwtSecret({
         jwksUri: jwtParameters.jwksUri,
         cache: true,
@@ -66,6 +67,8 @@ const jwtCheck = jwt({
     algorithms: ['RS256']
 });
 
+const jwtCheckLoggedInUserRequired = jwt(jwtOptions());
+const jwtCheck = jwt(jwtOptions(false));
 console.log('jwt params', jwtParameters);
 
 class HttpException extends Error {
@@ -112,7 +115,9 @@ export const authorizedRoutes: {
         actions: ['GET']
     }
 ];
+
 // app.use(sslRedirectMiddleware());
+
 // Use JWT from auth0 for apis
 app.use('/api', (req, res, next) => {
     const fullPath = `/api${req.path}`;
@@ -125,11 +130,15 @@ app.use('/api', (req, res, next) => {
     // console.log('fullPath', fullPath);
     // console.log('pathMatches', pathMatches);
     // console.log('methodMatch', methodMatch);
+
+    // If it's a protected route require creds
     if (methodMatch) {
-        return jwtCheck(req, res, next);
+        return jwtCheckLoggedInUserRequired(req, res, next);
     }
-    next();
+    // Still use the jwt check that adds the "req.user" object
+    return jwtCheck(req, res, next);
 });
+
 app.use(
     '/api',
     (err: HttpException, _req: Request, res: Response, next: NextFunction) => {

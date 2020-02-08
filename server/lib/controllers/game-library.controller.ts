@@ -18,11 +18,12 @@ import {
     GameLibrarySearchResponse,
     gameLibrarySortMap
 } from '@shared/models/game-library-entry.model';
-import { getUserIdFromRequest as getUserAuth0IdFromRequest } from '../helpers.util';
+import { getAuth0UserIdFromRequest as getUserAuth0IdFromRequest } from '../helpers.util';
 import { paginationMax } from '../constants';
 import { performance } from 'perf_hooks';
 import { MongoDto } from '../models/database.model';
 import { GameLibraryCountHelper } from '@shared/util/game-library-count';
+import { GameServerTransformer } from '../models/game.model';
 
 const updateGameLibraryCount = async (db: Db, gameId: string) => {
     // 3) Update count for game
@@ -273,9 +274,10 @@ export const getGameLibrary: ControllerMethod = async (
             maxPage: Math.floor(totalCount / paginationMax),
             results: libEntries.map(libEntry => {
                 const game = libEntry.game[0];
-                const jsonIdGame = Object.assign({}, game, {
-                    _id: game._id.toHexString()
-                });
+                const jsonIdGame = GameServerTransformer.getGameServerJson(
+                    game
+                );
+
                 const jsonIdGameLibraryEntry = Object.assign({}, libEntry, {
                     _id: libEntry._id.toHexString(),
                     gameId: libEntry.gameId.toHexString()

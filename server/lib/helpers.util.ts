@@ -5,6 +5,6 @@ export function getCurrentUtcTime() {
     return moment().toISOString();
 }
 
-export function getUserIdFromRequest(req: AuthenticatedRequest): string {
+export function getAuth0UserIdFromRequest(req: AuthenticatedRequest): string {
     return req.user.sub;
 }

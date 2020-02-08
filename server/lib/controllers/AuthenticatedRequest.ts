@@ -12,3 +12,9 @@ export interface AuthenticatedRequest extends Request {
         permissions: string[];
     };
 }
+
+export function isAuthenticatedRequest(
+    req: Request | AuthenticatedRequest
+): req is AuthenticatedRequest {
+    return (req as AuthenticatedRequest).user !== undefined;
+}
