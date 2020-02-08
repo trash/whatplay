@@ -6,4 +6,5 @@ export interface Game extends GameStub {
     lastModifiedTime: Moment;
     createdTime: Moment;
     libraryCount: number | null;
+    isArchived: boolean | null;
 }

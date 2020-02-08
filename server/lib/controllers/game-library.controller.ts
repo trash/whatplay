@@ -275,6 +275,7 @@ export const getGameLibrary: ControllerMethod = async (
             results: libEntries.map(libEntry => {
                 const game = libEntry.game[0];
                 const jsonIdGame = GameServerTransformer.getGameServerJson(
+                    req,
                     game
                 );
 

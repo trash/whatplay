@@ -15,12 +15,16 @@ import { AuthenticatedRequest } from './AuthenticatedRequest';
 import { paginationMax } from '../constants';
 import { GameLibraryCountHelper } from '@shared/util/game-library-count';
 import { GameServerTransformer } from '../models/game.model';
+import { PermissionUtil } from '../util/permission.util';
+import { Permission } from '@shared/models/permission.model';
+import { merge } from 'lodash';
 
 export const createGame: ControllerMethod = async (
     req: AuthenticatedRequest,
     res
 ) => {
     const newGame: GameNotSavedServer = {
+        isArchived: false,
         title: req.body.title,
         systems: req.body.systems,
         genres: req.body.genres,
@@ -46,16 +50,66 @@ export const createGame: ControllerMethod = async (
     return response;
 };
 
-export const deleteGame: ControllerMethod = async (req, res) => {
+export const deleteGame: ControllerMethod = async (
+    req: AuthenticatedRequest,
+    res
+) => {
     const gameToUpdateId = req.params.id;
     const [client, db] = await connectToDatabase();
     let response: Response;
     try {
         const collection = db.collection<GameServer>('games');
 
-        const update = await collection.deleteOne({
-            _id: new ObjectId(gameToUpdateId)
-        });
+        const update = await collection.updateOne(
+            {
+                _id: new ObjectId(gameToUpdateId)
+            },
+            {
+                $set: {
+                    isArchived: true,
+                    archivedTime: getCurrentUtcTime(),
+                    archivedByAuth0Id: getAuth0UserIdFromRequest(req)
+                }
+            }
+        );
+        const nModified = update.result.n;
+        if (nModified === 1) {
+            response = res.status(200).send(update.result);
+        } else {
+            throw new Error('No matching record was found.');
+        }
+    } catch (e) {
+        console.error(e);
+        response = res.status(500).send(e);
+    }
+    client.close();
+    return response;
+};
+
+export const unarchiveGame: ControllerMethod = async (
+    req: AuthenticatedRequest,
+    res
+) => {
+    const gameToUpdateId = req.params.id;
+    const [client, db] = await connectToDatabase();
+    let response: Response;
+    try {
+        const collection = db.collection<GameServer>('games');
+
+        const update = await collection.updateOne(
+            {
+                _id: new ObjectId(gameToUpdateId)
+            },
+            {
+                $set: {
+                    isArchived: false
+                },
+                $unset: {
+                    archivedTime: '',
+                    archivedByAuth0Id: ''
+                }
+            }
+        );
         const nModified = update.result.n;
         if (nModified === 1) {
             response = res.status(200).send(update.result);
@@ -131,7 +185,8 @@ export const getExactTitleMatch: ControllerMethod = async (
             title: {
                 $regex: `^${title}$`,
                 $options: 'i'
-            }
+            },
+            isArchived: false
         });
 
         const responsePayload: GameExactMatchServer = !!match;
@@ -170,6 +225,13 @@ export const searchGames: ControllerMethod = async (req, res) => {
                     }
                 }
             };
+            if (!PermissionUtil.hasPermission(req, Permission.DeleteGame)) {
+                merge(regexMatch, {
+                    $match: {
+                        isArchived: false
+                    }
+                });
+            }
             matches = await collection.aggregate([
                 regexMatch,
                 {
@@ -204,7 +266,7 @@ export const searchGames: ControllerMethod = async (req, res) => {
             results: arrayMatches.map(g => {
                 const gameId = g._id.toHexString();
 
-                const game = GameServerTransformer.getGameServerJson(g);
+                const game = GameServerTransformer.getGameServerJson(req, g);
 
                 return Object.assign({}, game, {
                     libraryCount: gameLibraryCountMap[gameId] || 0

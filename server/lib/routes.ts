@@ -55,6 +55,12 @@ export default function(app: Application) {
         )
     );
     app.patch(
+        '/api/v1/games/:id/unarchive',
+        requirePermissions('delete:game', (req, res) =>
+            api.game.unarchiveGame(req, res)
+        )
+    );
+    app.patch(
         '/api/v1/games/:id',
         requirePermissions('update:game', (req, res) =>
             api.game.updateGame(req, res)

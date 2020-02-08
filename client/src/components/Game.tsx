@@ -100,6 +100,7 @@ export const GameComponent: React.FC<GameProps> = props => {
                         loading={isSaving}
                         gameId={props.game.id}
                         onDelete={() => props.onUpdate()}
+                        isArchived={props.game.isArchived}
                     />
                 </div>
             </div>

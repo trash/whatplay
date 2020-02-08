@@ -30,7 +30,11 @@ export class GameUtilities {
             ),
             createdTime: moment(
                 gameServer.createdTime ? gameServer.createdTime : 'INVALID'
-            )
+            ),
+            isArchived:
+                gameServer.isArchived !== undefined
+                    ? gameServer.isArchived
+                    : null
         };
     }
     static newGameState(): GameStub {

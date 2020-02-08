@@ -20,6 +20,7 @@
         "@babel/preset-env": "^7.7.7",
         "@babel/preset-typescript": "^7.7.7",
         "@types/errorhandler": "^0.0.32",
+        "@types/lodash": "^4.14.149",
         "@types/mongodb": "^3.3.14",
         "@types/path-to-regexp": "^1.7.0",
         "@types/swagger-ui-express": "^4.1.1",

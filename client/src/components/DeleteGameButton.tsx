@@ -9,10 +9,11 @@ type DeleteGameButtonProps = {
     gameId: string;
     loading?: boolean;
     onDelete: Function;
+    isArchived: boolean | null;
 };
 
 export const DeleteGameButton: React.FC<DeleteGameButtonProps> = props => {
-    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isUpdating, setIsUpdated] = useState<boolean>(false);
     const { user } = useAuth0();
     let canDelete = false;
     if (user) {
@@ -21,26 +22,51 @@ export const DeleteGameButton: React.FC<DeleteGameButtonProps> = props => {
     if (!canDelete) {
         return null;
     }
+
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (isDeleting) {
+        if (isUpdating) {
             return;
         }
         if (window.confirm('Are you sure you want to delete this game?')) {
-            setIsDeleting(true);
+            setIsUpdated(true);
             await gameService.deleteGame(props.gameId);
             props.onDelete();
         }
     };
+
+    const handleUnarchive = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (isUpdating) {
+            return;
+        }
+        setIsUpdated(true);
+        await gameService.unarchiveGame(props.gameId);
+        props.onDelete();
+    };
+
     return (
-        <button
-            className={classNames('warning', {
-                loading: isDeleting || props.loading
-            })}
-            onClick={e => handleDelete(e)}
-        >
-            <span className="icon-bin"></span>
-            Delete
-        </button>
+        <React.Fragment>
+            {props.isArchived ? (
+                <button
+                    className={classNames({
+                        loading: isUpdating || props.loading
+                    })}
+                    onClick={e => handleUnarchive(e)}
+                >
+                    Unarchive
+                </button>
+            ) : (
+                <button
+                    className={classNames('warning', {
+                        loading: isUpdating || props.loading
+                    })}
+                    onClick={e => handleDelete(e)}
+                >
+                    <span className="icon-bin"></span>
+                    Archive
+                </button>
+            )}
+        </React.Fragment>
     );
 };

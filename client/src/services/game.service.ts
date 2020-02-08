@@ -97,5 +97,10 @@ class GameService {
         await Api.delete(`/api/v1/games/${id}`);
         store.dispatch(deleteGame(id));
     }
+
+    async unarchiveGame(id: string): Promise<void> {
+        await Api.patch(`/api/v1/games/${id}/unarchive`, {});
+        store.dispatch(deleteGame(id));
+    }
 }
 export const gameService = new GameService();
