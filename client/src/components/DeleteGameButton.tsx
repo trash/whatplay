@@ -28,7 +28,7 @@ export const DeleteGameButton: React.FC<DeleteGameButtonProps> = props => {
         if (isUpdating) {
             return;
         }
-        if (window.confirm('Are you sure you want to delete this game?')) {
+        if (window.confirm('Are you sure you want to archive this game?')) {
             setIsUpdated(true);
             await gameService.deleteGame(props.gameId);
             props.onDelete();
