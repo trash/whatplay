@@ -24,6 +24,9 @@ import { performance } from 'perf_hooks';
 import { MongoDto } from '../models/database.model';
 import { GameLibraryCountHelper } from '@shared/util/game-library-count';
 import { GameServerTransformer } from '../models/game.model';
+import { PermissionUtil } from '../util/permission.util';
+import { Permission } from '@shared/models/permission.model';
+import { merge } from 'lodash';
 
 const updateGameLibraryCount = async (db: Db, gameId: string) => {
     // 3) Update count for game
@@ -205,12 +208,24 @@ export const getGameLibrary: ControllerMethod = async (
 
         const regexMatch = {
             $match: {
-                'game.title': {
-                    $regex: searchTerm,
-                    $options: 'i'
+                game: {
+                    title: {
+                        $regex: searchTerm,
+                        $options: 'i'
+                    }
                 }
             }
         };
+        if (!PermissionUtil.hasPermission(req, Permission.DeleteGame)) {
+            merge(regexMatch, {
+                $match: {
+                    game: {
+                        isArchived: false
+                    }
+                }
+            });
+        }
+        console.error('this doesnt do anything', regexMatch);
 
         const sortByGameTitle = {
             $sort: {
