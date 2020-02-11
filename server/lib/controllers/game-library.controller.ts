@@ -224,6 +224,29 @@ export const getGameLibrary: ControllerMethod = async (
                     }
                 }
             });
+            merge(gameLibraryJoin, {
+                $lookup: {
+                    let: {
+                        gameId: '$gameId'
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$_id', '$$gameId'] },
+                                        {
+                                            $eq: ['$isArchived', false]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            });
+            delete gameLibraryJoin.$lookup.localField;
+            delete gameLibraryJoin.$lookup.foreignField;
         }
         console.error('this doesnt do anything', regexMatch);
 
@@ -246,6 +269,18 @@ export const getGameLibrary: ControllerMethod = async (
             sorts.push(secondarySort);
         }
 
+        // The $lookup produces an empty array for "game" if it fails the query
+        // Let's prune these out
+        const removeNoGameMatchEntries = {
+            $match: {
+                game: {
+                    $not: {
+                        $size: 0
+                    }
+                }
+            }
+        };
+
         const resultsWrap = {
             $facet: {
                 results: [
@@ -264,11 +299,13 @@ export const getGameLibrary: ControllerMethod = async (
             gameLibraryFindFilter,
             gameLibraryJoin,
             ...sorts,
+            removeNoGameMatchEntries,
             resultsWrap
         ];
         if (searchTerm) {
             aggregationSteps.splice(2, 0, regexMatch);
         }
+        console.info('aggregationSteps', aggregationSteps);
         const before = performance.now();
         const aggregateResultList = ((await libraryEntryCollection
             .aggregate(aggregationSteps)
@@ -280,7 +317,7 @@ export const getGameLibrary: ControllerMethod = async (
         const queryTime = performance.now() - before;
         console.log(queryTime);
 
-        // console.log(aggregateResult);
+        console.log(aggregateResult);
 
         const totalCount = aggregateResult.totalCount[0]?.count || 0;
 
