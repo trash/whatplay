@@ -198,11 +198,39 @@ export const getGameLibrary: ControllerMethod = async (
         };
 
         const gameLibraryJoin = {
+            // $lookup: {
+            //     from: 'games',
+            //     localField: 'gameId',
+            //     foreignField: '_id',
+            //     as: 'game'
+            // }
             $lookup: {
                 from: 'games',
-                localField: 'gameId',
-                foreignField: '_id',
-                as: 'game'
+                as: 'game',
+                let: {
+                    gameId: '$gameId'
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ['$_id', '$$gameId'] },
+                                    // {
+                                    //     $eq: ['$isArchived', false]
+                                    // }
+                                    {
+                                        $regexMatch: {
+                                            input: '$title',
+                                            regex: searchTerm,
+                                            options: 'i'
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
             }
         };
 
@@ -224,29 +252,29 @@ export const getGameLibrary: ControllerMethod = async (
                     }
                 }
             });
-            merge(gameLibraryJoin, {
-                $lookup: {
-                    let: {
-                        gameId: '$gameId'
-                    },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ['$_id', '$$gameId'] },
-                                        {
-                                            $eq: ['$isArchived', false]
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    ]
-                }
-            });
-            delete gameLibraryJoin.$lookup.localField;
-            delete gameLibraryJoin.$lookup.foreignField;
+            // merge(gameLibraryJoin, {
+            //     $lookup: {
+            //         let: {
+            //             gameId: '$gameId'
+            //         },
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     $expr: {
+            //                         $and: [
+            //                             { $eq: ['$_id', '$$gameId'] },
+            //                             {
+            //                                 $eq: ['$isArchived', false]
+            //                             }
+            //                         ]
+            //                     }
+            //                 }
+            //             }
+            //         ]
+            //     }
+            // });
+            // delete gameLibraryJoin.$lookup.localField;
+            // delete gameLibraryJoin.$lookup.foreignField;
         }
         console.error('this doesnt do anything', regexMatch);
 
