@@ -277,6 +277,7 @@ export const getGameLibrary: ControllerMethod = async (
             // delete gameLibraryJoin.$lookup.foreignField;
         }
         console.error('this doesnt do anything', regexMatch);
+        console.error('sure doesn');
 
         const sortByGameTitle = {
             $sort: {
