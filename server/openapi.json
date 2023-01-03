@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "https://whatplay.io/api/v1",
+            "url": "https://what-to-play-next.herokuapp.com/api/v1",
             "description": "Prod env"
         },
         {

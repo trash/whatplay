@@ -1,11 +1,11 @@
 const webpack = require('webpack');
-var webpackMerge = require('webpack-merge');
+var { merge } = require('webpack-merge');
 var commonConfig = require('./webpack.common.js');
 var helpers = require('./helpers');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin;
 
-module.exports = webpackMerge(commonConfig, {
+module.exports = merge(commonConfig, {
     mode: 'development',
 
     devtool: 'eval-source-map',

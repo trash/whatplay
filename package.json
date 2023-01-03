@@ -3,8 +3,8 @@
         "typescript": "3.7.4"
     },
     "engines": {
-        "node": "13.6.0",
-        "yarn": "1.21.1"
+        "node": "19.3.0",
+        "yarn": "1.22.19"
     },
     "scripts": {
         "postinstall": "cd shared && yarn && cd ../client && yarn && cd ../server && yarn",

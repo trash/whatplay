@@ -7,7 +7,7 @@
         "lib": "lib"
     },
     "engines": {
-        "node": "13.6.0"
+        "node": "19.3.0"
     },
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.6.0",
@@ -52,15 +52,15 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "css-loader": "^3.4.1",
-        "file-loader": "^5.0.2",
+        "css-loader": "^6.7.3",
+        "file-loader": "^6.2.0",
         "less": "^3.10.3",
-        "less-loader": "^5.0.0",
+        "less-loader": "^11.1.0",
         "nodemon": "^2.0.2",
-        "style-loader": "^1.1.2",
-        "ts-loader": "^6.2.1",
-        "webpack": "^4.41.5",
-        "webpack-dev-middleware": "^3.7.2",
-        "webpack-hot-middleware": "^2.25.0"
+        "style-loader": "^3.3.1",
+        "ts-loader": "^9.4.2",
+        "webpack": "^5.75.0",
+        "webpack-dev-middleware": "^6.0.1",
+        "webpack-hot-middleware": "^2.25.3"
     }
 }
