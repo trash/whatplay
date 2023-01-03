@@ -1,5 +1,5 @@
 ## What is this?
-It's whatplay dood
+https://what-to-play-next.herokuapp.com/about
 
 ## How to get started
 1. Create a `.env` file in the root with these values:
