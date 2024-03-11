@@ -27,7 +27,7 @@
         "@types/swagger-ui-express": "^4.1.1",
         "babel-plugin-module-resolver": "^4.0.0",
         "body-parser": "^1.18.2",
-        "dotenv": "^8.2.0",
+        "dotenv": "^16.4.5",
         "ejs": "^2.5.2",
         "errorhandler": "^1.5.1",
         "express": "^4.14.0",

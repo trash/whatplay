@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime';
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../') });
+const dotEnvPath = path.resolve(__dirname, '../../.env');
+require('dotenv').config({ path: dotEnvPath, debug: true });
 import express, { Request, Response, NextFunction } from 'express';
 import jwt from 'express-jwt';
 import https from 'https';
@@ -10,7 +11,7 @@ const jwks = require('jwks-rsa');
 
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-const port = process.env.port || process.env.PORT || 5000;
+const port = process.env.port || process.env.PORT || 5001;
 
 // Express settings
 import { config } from './config';
